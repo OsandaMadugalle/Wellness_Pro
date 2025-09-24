@@ -5,8 +5,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.wellness_pro.R // Assuming item layout will be in main R
-import com.example.wellness_pro.db.AppNotification // Assuming this is your Notification data class
+import com.example.wellness_pro.R
+import com.example.wellness_pro.db.AppNotification
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class AppNotificationAdapter(
     private var notifications: List<AppNotification>,
@@ -14,11 +17,8 @@ class AppNotificationAdapter(
 ) : RecyclerView.Adapter<AppNotificationAdapter.NotificationViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotificationViewHolder {
-        // ASSUMPTION: You will create a layout file named 'item_notification.xml'
-        // in your res/layout folder.
-        // This layout should contain at least a TextView with id 'textViewNotificationTitle'.
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_notification, parent, false) // Ensure item_notification.xml exists
+            .inflate(R.layout.item_notification, parent, false)
         return NotificationViewHolder(view)
     }
 
@@ -35,11 +35,23 @@ class AppNotificationAdapter(
     }
 
     class NotificationViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        // ASSUMPTION: Your item_notification.xml has a TextView with this ID.
         private val titleTextView: TextView = itemView.findViewById(R.id.textViewNotificationTitle)
+        private val dateTextView: TextView = itemView.findViewById(R.id.textViewNotificationDate)
+        private val timeTextView: TextView = itemView.findViewById(R.id.textViewNotificationTime)
+
+        // Date and Time formatters
+        private val dateFormatter = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+        private val timeFormatter = SimpleDateFormat("hh:mm a", Locale.getDefault())
 
         fun bind(notification: AppNotification, onItemClicked: (AppNotification) -> Unit) {
             titleTextView.text = notification.title
+            
+            // Convert timestamp to Date object
+            val dateObject = Date(notification.timestamp)
+            
+            dateTextView.text = dateFormatter.format(dateObject)
+            timeTextView.text = timeFormatter.format(dateObject)
+            
             itemView.setOnClickListener {
                 onItemClicked(notification)
             }
