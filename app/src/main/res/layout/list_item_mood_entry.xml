@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="16dp"
+    android:background="@drawable/box_corners_rounded_very_dark"
+    android:layout_marginBottom="8dp">
+
+    <TextView
+        android:id="@+id/textViewMoodItemEmoji"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="32sp"
+        android:layout_marginEnd="16dp"
+        android:text="😊" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textViewMoodItemTimestamp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="@color/text_white_secondary"
+            android:text="Jan 01, 2024 10:00"/>
+
+        <TextView
+            android:id="@+id/textViewMoodItemNote"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textColor="@color/text_white"
+            android:layout_marginTop="4dp"
+            android:text="Feeling great today!"
+            android:visibility="gone"/> <!-- Initially gone, made visible if note exists -->
+    </LinearLayout>
+</LinearLayout>

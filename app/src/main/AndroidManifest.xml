@@ -27,15 +27,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PlayPal">
 
-        <activity android:name="com.example.wellness_pro.NotificationScreen" android:exported="false" />
-        <activity android:name="com.example.wellness_pro.SetHabitScreen" android:exported="false" />
-        <activity android:name="com.example.wellness_pro.ProfileScreen" android:exported="false" />
-        <activity android:name="com.example.wellness_pro.HabitsScreen" android:exported="false" />
-        <activity android:name="com.example.wellness_pro.navbar.BaseActivity" android:exported="false" />
-        <activity android:name="com.example.wellness_pro.navbar.BaseBottomNavActivity" android:exported="false" />
-        <activity android:name="com.example.wellness_pro.DashboardScreen" android:exported="false" />
+        <activity android:name=".NotificationScreen" android:exported="false" />
+        <activity android:name=".SetHabitScreen" android:exported="false" />
+        <activity android:name=".ProfileScreen" android:exported="false" />
+        <activity android:name=".HabitsScreen" android:exported="false" />
+        <activity android:name=".navbar.BaseActivity" android:exported="false" />
+        <activity android:name=".navbar.BaseBottomNavActivity" android:exported="false" />
+        <activity android:name=".DashboardScreen" android:exported="false" />
         <activity
-            android:name="com.example.wellness_pro.LaunchScreen"
+            android:name=".LaunchScreen"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -43,14 +43,18 @@
             </intent-filter>
         </activity>
 
+        <!-- Mood Activities -->
+        <activity android:name=".ui.MoodLogActivity" android:exported="false" />
+        <activity android:name=".ui.MoodHistoryActivity" android:exported="false" />
+
         <!-- Reminder Receivers -->
         <receiver
-            android:name="com.example.wellness_pro.reminders.HydrationAlarmReceiver"
+            android:name=".reminders.HydrationAlarmReceiver"
             android:enabled="true"
             android:exported="false" />
 
         <receiver
-            android:name="com.example.wellness_pro.reminders.BootCompletedReceiver"
+            android:name=".reminders.BootCompletedReceiver"
             android:enabled="true"
             android:exported="true"
             tools:ignore="ExportedReceiver">

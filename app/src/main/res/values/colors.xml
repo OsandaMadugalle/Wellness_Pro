@@ -33,6 +33,7 @@
 
     <color name="text_grey">#FF8E8E93</color>
     <color name="text_grey_light">#FFBFBFBF</color>
+    <color name="text_white_secondary">#CCCCCC</color> <!-- Added -->
 
     <!-- BMI -->
     <color name="bmi_underweight">#FF3498DB</color>

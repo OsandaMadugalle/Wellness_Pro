@@ -13,6 +13,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import com.example.wellness_pro.DashboardScreen
 import com.example.wellness_pro.HabitsScreen
+import com.example.wellness_pro.ui.MoodLogActivity // Keep this for later use from MoodHistoryActivity
+import com.example.wellness_pro.ui.MoodHistoryActivity // Added import
 import com.example.wellness_pro.ProfileScreen
 import com.example.wellness_pro.R
 import com.google.android.material.button.MaterialButton
@@ -22,9 +24,8 @@ abstract class BaseBottomNavActivity : BaseActivity() { // Extends our updated B
     abstract val currentNavControllerItemId: Int
 
     private lateinit var navButtonDashboard: MaterialButton
-    // private lateinit var navButtonExercise: MaterialButton // Removed
     private lateinit var navButtonHabits: MaterialButton
-    // private lateinit var navButtonChallenges: MaterialButton // Removed
+    private lateinit var navButtonMoodJournal: MaterialButton // Added
     private lateinit var navButtonProfile: MaterialButton
     private lateinit var navButtons: List<MaterialButton>
 
@@ -43,10 +44,11 @@ abstract class BaseBottomNavActivity : BaseActivity() { // Extends our updated B
         try {
             navButtonDashboard = findViewById(R.id.navButtonDashboard)
             navButtonHabits = findViewById(R.id.navButtonHabits)
+            navButtonMoodJournal = findViewById(R.id.navButtonMoodJournal) // Added
             navButtonProfile = findViewById(R.id.navButtonProfile)
-            // Updated list to only include initialized buttons
+            // Updated list to include all initialized buttons
             navButtons = listOf(
-                navButtonDashboard, navButtonHabits, navButtonProfile
+                navButtonDashboard, navButtonHabits, navButtonMoodJournal, navButtonProfile // Added navButtonMoodJournal
             )
         } catch (e: Exception) {
             Log.e("BaseBottomNav", "Error initializing nav buttons. Check IDs in XML.", e)
@@ -57,8 +59,9 @@ abstract class BaseBottomNavActivity : BaseActivity() { // Extends our updated B
     private fun setupClickListeners() {
         navButtonDashboard.setOnClickListener { navigateTo(DashboardScreen::class.java, R.id.navButtonDashboard) }
         navButtonHabits.setOnClickListener { navigateTo(HabitsScreen::class.java, R.id.navButtonHabits) }
+        // Changed to navigate to MoodHistoryActivity
+        navButtonMoodJournal.setOnClickListener { navigateTo(MoodHistoryActivity::class.java, R.id.navButtonMoodJournal) } 
         navButtonProfile.setOnClickListener { navigateTo(ProfileScreen::class.java, R.id.navButtonProfile) }
-        // Click listeners for navButtonExercise and navButtonChallenges would be removed here if they existed
     }
 
     private fun setupReusableBottomNavigationBar() {
@@ -71,21 +74,17 @@ abstract class BaseBottomNavActivity : BaseActivity() { // Extends our updated B
         if (this::class.java == activityClass && currentNavControllerItemId == destinationButtonId) {
             return // Already on the target screen
         }
-        // Navigate even if it's the same activity but a different conceptual destination (button ID)
-        // Or if it's a different activity altogether.
         val intent = Intent(this, activityClass).apply {
             flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or Intent.FLAG_ACTIVITY_SINGLE_TOP
         }
         startActivity(intent)
-        // Consider adding finish() if you don't want the previous activity in the back stack,
-        // or overridePendingTransition for custom animations.
     }
 
     private fun updateNavButtonStates() {
         if (!::navButtons.isInitialized) {
-            try { initializeNavButtons() } catch (e: Exception) { 
-                Log.e("BaseBottomNav", "Failed to re-init buttons for state update. Resources exist?",e); 
-                return 
+            try { initializeNavButtons() } catch (e: Exception) {
+                Log.e("BaseBottomNav", "Failed to re-init buttons for state update. Resources exist?",e);
+                return
             }
         }
         navButtons.forEach { button ->
@@ -96,16 +95,14 @@ abstract class BaseBottomNavActivity : BaseActivity() { // Extends our updated B
             try {
                 button.setIconTintResource(iconTintColor)
                 button.setTextColor(ContextCompat.getColor(this, textColorVal))
-            } catch (e: Exception) { 
-                Log.e("BaseBottomNav", "Error setting button colors. Resources exist? Button ID: ${button.id}", e) 
+            } catch (e: Exception) {
+                Log.e("BaseBottomNav", "Error setting button colors. Resources exist? Button ID: ${button.id}", e)
             }
         }
     }
 
     private fun setupNavBarInsets() {
-        // Assuming navBarContainer is an ID in the layout file of the Activity that includes the nav bar.
-        // If navBarContainer is part of the included layout_reusable_nav_bar.xml itself, this is fine.
-        findViewById<FrameLayout?>(R.id.navBarContainerBottom)?.let { container -> // Changed ID to navBarContainerBottom to match Dashboard XML
+        findViewById<FrameLayout?>(R.id.navBarContainerBottom)?.let { container ->
             ViewCompat.setOnApplyWindowInsetsListener(container) { view, windowInsets ->
                 val navInsets = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars())
                 view.updatePadding(bottom = navInsets.bottom)

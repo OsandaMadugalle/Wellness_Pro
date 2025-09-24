@@ -8,6 +8,7 @@
     <string name="Habits">Habits</string>
     <string name="profile">Profile</string>
     <string name="notifications">Notifications</string> <!-- Added back -->
+    <string name="mood_journal">Mood Journal</string> <!-- Added -->
 
     <!-- Strings for Splash Screen -->
     <string name="loading">Loading ...</string>
