@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <!-- Background Color -->
+    <solid android:color="@color/box_slate_blue" /> <!-- White background -->
+
+    <!-- Corner Radius -->
+    <corners android:radius="20dp" />
+    <!-- Adjust 8dp to your desired corner roundness.
+         Given your EditText height is 35dp, a radius like 18dp would make it pill-shaped.
+         A smaller radius like 4dp or 8dp will give more subtly rounded corners.
+    -->
+
+</shape>
+

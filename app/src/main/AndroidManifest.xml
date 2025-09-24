@@ -1,0 +1,64 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.wellness_pro">
+
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Permissions for Reminders -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+
+    <application
+        android:name=".WellnessProApplication"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.PlayPal">
+
+        <activity android:name="com.example.wellness_pro.NotificationScreen" android:exported="false" />
+        <activity android:name="com.example.wellness_pro.SetHabitScreen" android:exported="false" />
+        <activity android:name="com.example.wellness_pro.ProfileScreen" android:exported="false" />
+        <activity android:name="com.example.wellness_pro.HabitsScreen" android:exported="false" />
+        <activity android:name="com.example.wellness_pro.navbar.BaseActivity" android:exported="false" />
+        <activity android:name="com.example.wellness_pro.navbar.BaseBottomNavActivity" android:exported="false" />
+        <activity android:name="com.example.wellness_pro.DashboardScreen" android:exported="false" />
+        <activity
+            android:name="com.example.wellness_pro.LaunchScreen"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Reminder Receivers -->
+        <receiver
+            android:name="com.example.wellness_pro.reminders.HydrationAlarmReceiver"
+            android:enabled="true"
+            android:exported="false" />
+
+        <receiver
+            android:name="com.example.wellness_pro.reminders.BootCompletedReceiver"
+            android:enabled="true"
+            android:exported="true"
+            tools:ignore="ExportedReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+    </application>
+
+</manifest>

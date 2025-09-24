@@ -1,0 +1,135 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.PlayPal" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    </style>
+
+    <style name="Theme.PlayPal" parent="Base.Theme.PlayPal" />
+       <!-- ... other styles ... -->
+
+    <style name="Widget.App.Button.IconOnly" parent="Widget.MaterialComponents.Button.TextButton">
+        <!-- or parent="Widget.MaterialComponents.Button.OutlinedButton" -->
+        <!-- or parent="Widget.MaterialComponents.Button" (for a contained button) -->
+
+        <item name="iconPadding">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:paddingLeft">12dp</item> <!-- Adjust as needed -->
+        <item name="android:paddingRight">12dp</item><!-- Adjust as needed -->
+        <item name="android:minWidth">48dp</item>   <!-- Minimum touch target size -->
+        <item name="android:minHeight">48dp</item>  <!-- Minimum touch target size -->
+        <!-- Add other attributes specific to your icon-only button style -->
+        <!-- For example, if you want no background for a truly "icon-only" feel with TextButton -->
+        <item name="backgroundTint">@android:color/transparent</item>
+        <item name="android:textColor">@color/text_white</item> <!-- If not using iconTint -->
+        <!-- If your buttons also have text like in your nav bar, but styled primarily for the icon -->
+        <item name="android:textAppearance">@style/TextAppearance.App.Button.IconOnly</item>
+    </style>
+
+       <!-- Optional: A specific text appearance if your icon buttons still have small text -->
+    <style name="TextAppearance.App.Button.IconOnly"
+        parent="TextAppearance.MaterialComponents.Button">
+        <item name="android:textSize">10sp</item> <!-- Example: Smaller text size -->
+        <!-- You might not even need text if it's truly icon-only -->
+    </style>
+        <!-- Your existing theme(s) -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <!-- Customize your theme here. -->
+    </style>
+
+        <!-- Define your custom AlertDialog style here -->
+    <style name="AlertDialogCustom" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <!-- Customize properties of your AlertDialog -->
+
+        <!-- Example: Background color of the dialog window -->
+        <item name="android:background">@color/dialog_background_color
+        </item> <!-- Define this color in colors.xml -->
+
+        <!-- Example: Title text color -->
+        <item name="android:textColorPrimary">@color/dialog_title_text_color
+        </item> <!-- Define this color -->
+        <item name="titleTextColor">@color/dialog_title_text_color
+        </item> <!-- For Material Components Dialogs -->
+
+        <!-- Example: Message text color -->
+        <item name="android:textColorSecondary">@color/dialog_message_text_color
+        </item> <!-- Define this color -->
+        <item name="android:textColor">@color/dialog_message_text_color
+        </item> <!-- For the main body text -->
+
+        <!-- Example: Button text color -->
+        <item name="buttonBarPositiveButtonStyle">@style/AlertDialogCustom.Button</item>
+        <item name="buttonBarNegativeButtonStyle">@style/AlertDialogCustom.Button</item>
+        <item name="buttonBarNeutralButtonStyle">@style/AlertDialogCustom.Button</item>
+
+        <!-- Example: Title text appearance -->
+        <item name="android:windowTitleStyle">@style/AlertDialogCustom.Title</item>
+
+        <!-- Example: Corners (requires a custom drawable background for the dialog) -->
+        <!-- <item name="android:windowBackground">@drawable/custom_dialog_background</item> -->
+
+    </style>
+
+        <!-- Optional: Custom style for dialog buttons -->
+    <style name="AlertDialogCustom.Button"
+        parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/dialog_button_text_color
+        </item> <!-- Define this color -->
+        <item name="rippleColor">@color/dialog_button_ripple_color</item> <!-- Define this color -->
+    </style>
+
+        <!-- Optional: Custom style for dialog title -->
+    <style name="AlertDialogCustom.Title" parent="RtlOverlay.DialogWindowTitle.AppCompat">
+        <item name="android:textAppearance">@style/AlertDialogCustom.Title.TextAppearance</item>
+    </style>
+    <style name="AlertDialogCustom.Title.TextAppearance"
+        parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="android:textColor">@color/dialog_title_text_color</item>
+        <!-- <item name="android:textSize">20sp</item> -->
+        <!-- <item name="android:textStyle">bold</item> -->
+    </style>
+
+        
+
+        <!-- Optional: Custom style for dialog buttons if needed -->
+        <style name="TimePickerCustom.Button"
+            parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+            <item name="android:textColor">@color/dialog_button_text_color
+            </item> <!-- Define in colors.xml -->
+        </style>
+
+        <!-- Define your custom TimePickerDialog style here -->
+        <style name="TimePickerCustom" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+            <!-- Example customizations for a TimePickerDialog -->
+            <!-- You might need to experiment to find the exact attributes for TimePicker -->
+
+            <!-- Background color of the dialog window -->
+            <item name="android:background">@color/dialog_background_color
+            </item> <!-- Define in colors.xml -->
+
+            <!-- Color for the header background of the TimePicker -->
+            <item name="colorAccent">@color/timepicker_header_color
+            </item> <!-- Define in colors.xml, often used for accents -->
+            <item name="colorPrimary">@color/timepicker_header_color
+            </item> <!-- Sometimes primary is used -->
+
+            <!-- Text color for the header (e.g., the selected time display) -->
+            <item name="android:textColorPrimaryInverse">@color/timepicker_header_text_color
+            </item> <!-- Define in colors.xml -->
+
+            <!-- Text color for the numbers on the clock face -->
+            <item name="android:textColorPrimary">@color/timepicker_clock_text_color
+            </item> <!-- Define in colors.xml -->
+
+            <!-- Color of the clock hand and selected number circle -->
+            <item name="colorControlActivated">@color/timepicker_accent_color
+            </item> <!-- Define in colors.xml -->
+
+            <!-- Text color for buttons (OK, Cancel) -->
+            <item name="buttonBarPositiveButtonStyle">@style/TimePickerCustom.Button</item>
+            <item name="buttonBarNegativeButtonStyle">@style/TimePickerCustom.Button</item>
+        </style>
+
+
+        </resources>

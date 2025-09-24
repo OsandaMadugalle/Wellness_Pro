@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <!-- Background color of the box -->
+    <!-- Using the backgroundTint color #522A2424 -->
+    <!-- If you prefer the solid #142435, change it here -->
+    <solid android:color="@color/box_very_dark" />
+
+    <!-- Radius for the corners -->
+    <corners
+        android:topLeftRadius="0dp"
+        android:topRightRadius="200dp"/>
+
+</shape>

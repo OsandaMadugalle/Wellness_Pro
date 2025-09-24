@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="action_icon_size">28dp</dimen>
+    <dimen name="action_icon_margin_end">52dp</dimen>
+    <dimen name="action_icon_margin_start_delete">16dp</dimen>
+</resources>

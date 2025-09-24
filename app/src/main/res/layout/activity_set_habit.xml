@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/layout/activity_set_habit.xml (Simplified) -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Habit Type:" />
+    <Spinner
+        android:id="@+id/spinnerHabitType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Target Value:" />
+    <EditText
+        android:id="@+id/editTextTargetValue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Unit (e.g., glasses, km, minutes):" />
+    <EditText
+        android:id="@+id/editTextUnit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Schedule:" />
+    <Spinner
+        android:id="@+id/spinnerSchedule"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/habit_schedules" /> <!-- Define in arrays.xml -->
+
+    <!-- Optional: Reminder Time (TimePicker integration) -->
+    <Button
+        android:id="@+id/buttonSetReminder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Set Reminder (Optional)" />
+    <TextView
+        android:id="@+id/textViewReminderTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No reminder set" />
+
+    <Button
+        android:id="@+id/buttonSaveHabit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="24dp"
+        android:text="Save Habit" />
+
+</LinearLayout>

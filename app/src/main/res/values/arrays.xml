@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="habit_types_array">
+        <item>Hydration</item>
+        <item>Steps</item>
+        <item>Meditation</item>
+        <item>Workout</item>
+        <item>Reading</item>
+        <item>Custom</item>
+    </string-array>
+    <string-array name="habit_schedules">
+        <item>Daily</item>
+        <item>Specific days of week</item> <!-- You'd need more UI for this -->
+    </string-array>
+</resources>

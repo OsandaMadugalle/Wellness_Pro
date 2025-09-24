@@ -1,0 +1,210 @@
+<resources>
+    <!-- <string name="firebase_project_id">playpal-app-89027</string> --> <!-- REMOVED -->
+    <string name="app_name">Wellness Pro</string>
+    <string name="game_hard_live_well">Game Hard. Live Well.</string>
+
+    <!-- Nav Bar -->
+    <string name="dashboard">Dashboard</string>
+    <string name="Habits">Habits</string>
+    <string name="profile">Profile</string>
+    <string name="notifications">Notifications</string> <!-- Added back -->
+
+    <!-- Strings for Splash Screen -->
+    <string name="loading">Loading ...</string>
+
+    <!-- Common strings for Screen -->
+    <string name="back">Back</string>
+    <string name="update">Update</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="all_fields_required">All fields are required.</string>
+    <string name="your_details">Your Details</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+
+    <!--Strings for Dashboard Screen -->
+    <string name="step_counter">Step Counter</string>
+    <string name="steps">Steps</string>
+    <string name="step_counter_value">5200</string>
+    <string name="step_counter_background">Step counter background</string>
+    <string name="app_time">App Time Today</string>
+    <string name="screen_time_value">0h 00m</string>
+    <string name="screen_time_background">Screen time background</string>
+    <string name="confucius">- Confucius</string>
+    <string name="you_do_not_stop">you do not stop.</string>
+    <string name="slowly_you_go_as_long_as">slowly you go as long as</string>
+    <string name="it_does_not_matter_how">It does not matter how</string>
+    <string name="xp_level">450/800 XP | Level 3</string>
+    <string name="streak">🔥 7-Day Streak</string>
+    <string name="date">Loading date...</string>
+    <string name="Dashboard">Dashboard</string>
+    <string name="done">Done</string>
+
+    <!-- Strings for habits Screen -->
+    <string name="want_to_set_a_habit">Want to set a new habit?</string>
+    <string name="set_a_habit">Set a Habit</string>
+    <string name="habit_status">Habit Status</string>
+    <string name="habit_xp">150 XP</string>
+    <string name="habits">Habits</string>
+    <string name="habit_type">Habit Type</string>
+    <string name="set_habit">Set Habit</string>
+    <string name="long_term_habit_tracking">Long-term habit tracking</string>
+    <string name="presentage">60%</string>
+    <string name="days_duration">14 days duration</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="s">S</string>
+    <string name="m">M</string>
+    <string name="t">T</string>
+    <string name="w">W</string>
+    <string name="f">F</string>
+    <string name="em_posture">🙆‍♂️</string>
+    <string name="posture">Posture</string>
+    <string name="posture_days_remain_text">Log posture 2x daily for 6 days</string>
+    <string name="posture_days_remain">6/7</string>
+    <string name="em_sleep">💤️</string>
+    <string name="sleep">Sleep</string>
+    <string name="sleep_days_remain_text">Sleep 7h nightly for 5 days</string>
+    <string name="sleep_days_remain">5/7</string>
+    <string name="em_hydration">💧️</string>
+    <string name="hydration">Hydration</string>
+    <string name="hydration_days_remain_text">Log water intake for 4 days</string>
+    <string name="hydration_days_remain">4/7</string>
+    <string name="goal_type">Goal Type</string>
+    <string name="hydration_txt_em">💧 Hydration</string>
+    <string name="glasses_day">glasses/day</string>
+    <string name="steps_unit">steps</string> <!-- Added this line -->
+    <string name="minutes_unit">minutes</string>
+    <string name="duration_unit">duration</string>
+    <string name="pages_unit">pages</string>
+    <string name="_8">8</string>
+    <string name="schedule">Schedule</string>
+    <string name="daily">Daily</string>
+    <string name="weekly">Weekly</string>
+    <string name="weekdays">Weekdays</string>
+    <string name="remind_me_at">Remind me at ></string>
+    <string name="time">8.00 A.M.</string>
+    <string name="proud_of_your_consistency">🏆 Proud of your consistency!</string>
+    <string name="habit_completion_status_icon">Habit completion status</string>
+    <string name="habit_status_completed">Habit completed</string>
+    <string name="habit_status_incomplete">Habit incomplete</string>
+    <string name="delete_habit_description">Delete habit</string>
+    <string name="edit_habit_description">Edit habit</string>
+    <string name="increment_habit_progress">Increment habit progress</string>
+    <string name="edit_habit_title">Edit Habit</string>
+    <string name="update_habit_button">Update Habit</string>
+    <string name="set_new_habit_title">Set New Habit</string>
+    <string name="set_habit_button">Set Habit</string>
+    <string name="no_habits_yet_message">You haven\'t set up any habits yet. Tap the button
+            below to get started!
+        </string>
+    <string name="habit_type_status">%1$s Status</string>
+    <string name="xp_format_habit">+%1$d XP</string>
+
+    <!-- Strings for onboard Screen -->
+    <string name="hi_there">Hi there</string>
+    <string name="ready_to_unlock">Ready to unlock</string>
+    <string name="your_wellness_power">your wellness power</string>
+    <string name="get_started">Get Started</string>
+    <string name="benefits_of">Benefits of</string>
+    <string name="setting_a_goal">Setting a Goal</string>
+    <string name="clarity_and_direction">Clarity and Direction</string>
+    <string name="provides_a_clear">Provides a clear</string>
+    <string name="starting_point">starting point</string>
+    <string name="personalization">Personalization</string>
+    <string name="tailor_the_experience">Tailor the experience</string>
+    <string name="to_your_needs">to your needs</string>
+    <string name="motivation_boost">Motivation Boost</string>
+    <string name="increase_commitment">Increase commitment</string>
+    <string name="to_self_improvement">to self-improvement</string>
+    <string name="Continue">Continue</string>
+    <string name="smart_tips">Smart Tips</string>
+    <string name="just_for_you">Just for You</string>
+    <string name="ic_hydration">💧</string>
+    <string name="drink_water">Drink water</string>
+    <string name="every_2_hours">every 2 hours</string>
+    <string name="for_better_energy">for better energy</string>
+    <string name="ic_stretch">🧍‍♂️</string>
+    <string name="stretch">Stretch</string>
+    <string name="every_30_minutes">every 30 minutes</string>
+    <string name="your_spine_will">your spine will</string>
+    <string name="thank_you">thank you</string>
+    <string name="ic_eys">👀</string>
+    <string name="follow">Follow</string>
+    <string name="the_20_20_20_rule">the 20-20-20 rule</string>
+    <string name="to_reduce_strain">to reduce strain</string>
+    <string name="ic_breathe">🧘‍♂️️</string>
+    <string name="take_1_minute">Take 1 minute</string>
+    <string name="to_breathe_deeply">to breathe deeply</string>
+    <string name="and">and</string>
+    <string name="reset_your_focus">reset your focus</string>
+    <string name="got_it">Got it</string>
+
+    <!-- Strings for Profile Screen -->
+    <string name="log_out">Log Out</string>
+    <string name="settings">Settings</string>
+    <string name="name">John Doe</string>
+    <string name="mail">johndoe@mail.com</string>
+    <string name="level">Level 3</string>
+    <string name="xp">450/800 XP</string>
+    <string name="achievements">Achievements</string>
+    <string name="emoji_hydration">💧</string>
+    <string name="ac_hydration">Hydration</string>
+    <string name="ac_hero">Hero</string>
+    <string name="emoji_meditation">🧘</string>
+    <string name="ac_mindful">Mindful</string>
+    <string name="ac_master">Master</string>
+    <string name="emoji_sleep">😴</string>
+    <string name="ac_sleep">Sleep</string>
+    <string name="ac_sage">Sage</string>
+    <string name="emoji_no_digital">📵</string>
+    <string name="ac_digital">Digital</string>
+    <string name="ac_detoxer">Detoxer</string>
+    <string name="emoji_walk">🚶</string>
+    <string name="ac_step">Step</string>
+    <string name="ac_champion">Champion</string>
+    <string name="emoji_posture">🧍</string>
+    <string name="ac_posture">Posture</string>
+    <string name="ac_pro">Pro</string>
+    <string name="emoji_brain">🧠</string>
+    <string name="ac_focus">Focus</string>
+    <string name="ac_finisher">Finisher</string>
+    <string name="emoji_habit">🗓️</string>
+    <string name="ac_habit">Habit</string>
+    <string name="ac_builder">Builder</string>
+    <string name="emoji_nutrition">🥗</string>
+    <string name="ac_nutrition">Nutrition</string>
+    <string name="ac_ninja">Ninja</string>
+    <string name="emoji_night">🌙</string>
+    <string name="ac_night">Night</string>
+    <string name="ac_owl">Owl</string>
+    <string name="emoji_goal">🎯</string>
+    <string name="ac_goal">Goal</string>
+    <string name="ac_crusher">Crusher</string>
+    <string name="emoji_learn">📚</string>
+    <string name="ac_learning">Learning</string>
+    <string name="ac_legend">Legend</string>
+    <string name="emoji_clean">🧼</string>
+    <string name="ac_clean">Clean</string>
+    <string name="ac_routine">Routine</string>
+    <string name="level_format">Level: %1$d</string>
+    <string name="xp_format">XP: %1$d / %2$s</string>
+    <string name="user_avatar">User Avatar</string>
+    <string name="edit_profile">Edit Profile</string>
+
+    <!-- Strings for Notification Screen -->
+    <string name="notification">Notification</string> <!-- Note: This is a duplicate of the one under Nav Bar. Consolidate if they serve the same exact purpose. -->
+    <string name="check_your_day">Check Your Day</string>
+    <string name="notification1">Notification 1</string>
+    <string name="notification1_description">Notification 1 Description</string>
+    <string name="notification2">Notification 2</string>
+    <string name="notification2_description">Notification 2 Description</string>
+    <string name="no_notifications_yet">No notifications yet</string>
+
+    <!-- General App Strings -->
+    <string name="percentage_format">%d%%</string>
+    <string name="day_streak_format">%d day streak</string>
+    <string name="no_active_streak">No active streak</string>
+    <string name="some_other_string">Some other value</string>
+
+</resources>
