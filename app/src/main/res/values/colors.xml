@@ -30,6 +30,8 @@
     <color name="purple_200">#CE93D8</color>
     <color name="purple_500">#9C27B0</color>
     <color name="grey_300">#E0E0E0</color>
+    <color name="grey_400">#BDBDBD</color> <!-- Added grey_400 -->
+    <color name="grey_500">#9E9E9E</color>
 
     <color name="text_grey">#FF8E8E93</color>
     <color name="text_grey_light">#FFBFBFBF</color>

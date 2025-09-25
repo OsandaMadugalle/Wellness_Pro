@@ -1,20 +1,35 @@
 package com.example.wellness_pro
 
-// import android.content.Intent // No longer needed if EditProfileScreen is removed
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-// import android.widget.ImageButton // No longer finding settingsButton by this type if listener is removed
+// Removed: import android.widget.Button - Not needed if only moodButtons were using it
+// Removed: import android.widget.EditText - Not needed if only editTextMoodNotes was using it
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updatePadding
-// import com.bumptech.glide.Glide // Not strictly needed if only using placeholders
+import androidx.core.view.updatePadding // Ensure this import is present
+// Removed: import androidx.lifecycle.ViewModelProvider
+// Removed: import androidx.lifecycle.lifecycleScope
+// Removed: import com.example.wellness_pro.db.AppDatabase - If only used for MoodViewModel
+// Removed: import com.example.wellness_pro.db.MoodEntry
 import com.example.wellness_pro.navbar.BaseBottomNavActivity
 import com.example.wellness_pro.util.UserProgressUtil
+// Removed: import com.example.wellness_pro.viewmodel.MoodViewModel
+// Removed: import com.example.wellness_pro.viewmodel.MoodViewModelFactory
+// Removed: import com.github.mikephil.charting.charts.LineChart
+// Removed: import com.github.mikephil.charting.components.XAxis
+// Removed: import com.github.mikephil.charting.data.Entry
+// Removed: import com.github.mikephil.charting.data.LineData
+// Removed: import com.github.mikephil.charting.data.LineDataSet
+// Removed: import com.github.mikephil.charting.formatter.ValueFormatter
+// Removed: import kotlinx.coroutines.launch
+// Removed: import java.text.SimpleDateFormat
+// Removed: import java.util.Date
+// Removed: import java.util.Locale
 
 class ProfileScreen : BaseBottomNavActivity() {
 
@@ -32,9 +47,12 @@ class ProfileScreen : BaseBottomNavActivity() {
     private lateinit var textViewXP: TextView
     private lateinit var progressBarLevel: ProgressBar
 
+    // Mood tracking UI elements and ViewModel removed
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // MoodViewModel initialization removed
 
         try {
             imageViewAvatar = findViewById(R.id.imageViewAvatar)
@@ -45,35 +63,33 @@ class ProfileScreen : BaseBottomNavActivity() {
             textViewXP = findViewById(R.id.textViewXP)
             progressBarLevel = findViewById(R.id.progressBarLevel)
 
+            // findViewById calls for mood UI elements removed
+
         } catch (e: NullPointerException) {
-            Log.e("ProfileScreen", "Error finding profile UI elements. Check IDs in XML.", e)
+            Log.e("ProfileScreen", "Error finding UI elements. Check IDs in XML.", e)
             Toast.makeText(this, "Error loading profile components.", Toast.LENGTH_LONG).show()
+            return
         }
 
         setPlaceholderProfileData()
         loadAndDisplayAppUserProgress()
         setupWindowInsets()
 
-        // Settings Button Click Listener - REMOVED
-        // val settingsButton = findViewById<ImageButton>(R.id.buttonSettings)
-        // settingsButton?.setOnClickListener {
-        //     val intent = Intent(this, EditProfileScreen::class.java)
-        //     startActivity(intent)
-        // } ?: Log.w("ProfileScreen", "Button with ID R.id.buttonSettings not found or listener not set.")
-        // You might want to hide or remove the settingsButton from the XML if it has no function
-        val settingsButton = findViewById<View>(R.id.buttonSettings) // Find it as a generic View
-        settingsButton?.setOnClickListener(null) // Remove any existing listener
-        // settingsButton?.visibility = View.GONE // Optionally hide it
-
+        val settingsButton = findViewById<View>(R.id.buttonSettings)
+        settingsButton?.setOnClickListener(null) 
         val logoutButton = findViewById<View>(R.id.buttonLogout)
         logoutButton?.visibility = View.GONE
+
+        // Calls to mood-related setup methods removed
     }
 
     override fun onResume() {
         super.onResume()
-        setPlaceholderProfileData()
-        loadAndDisplayAppUserProgress()
+        setPlaceholderProfileData() 
+        loadAndDisplayAppUserProgress() 
     }
+
+    // Mood-related functions (setupMoodInputListeners, updateMoodButtonSelection, etc.) removed
 
     private fun setupWindowInsets() {
         val mainContent = findViewById<View>(R.id.main)
@@ -94,7 +110,7 @@ class ProfileScreen : BaseBottomNavActivity() {
     }
 
     private fun setPlaceholderProfileData() {
-        if (::textViewName.isInitialized) textViewName.text = getString(R.string.name) 
+        if (::textViewName.isInitialized) textViewName.text = getString(R.string.name)
         if (::textViewEmail.isInitialized) textViewEmail.text = getString(R.string.mail)
         if (::imageViewAvatar.isInitialized) {
             imageViewAvatar.setImageResource(R.drawable.ic_avatar)

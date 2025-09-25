@@ -9,10 +9,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-@Database(entities = [AppNotification::class], version = 2, exportSchema = false)
+@Database(entities = [AppNotification::class, MoodEntry::class], version = 3, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun appNotificationDao(): AppNotificationDao
+    abstract fun moodDao(): MoodDao
 
     companion object {
         private const val TAG = "AppDatabase"
@@ -32,7 +33,7 @@ abstract class AppDatabase : RoomDatabase() {
                             AppDatabase::class.java,
                             "wellness_pro_database"
                         )
-                        .fallbackToDestructiveMigration()
+                        .fallbackToDestructiveMigration() // Note: For production, you'd want a proper migration strategy
                         .build()
                         _isInitialized.value = true
                         Log.d(TAG, "Database built and initialized flag set.")
