@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/app_background_dark"
+    android:background="#FF0A1F2E"
     tools:context=".DashboardScreen">
 
     <LinearLayout
         android:id="@+id/headerLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/app_background_dark"
+        android:background="#FF0A1F2E"
         android:elevation="4dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/Dashboard"
-            android:textColor="@color/text_white"
+            android:textColor="#FFE8F4F8"
             android:textSize="26sp"
             android:textStyle="bold"
             android:gravity="center_horizontal"
@@ -45,7 +45,7 @@
             android:contentDescription="@string/notifications"
             android:padding="8dp"
             app:srcCompat="@drawable/ic_notification"
-            app:tint="@color/icon_white" />
+            app:tint="#FF4CAF50" />
     </LinearLayout>
 
     <FrameLayout
@@ -82,7 +82,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:text="@string/date"
-                android:textColor="@color/text_white"
+                android:textColor="#FFE8F4F8"
                 android:textSize="15sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -93,7 +93,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:text="@string/streak"
-                android:textColor="@color/text_white"
+                android:textColor="#FF4CAF50"
                 android:textSize="15sp"
                 app:layout_constraintBottom_toBottomOf="@+id/textViewDate"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -108,6 +108,8 @@
                 android:layout_marginTop="12dp"
                 android:layout_marginEnd="16dp"
                 android:progress="60"
+                android:progressTint="#FF4CAF50"
+                android:progressBackgroundTint="#FF1E3A5A"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textViewDate" />
@@ -118,7 +120,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:text="@string/xp_level"
-                android:textColor="@color/text_white"
+                android:textColor="#FFE8F4F8"
                 android:textSize="13sp"
                 app:layout_constraintEnd_toEndOf="@+id/progressBar"
                 app:layout_constraintTop_toBottomOf="@+id/progressBar" />
@@ -130,7 +132,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="16dp"
-                android:background="@drawable/box_corners_rounded_slate_blue"
+                android:background="#FF1E3A5A"
                 android:gravity="center"
                 android:orientation="vertical"
                 android:padding="12dp"
@@ -144,7 +146,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="@string/it_does_not_matter_how"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="17sp" />
 
                 <TextView
@@ -153,7 +155,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="@string/slowly_you_go_as_long_as"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="17sp" />
 
                 <TextView
@@ -162,7 +164,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="@string/you_do_not_stop"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="17sp" />
 
                 <TextView
@@ -172,7 +174,7 @@
                     android:layout_marginTop="4dp"
                     android:gravity="center"
                     android:text="@string/confucius"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FF4CAF50"
                     android:textSize="15sp"
                     android:textStyle="italic" />
             </LinearLayout>
@@ -184,6 +186,8 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="6dp"
+                android:background="#FF1E3A5A"
+                android:backgroundTint="#FF1E3A5A"
                 app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintEnd_toStartOf="@+id/stepCounterItemGroup"
                 app:layout_constraintHorizontal_chainStyle="packed"
@@ -196,11 +200,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:contentDescription="@string/screen_time_background"
+                    android:background="#FF2196F3"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/roundlogo" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/textViewScreenTimeValue"
@@ -208,7 +212,7 @@
                     android:layout_height="wrap_content"
                     android:elevation="1dp"
                     android:text="@string/screen_time_value"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="24sp"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toTopOf="@+id/textViewScreenTimeLabel"
@@ -224,7 +228,7 @@
                     android:layout_height="wrap_content"
                     android:elevation="1dp"
                     android:text="@string/app_time"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="13sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -239,6 +243,8 @@
                 android:layout_height="0dp"
                 android:layout_marginStart="6dp"
                 android:layout_marginEnd="20dp"
+                android:background="#FF1E3A5A"
+                android:backgroundTint="#FF1E3A5A"
                 app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_weight="1"
@@ -250,19 +256,19 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:contentDescription="@string/step_counter_background"
+                    android:background="#FF4CAF50"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/roundlogo" />
+                    app:layout_constraintTop_toTopOf="parent"/>
 
                 <TextView
                     android:id="@+id/textViewStepCounterValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:elevation="1dp"
-                    android:text="@string/step_counter_value" 
-                    android:textColor="@color/text_white"
+                    android:text="@string/step_counter_value"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="24sp"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toTopOf="@+id/textViewStepCounterSubLabel"
@@ -278,7 +284,7 @@
                     android:layout_height="wrap_content"
                     android:elevation="1dp"
                     android:text="@string/steps"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="11sp"
                     app:layout_constraintBottom_toTopOf="@+id/textViewStepCounterLabel"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -291,7 +297,7 @@
                     android:layout_height="wrap_content"
                     android:elevation="1dp"
                     android:text="@string/step_counter"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="13sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -299,12 +305,6 @@
                     app:layout_constraintTop_toBottomOf="@+id/textViewStepCounterSubLabel" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <!-- Removed toDoItemGroup -->
-            <!-- Removed focusItemGroup -->
-            <!-- Removed buttonToDo -->
-            <!-- Removed buttonFocusTracker -->
-            <!-- Removed buttonBmiTracker -->
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

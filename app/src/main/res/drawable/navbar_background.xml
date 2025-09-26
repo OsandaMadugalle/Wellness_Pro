@@ -2,11 +2,10 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
 
-    <!-- Background Color -->
-    <solid android:color="@color/nav_black" />
+    <!-- Background Color - Using wellness theme -->
+    <solid android:color="#FF1E3A5A" />
 
     <!-- Corner Radius -->
     <corners android:radius="400dp" />
-
 
 </shape>
