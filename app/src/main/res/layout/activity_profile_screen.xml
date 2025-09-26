@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/app_background_dark"
+    android:background="#FF0A1F2E"
     android:paddingTop="24dp"
     tools:context=".ProfileScreen">
 
@@ -43,8 +43,8 @@
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
         android:text="@string/log_out"
-        android:textColor="@color/text_white"
-        app:backgroundTint="@color/button_red"
+        android:textColor="#FFE8F4F8"
+        app:backgroundTint="#FFFF5252"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintTop_toTopOf="@id/imageViewAvatar"
         app:layout_constraintBottom_toBottomOf="@id/imageViewAvatar" />
@@ -82,7 +82,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:text="@string/name"
-            android:textColor="@color/text_white"
+            android:textColor="#FFE8F4F8"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -93,7 +93,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:text="@string/mail"
-            android:textColor="@color/text_white"
+            android:textColor="#FFE8F4F8"
             android:textSize="13sp" />
     </LinearLayout>
 
@@ -111,7 +111,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/level"
-            android:textColor="@color/text_white"
+            android:textColor="#FFE8F4F8"
             android:textSize="13sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
@@ -122,7 +122,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/xp"
-            android:textColor="@color/text_white"
+            android:textColor="#FFE8F4F8"
             android:textSize="13sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -139,8 +139,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textViewLevel"
-            android:progressTint="@color/purple_500"
-            android:progressBackgroundTint="@color/grey_300" />
+            android:progressTint="#FF4CAF50"
+            android:progressBackgroundTint="#FF1E3A5A" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -150,7 +150,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:text="@string/achievements"
-        android:textColor="@color/text_white"
+        android:textColor="#FFE8F4F8"
         android:textSize="17sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
@@ -194,7 +194,7 @@
                 android:id="@+id/challengeItemHydration"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/box_corners_rounded_very_dark"
+                android:background="#FF1E3A5A"
                 android:padding="10dp">
 
                 <TextView
@@ -202,7 +202,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/emoji_hydration"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="22sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -218,7 +218,7 @@
                     android:gravity="center_horizontal"
                     android:maxLines="1"
                     android:text="@string/ac_hydration"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="11sp"
                     app:layout_constrainedWidth="true"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -234,7 +234,7 @@
                     android:gravity="center_horizontal"
                     android:maxLines="1"
                     android:text="@string/ac_hero"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="11sp"
                     app:layout_constrainedWidth="true"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -248,7 +248,7 @@
                 android:id="@+id/challengeItemMindful"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/box_corners_rounded_very_dark"
+                android:background="#FF1E3A5A"
                 android:padding="10dp">
 
                 <TextView
@@ -256,7 +256,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/emoji_meditation"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="22sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -272,7 +272,7 @@
                     android:gravity="center_horizontal"
                     android:maxLines="1"
                     android:text="@string/ac_mindful"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="11sp"
                     app:layout_constrainedWidth="true"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -288,7 +288,7 @@
                     android:gravity="center_horizontal"
                     android:maxLines="1"
                     android:text="@string/ac_master"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="11sp"
                     app:layout_constrainedWidth="true"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -301,7 +301,7 @@
                 android:id="@+id/challengeItemSleep"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/box_corners_rounded_very_dark"
+                android:background="#FF1E3A5A"
                 android:padding="10dp">
 
                 <TextView
@@ -309,7 +309,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/emoji_sleep"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="22sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -325,7 +325,7 @@
                     android:gravity="center_horizontal"
                     android:maxLines="1"
                     android:text="@string/ac_sleep"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="11sp"
                     app:layout_constrainedWidth="true"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -341,7 +341,7 @@
                     android:gravity="center_horizontal"
                     android:maxLines="1"
                     android:text="@string/ac_sage"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="11sp"
                     app:layout_constrainedWidth="true"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -354,7 +354,7 @@
                 android:id="@+id/challengeItemDigitalDetox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/box_corners_rounded_very_dark"
+                android:background="#FF1E3A5A"
                 android:padding="10dp">
 
                 <TextView
@@ -362,7 +362,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/emoji_no_digital"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="22sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -378,7 +378,7 @@
                     android:gravity="center_horizontal"
                     android:maxLines="1"
                     android:text="@string/ac_digital"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="11sp"
                     app:layout_constrainedWidth="true"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -394,7 +394,7 @@
                     android:gravity="center_horizontal"
                     android:maxLines="1"
                     android:text="@string/ac_detoxer"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="11sp"
                     app:layout_constrainedWidth="true"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -407,7 +407,7 @@
                 android:id="@+id/challengeItemStep"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/box_corners_rounded_very_dark"
+                android:background="#FF1E3A5A"
                 android:padding="10dp">
 
                 <TextView
@@ -415,7 +415,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/emoji_walk"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="22sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -431,7 +431,7 @@
                     android:gravity="center_horizontal"
                     android:maxLines="1"
                     android:text="@string/ac_step"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="11sp"
                     app:layout_constrainedWidth="true"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -447,7 +447,7 @@
                     android:gravity="center_horizontal"
                     android:maxLines="1"
                     android:text="@string/ac_champion"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="11sp"
                     app:layout_constrainedWidth="true"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -460,7 +460,7 @@
                 android:id="@+id/challengeItemPosture"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/box_corners_rounded_very_dark"
+                android:background="#FF1E3A5A"
                 android:padding="10dp">
 
                 <TextView
@@ -468,7 +468,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/emoji_posture"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="22sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -484,7 +484,7 @@
                     android:gravity="center_horizontal"
                     android:maxLines="1"
                     android:text="@string/ac_posture"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="11sp"
                     app:layout_constrainedWidth="true"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -500,7 +500,7 @@
                     android:gravity="center_horizontal"
                     android:maxLines="1"
                     android:text="@string/ac_pro"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="11sp"
                     app:layout_constrainedWidth="true"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -513,7 +513,7 @@
                 android:id="@+id/challengeItemFocus"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/box_corners_rounded_very_dark"
+                android:background="#FF1E3A5A"
                 android:padding="10dp">
 
                 <TextView
@@ -521,7 +521,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/emoji_brain"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="22sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -537,7 +537,7 @@
                     android:gravity="center_horizontal"
                     android:maxLines="1"
                     android:text="@string/ac_focus"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="11sp"
                     app:layout_constrainedWidth="true"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -553,7 +553,7 @@
                     android:gravity="center_horizontal"
                     android:maxLines="1"
                     android:text="@string/ac_finisher"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="11sp"
                     app:layout_constrainedWidth="true"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -566,7 +566,7 @@
                 android:id="@+id/challengeItemHabit"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/box_corners_rounded_very_dark"
+                android:background="#FF1E3A5A"
                 android:padding="10dp">
 
                 <TextView
@@ -574,7 +574,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/emoji_habit"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="22sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -590,7 +590,7 @@
                     android:gravity="center_horizontal"
                     android:maxLines="1"
                     android:text="@string/ac_habit"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="11sp"
                     app:layout_constrainedWidth="true"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -606,7 +606,7 @@
                     android:gravity="center_horizontal"
                     android:maxLines="1"
                     android:text="@string/ac_builder"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="11sp"
                     app:layout_constrainedWidth="true"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -619,7 +619,7 @@
                 android:id="@+id/challengeItemNutrition"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/box_corners_rounded_very_dark"
+                android:background="#FF1E3A5A"
                 android:padding="10dp">
 
                 <TextView
@@ -627,7 +627,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/emoji_nutrition"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="22sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -643,7 +643,7 @@
                     android:gravity="center_horizontal"
                     android:maxLines="1"
                     android:text="@string/ac_nutrition"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="11sp"
                     app:layout_constrainedWidth="true"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -659,7 +659,7 @@
                     android:gravity="center_horizontal"
                     android:maxLines="1"
                     android:text="@string/ac_ninja"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="11sp"
                     app:layout_constrainedWidth="true"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -672,7 +672,7 @@
                 android:id="@+id/challengeItemNightOwl"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/box_corners_rounded_very_dark"
+                android:background="#FF1E3A5A"
                 android:padding="10dp">
 
                 <TextView
@@ -680,7 +680,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/emoji_night"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="22sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -696,7 +696,7 @@
                     android:gravity="center_horizontal"
                     android:maxLines="1"
                     android:text="@string/ac_night"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="11sp"
                     app:layout_constrainedWidth="true"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -712,7 +712,7 @@
                     android:gravity="center_horizontal"
                     android:maxLines="1"
                     android:text="@string/ac_owl"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="11sp"
                     app:layout_constrainedWidth="true"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -725,7 +725,7 @@
                 android:id="@+id/challengeItemGoal"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/box_corners_rounded_very_dark"
+                android:background="#FF1E3A5A"
                 android:padding="10dp">
 
                 <TextView
@@ -733,7 +733,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/emoji_goal"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="22sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -749,7 +749,7 @@
                     android:gravity="center_horizontal"
                     android:maxLines="1"
                     android:text="@string/ac_goal"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="11sp"
                     app:layout_constrainedWidth="true"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -765,7 +765,7 @@
                     android:gravity="center_horizontal"
                     android:maxLines="1"
                     android:text="@string/ac_crusher"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="11sp"
                     app:layout_constrainedWidth="true"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -778,7 +778,7 @@
                 android:id="@+id/challengeItemLearning"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/box_corners_rounded_very_dark"
+                android:background="#FF1E3A5A"
                 android:padding="10dp">
 
                 <TextView
@@ -786,7 +786,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/emoji_learn"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="22sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -802,7 +802,7 @@
                     android:gravity="center_horizontal"
                     android:maxLines="1"
                     android:text="@string/ac_learning"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="11sp"
                     app:layout_constrainedWidth="true"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -818,7 +818,7 @@
                     android:gravity="center_horizontal"
                     android:maxLines="1"
                     android:text="@string/ac_legend"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="11sp"
                     app:layout_constrainedWidth="true"
                     app:layout_constraintBottom_toBottomOf="parent"
