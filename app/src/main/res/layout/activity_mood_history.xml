@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/app_background_dark"
+    android:background="#FF0A1F2E"
     tools:context=".ui.MoodHistoryActivity">
 
     <TextView
@@ -14,7 +14,7 @@
         android:text="Mood History"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:textColor="@color/text_white"
+        android:textColor="#FFE8F4F8"
         android:layout_marginTop="16dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -37,7 +37,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="No mood entries yet."
-        android:textColor="@color/text_white_secondary"
+        android:textColor="#FFA0A0A0"
         android:textSize="18sp"
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/textViewMoodHistoryTitle"
@@ -50,9 +50,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:src="@android:drawable/ic_input_add" 
-        app:tint="@color/white"
-        app:backgroundTint="@color/button_blue"
+        android:src="@android:drawable/ic_input_add"
+        app:tint="#FFE8F4F8"
+        app:backgroundTint="#FF4CAF50"
         app:layout_constraintBottom_toTopOf="@id/navBarContainerBottom"
         app:layout_constraintEnd_toEndOf="parent"
         android:contentDescription="Log New Mood" />

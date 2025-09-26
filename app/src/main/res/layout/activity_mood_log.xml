@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/app_background_dark"
+    android:background="#FF0A1F2E"
     tools:context=".ui.MoodLogActivity">
 
     <androidx.core.widget.NestedScrollView
@@ -29,7 +29,7 @@
                 android:text="Log Your Mood"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                android:textColor="@color/text_white"
+                android:textColor="#FFE8F4F8"
                 android:gravity="center"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -40,7 +40,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="How are you feeling? (1 = Very Bad, 5 = Very Good)"
-                android:textColor="@color/text_white"
+                android:textColor="#FFE8F4F8"
                 android:textSize="16sp"
                 android:layout_marginTop="16dp"
                 app:layout_constraintTop_toBottomOf="@id/textViewMoodLogTitle"
@@ -57,11 +57,11 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/textViewMoodSelectionPrompt">
 
-                <Button android:id="@+id/buttonMood1" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="1" style="@style/Widget.MaterialComponents.Button.OutlinedButton" android:textColor="@color/text_white" app:strokeColor="@color/text_white" android:layout_marginEnd="4dp"/>
-                <Button android:id="@+id/buttonMood2" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="2" style="@style/Widget.MaterialComponents.Button.OutlinedButton" android:textColor="@color/text_white" app:strokeColor="@color/text_white" android:layout_marginStart="4dp" android:layout_marginEnd="4dp"/>
-                <Button android:id="@+id/buttonMood3" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="3" style="@style/Widget.MaterialComponents.Button.OutlinedButton" android:textColor="@color/text_white" app:strokeColor="@color/text_white" android:layout_marginStart="4dp" android:layout_marginEnd="4dp"/>
-                <Button android:id="@+id/buttonMood4" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="4" style="@style/Widget.MaterialComponents.Button.OutlinedButton" android:textColor="@color/text_white" app:strokeColor="@color/text_white" android:layout_marginStart="4dp" android:layout_marginEnd="4dp"/>
-                <Button android:id="@+id/buttonMood5" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="5" style="@style/Widget.MaterialComponents.Button.OutlinedButton" android:textColor="@color/text_white" app:strokeColor="@color/text_white" android:layout_marginStart="4dp"/>
+                <Button android:id="@+id/buttonMood1" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="1" style="@style/Widget.MaterialComponents.Button.OutlinedButton" android:textColor="#FFE8F4F8" app:strokeColor="#FFE8F4F8" android:layout_marginEnd="4dp"/>
+                <Button android:id="@+id/buttonMood2" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="2" style="@style/Widget.MaterialComponents.Button.OutlinedButton" android:textColor="#FFE8F4F8" app:strokeColor="#FFE8F4F8" android:layout_marginStart="4dp" android:layout_marginEnd="4dp"/>
+                <Button android:id="@+id/buttonMood3" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="3" style="@style/Widget.MaterialComponents.Button.OutlinedButton" android:textColor="#FFE8F4F8" app:strokeColor="#FFE8F4F8" android:layout_marginStart="4dp" android:layout_marginEnd="4dp"/>
+                <Button android:id="@+id/buttonMood4" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="4" style="@style/Widget.MaterialComponents.Button.OutlinedButton" android:textColor="#FFE8F4F8" app:strokeColor="#FFE8F4F8" android:layout_marginStart="4dp" android:layout_marginEnd="4dp"/>
+                <Button android:id="@+id/buttonMood5" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="5" style="@style/Widget.MaterialComponents.Button.OutlinedButton" android:textColor="#FFE8F4F8" app:strokeColor="#FFE8F4F8" android:layout_marginStart="4dp"/>
             </LinearLayout>
 
             <EditText
@@ -73,10 +73,10 @@
                 android:inputType="textCapSentences|textMultiLine"
                 android:minLines="2"
                 android:gravity="top"
-                android:background="@drawable/box_corners_rounded_very_dark"
+                android:background="#FF1E3A5A"
                 android:padding="12dp"
-                android:textColor="@color/text_white"
-                android:textColorHint="@color/grey_500"
+                android:textColor="#FFE8F4F8"
+                android:textColorHint="#FFA0A0A0"
                 app:layout_constraintTop_toBottomOf="@id/moodSelectionLayout"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
@@ -90,15 +90,15 @@
                 app:layout_constraintTop_toBottomOf="@id/editTextMoodNotes"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:backgroundTint="@color/button_blue"
-                android:textColor="@color/text_white"/>
+                app:backgroundTint="#FF4CAF50"
+                android:textColor="#FFE8F4F8"/>
 
             <TextView
                 android:id="@+id/textViewChartTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Your Mood Trend (Last 7 Days)"
-                android:textColor="@color/text_white"
+                android:textColor="#FFE8F4F8"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:layout_marginTop="24dp"
@@ -121,9 +121,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Log your mood to see your trend!"
-                android:textColor="@color/grey_400"
+                android:textColor="#FFA0A0A0"
                 android:textSize="16sp"
-                android:visibility="gone" 
+                android:visibility="gone"
                 app:layout_constraintTop_toTopOf="@id/moodChart"
                 app:layout_constraintBottom_toBottomOf="@id/moodChart"
                 app:layout_constraintStart_toStartOf="@id/moodChart"
