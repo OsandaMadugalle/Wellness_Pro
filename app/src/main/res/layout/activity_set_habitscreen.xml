@@ -5,14 +5,14 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/app_background_dark"
+    android:background="#FF0A1F2E"
     tools:context=".SetHabitScreen">
 
     <LinearLayout
         android:id="@+id/headerLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/app_background_dark"
+        android:background="#FF0A1F2E"
         android:elevation="4dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -33,7 +33,7 @@
             android:contentDescription="@string/back"
             android:padding="8dp"
             app:srcCompat="@drawable/ic_back"
-            app:tint="@color/icon_white" />
+            app:tint="#FFE8F4F8" />
 
         <Space
             android:layout_width="0dp"
@@ -45,7 +45,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/set_a_habit"
-            android:textColor="@color/text_white"
+            android:textColor="#FFE8F4F8"
             android:textSize="28sp"
             android:textStyle="bold"
             app:autoSizeMaxTextSize="28sp"
@@ -88,7 +88,7 @@
                 android:id="@+id/habitTypeContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/box_corners_rounded_slate_blue"
+                android:background="#FF1E3A5A"
                 android:padding="16dp">
 
                 <TextView
@@ -96,7 +96,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/habit_type"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="17sp"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
@@ -106,7 +106,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:background="@drawable/box_corners_rounded_very_dark"
+                    android:background="#FF1E3A5A"
                     android:minHeight="48dp"
                     android:paddingStart="16dp"
                     android:paddingTop="10dp"
@@ -124,7 +124,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="@string/hydration_txt_em"
-                        android:textColor="@color/text_white"
+                        android:textColor="#FFE8F4F8"
                         android:textSize="16sp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/imageViewDropdownArrow"
@@ -137,7 +137,7 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         app:srcCompat="@drawable/ic_dropdown_arrow"
-                        app:tint="@color/text_white"
+                        app:tint="#FFE8F4F8"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent" />
@@ -149,7 +149,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:background="@drawable/box_corners_rounded_very_dark"
+                    android:background="#FF1E3A5A"
                     android:minHeight="48dp"
                     android:paddingStart="16dp"
                     android:paddingTop="10dp"
@@ -165,7 +165,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/glasses_day"
-                        android:textColor="@color/text_white"
+                        android:textColor="#FFE8F4F8"
                         android:textSize="16sp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -179,7 +179,7 @@
                         android:maxWidth="100dp"
                         android:inputType="number"
                         android:text="@string/_8"
-                        android:textColor="@color/text_white"
+                        android:textColor="#FFE8F4F8"
                         android:background="@android:color/transparent"
                         android:gravity="end|center_vertical"
                         android:paddingStart="8dp"
@@ -202,7 +202,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:background="@drawable/box_corners_rounded_slate_blue"
+                android:background="#FF1E3A5A"
                 android:padding="16dp">
 
                 <TextView
@@ -210,7 +210,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/schedule"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="17sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -238,8 +238,8 @@
                     android:paddingStart="8dp"
                     android:paddingEnd="8dp"
                     android:textSize="13sp"
-                    android:textColor="@color/text_white"
-                    app:backgroundTint="@color/button_grey"
+                    android:textColor="#FFE8F4F8"
+                    app:backgroundTint="#FF4CAF50"
                     tools:layout_editor_absoluteX="16dp"
                     tools:layout_editor_absoluteY="80dp"
                     tools:ignore="MissingConstraints" />
@@ -254,8 +254,8 @@
                     android:paddingEnd="8dp"
                     android:textSize="13sp"
                     tools:ignore="MissingConstraints"
-                    android:textColor="@color/text_white"
-                    app:backgroundTint="@color/button_grey"/>
+                    android:textColor="#FFE8F4F8"
+                    app:backgroundTint="#FF1E3A5A"/>
 
                 <Button
                     android:id="@+id/buttonWeekdays"
@@ -267,8 +267,8 @@
                     android:paddingEnd="8dp"
                     android:textSize="13sp"
                     tools:ignore="MissingConstraints"
-                    android:textColor="@color/text_white"
-                    app:backgroundTint="@color/button_grey"/>
+                    android:textColor="#FFE8F4F8"
+                    app:backgroundTint="#FF1E3A5A"/>
 
                 <TextView
                     android:id="@+id/textViewRemindMePrompt"
@@ -276,7 +276,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="@string/remind_me_at"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="17sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/scheduleButtonFlow" />
@@ -288,7 +288,7 @@
                     android:minWidth="48dp"
                     android:padding="4dp"
                     android:text="@string/time"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FF4CAF50"
                     android:textSize="17sp"
                     android:background="?attr/selectableItemBackground"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -303,7 +303,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:background="@drawable/box_corners_rounded_slate_blue"
+                android:background="#FF1E3A5A"
                 android:padding="16dp"
                 android:visibility="gone"
                 tools:visibility="visible">
@@ -313,7 +313,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="Hydration Reminders"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="17sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -333,7 +333,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
                     android:text="Remind every (minutes):"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="14sp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textViewHydrationReminderLabel" />
@@ -345,13 +345,13 @@
                     android:layout_marginStart="8dp"
                     android:inputType="number"
                     android:minHeight="48dp"
-                    android:background="@drawable/box_corners_rounded_very_dark"
+                    android:background="#FF1E3A5A"
                     android:paddingStart="12dp"
                     android:paddingEnd="12dp"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="16sp"
                     android:hint="e.g., 60"
-                    android:textColorHint="@color/hint_text_color"
+                    android:textColorHint="#FFA0A0A0"
                     app:layout_constraintStart_toEndOf="@+id/textViewReminderIntervalLabel"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/textViewReminderIntervalLabel"
@@ -367,7 +367,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
-                android:background="@drawable/box_corners_rounded_slate_blue"
+                android:background="#FF1E3A5A"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 android:paddingTop="20dp"
@@ -378,7 +378,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="@string/proud_of_your_consistency"
-                    android:textColor="@color/text_white"
+                    android:textColor="#FFE8F4F8"
                     android:textSize="22sp"
                     android:textStyle="bold"
                     android:gravity="center_horizontal"
@@ -402,7 +402,7 @@
         android:paddingBottom="16dp"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:background="@color/app_background_dark"
+        android:background="#FF0A1F2E"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -414,8 +414,8 @@
             android:layout_height="wrap_content"
             android:minHeight="48dp"
             android:text="@string/set_habit"
-            android:textColor="@color/text_white"
-            app:backgroundTint="@color/button_blue"
+            android:textColor="#FFE8F4F8"
+            app:backgroundTint="#FF4CAF50"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
