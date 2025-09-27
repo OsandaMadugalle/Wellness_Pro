@@ -33,10 +33,10 @@
         app:iconSize="24dp"
         app:iconTint="#FFE8F4F8"
         app:backgroundTint="@android:color/transparent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/navButtonHabits"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/navButtonHabits"
         app:layout_constraintHorizontal_weight="1" />
 
     <!-- Navigation Item 2: Habits -->
@@ -54,10 +54,10 @@
         app:iconSize="24dp"
         app:iconTint="#FFE8F4F8"
         app:backgroundTint="@android:color/transparent"
-        app:layout_constraintStart_toEndOf="@+id/navButtonDashboard"
-        app:layout_constraintEnd_toStartOf="@+id/navButtonMoodJournal"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/navButtonDashboard"
+        app:layout_constraintEnd_toStartOf="@+id/navButtonMoodJournal"
         app:layout_constraintHorizontal_weight="1"
         android:minWidth="0dp"
         android:minHeight="0dp"
@@ -68,7 +68,7 @@
         android:singleLine="true"
         android:ellipsize="end"/>
 
-    <!-- Navigation Item 3: Mood Journal (NEW) -->
+    <!-- Navigation Item 3: Mood Journal -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/navButtonMoodJournal"
         style="@style/Widget.MaterialComponents.Button.TextButton"
@@ -83,10 +83,10 @@
         app:iconSize="24dp"
         app:iconTint="#FFE8F4F8"
         app:backgroundTint="@android:color/transparent"
-        app:layout_constraintStart_toEndOf="@+id/navButtonHabits"
-        app:layout_constraintEnd_toStartOf="@+id/navButtonProfile"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/navButtonHabits"
+        app:layout_constraintEnd_toStartOf="@+id/navButtonProfile"
         app:layout_constraintHorizontal_weight="1"
         android:minWidth="0dp"
         android:minHeight="0dp"
@@ -97,7 +97,7 @@
         android:singleLine="true"
         android:ellipsize="end"/>
 
-    <!-- Navigation Item 4: Profile (was Item 3) -->
+    <!-- Navigation Item 4: Profile -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/navButtonProfile"
         style="@style/Widget.MaterialComponents.Button.TextButton"
@@ -112,10 +112,10 @@
         app:iconSize="24dp"
         app:iconTint="#FFE8F4F8"
         app:backgroundTint="@android:color/transparent"
-        app:layout_constraintStart_toEndOf="@+id/navButtonMoodJournal"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/navButtonMoodJournal"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_weight="1"
         android:minWidth="0dp"
         android:minHeight="0dp"

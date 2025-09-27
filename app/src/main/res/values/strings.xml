@@ -208,4 +208,7 @@
     <string name="no_active_streak">No active streak</string>
     <string name="some_other_string">Some other value</string>
 
+    <!-- Widget Specific -->
+    <string name="todays_habits_widget_description">Shows today\'s habit completion</string>
+
 </resources>

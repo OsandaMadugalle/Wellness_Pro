@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <item type="id" name="navButtonSettings" />
     <item type="id" name="tag_padding_top" />
     <item type="id" name="tag_padding_bottom" />
 </resources>

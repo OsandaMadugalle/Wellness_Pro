@@ -93,42 +93,6 @@
                 app:backgroundTint="#FF4CAF50"
                 android:textColor="#FFE8F4F8"/>
 
-            <TextView
-                android:id="@+id/textViewChartTitle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="Your Mood Trend (Last 7 Days)"
-                android:textColor="#FFE8F4F8"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:layout_marginTop="24dp"
-                android:gravity="center"
-                app:layout_constraintTop_toBottomOf="@id/buttonSaveMood"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-
-            <com.github.mikephil.charting.charts.LineChart
-                android:id="@+id/moodChart"
-                android:layout_width="0dp"
-                android:layout_height="220dp"
-                android:layout_marginTop="8dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/textViewChartTitle" />
-
-            <TextView
-                android:id="@+id/textViewNoMoodsChart"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Log your mood to see your trend!"
-                android:textColor="#FFA0A0A0"
-                android:textSize="16sp"
-                android:visibility="gone"
-                app:layout_constraintTop_toTopOf="@id/moodChart"
-                app:layout_constraintBottom_toBottomOf="@id/moodChart"
-                app:layout_constraintStart_toStartOf="@id/moodChart"
-                app:layout_constraintEnd_toEndOf="@id/moodChart" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
