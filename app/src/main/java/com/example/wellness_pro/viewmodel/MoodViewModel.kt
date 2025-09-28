@@ -20,7 +20,7 @@ class MoodViewModel(private val moodDao: MoodDao) : ViewModel() {
     // Flow for the weekly mood trend (last 7 days) - for the chart
     val weeklyMoodTrend: StateFlow<List<MoodEntry>> = refreshTrigger.flatMapLatest { endTime ->
         val startTime = getStartTimeForWindow(endTime, 7)
-        moodDao.getMoodEntriesBetween(startTime, endTime) 
+        moodDao.getMoodEntriesBetween(startTime, endTime)
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000L),
@@ -29,11 +29,20 @@ class MoodViewModel(private val moodDao: MoodDao) : ViewModel() {
 
     // Flow for all mood entries, sorted by timestamp - for the RecyclerView history
     val allMoodEntriesSorted: StateFlow<List<MoodEntry>> = refreshTrigger.flatMapLatest { 
-        moodDao.getAllMoodEntries() // CORRECTED: Was getAllEntriesSortedByTimestamp()
+        moodDao.getAllMoodEntries()
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000L), 
         initialValue = emptyList() 
+    )
+
+    // ADDED: Flow for the most recent mood entry - for the Dashboard
+    val latestMoodEntry: StateFlow<MoodEntry?> = refreshTrigger.flatMapLatest { 
+        moodDao.getLatestMoodEntry() // This calls the new DAO method
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000L),
+        initialValue = null // Initial value can be null if no entries exist
     )
 
     fun insertMoodEntry(moodLevel: Int, notes: String? = null) {
@@ -45,7 +54,7 @@ class MoodViewModel(private val moodDao: MoodDao) : ViewModel() {
                 notes = notes
             )
             moodDao.insert(moodEntry)
-            refreshTrigger.value = entryTimestamp // Update trigger to refetch data for both flows
+            refreshTrigger.value = entryTimestamp // Update trigger to refetch data for all flows
         }
     }
 

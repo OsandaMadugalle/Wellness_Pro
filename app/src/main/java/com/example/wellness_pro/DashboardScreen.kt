@@ -1,6 +1,10 @@
 // file: com/example/playpal/DashboardScreen.kt
 package com.example.wellness_pro
 
+import kotlinx.coroutines.launch // ADD THIS IMPORT
+import androidx.lifecycle.lifecycleScope // ADDED
+import kotlinx.coroutines.flow.collectLatest // ADDED
+import android.view.View
 import android.Manifest
 import android.content.Context
 import android.content.Intent
@@ -15,7 +19,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import android.widget.Button
+// import android.widget.Button // Not used directly
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -26,7 +30,18 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
-import androidx.localbroadcastmanager.content.LocalBroadcastManager // Added
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+
+import androidx.lifecycle.ViewModelProvider // ADDED
+import androidx.lifecycle.lifecycleScope // ADDED
+import com.google.android.material.card.MaterialCardView // ADDED
+import androidx.constraintlayout.widget.Group // ADDED
+import com.example.wellness_pro.db.AppDatabase // ADDED
+// import com.example.wellness_pro.db.MoodEntry as DbMoodEntry // Not directly used here by this name
+import com.example.wellness_pro.viewmodel.MoodViewModel // ADDED
+import com.example.wellness_pro.viewmodel.MoodViewModelFactory // ADDED
+import kotlinx.coroutines.flow.collectLatest // ADDED
+
 import com.example.wellness_pro.navbar.BaseActivity
 import com.example.wellness_pro.navbar.BaseBottomNavActivity
 import java.text.SimpleDateFormat
@@ -51,6 +66,19 @@ class DashboardScreen : BaseBottomNavActivity(), SensorEventListener {
     private lateinit var textViewDate: TextView
     private lateinit var textViewScreenTimeValue: TextView
 
+    // ADDED: Mood ViewModel
+    private lateinit var moodViewModel: MoodViewModel
+
+    // ADDED: UI elements for Current Mood display
+    private lateinit var currentMoodCardView: MaterialCardView
+    private lateinit var textViewCurrentMoodEmoji: TextView
+    private lateinit var textViewCurrentMoodDescription: TextView
+    private lateinit var textViewCurrentMoodTimestamp: TextView
+    private lateinit var textViewCurrentMoodNotesLabel: TextView
+    private lateinit var textViewCurrentMoodNotes: TextView
+    private lateinit var textViewNoMoodsLoggedYet: TextView
+    private lateinit var groupMoodDisplay: Group
+
     private lateinit var stepCounterPrefs: SharedPreferences
 
     companion object {
@@ -60,8 +88,7 @@ class DashboardScreen : BaseBottomNavActivity(), SensorEventListener {
         const val KEY_CURRENT_DAILY_STEPS = "currentDailySteps"
         const val KEY_LAST_SENSOR_HARDWARE_VALUE = "lastSensorHardwareValue"
 
-        // For LocalBroadcastManager
-        const val ACTION_STEPS_UPDATED = "com.example.wellness_pro.ACTION_STEPS_UPDATED" // Corrected package name
+        const val ACTION_STEPS_UPDATED = "com.example.wellness_pro.ACTION_STEPS_UPDATED"
         const val EXTRA_CURRENT_STEPS = "extra_current_steps"
         const val EXTRA_STEPS_DATE = "extra_steps_date"
     }
@@ -84,16 +111,39 @@ class DashboardScreen : BaseBottomNavActivity(), SensorEventListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // ... (findViewById and date setup as before)
+        
         textViewStepCounterValue = findViewById(R.id.textViewStepCounterValue)
         textViewDate = findViewById(R.id.textViewDate)
         textViewScreenTimeValue = findViewById(R.id.textViewScreenTimeValue)
+
+        // ADDED: Initialize Mood UI Elements
+        currentMoodCardView = findViewById(R.id.currentMoodCardView)
+        textViewCurrentMoodEmoji = findViewById(R.id.textViewCurrentMoodEmoji)
+        textViewCurrentMoodDescription = findViewById(R.id.textViewCurrentMoodDescription)
+        textViewCurrentMoodTimestamp = findViewById(R.id.textViewCurrentMoodTimestamp)
+        textViewCurrentMoodNotesLabel = findViewById(R.id.textViewCurrentMoodNotesLabel)
+        textViewCurrentMoodNotes = findViewById(R.id.textViewCurrentMoodNotes)
+        textViewNoMoodsLoggedYet = findViewById(R.id.textViewNoMoodsLoggedYet)
+        groupMoodDisplay = findViewById(R.id.groupMoodDisplay)
 
         val sdf = SimpleDateFormat("EEEE, MMM dd, yyyy", Locale.getDefault())
         textViewDate.text = sdf.format(Date())
 
         stepCounterPrefs = getSharedPreferences(STEP_PREFS_NAME, Context.MODE_PRIVATE)
         screenTimePrefs = getSharedPreferences(BaseActivity.SCREEN_TIME_PREFS_NAME, Context.MODE_PRIVATE)
+
+        // ADDED: Initialize MoodViewModel
+        try {
+            // Ensure AppDatabase is initialized if it has an async init process
+            // For now, assuming getInstance() is safe to call directly or handles its own init.
+            val moodDao = AppDatabase.getInstance().moodDao() 
+            val moodViewModelFactory = MoodViewModelFactory(moodDao)
+            moodViewModel = ViewModelProvider(this, moodViewModelFactory)[MoodViewModel::class.java]
+        } catch (e: Exception) {
+            Log.e("DashboardScreen", "Error initializing MoodViewModel: ${e.message}", e)
+            // Hide the mood card if ViewModel fails to initialize
+            currentMoodCardView.visibility = View.GONE 
+        }
 
         setupInsets()
         setupNavigationButtons()
@@ -110,8 +160,69 @@ class DashboardScreen : BaseBottomNavActivity(), SensorEventListener {
                 screenTimeUpdateHandler.postDelayed(screenTimeUpdateRunnable, SCREEN_TIME_UPDATE_INTERVAL_MS)
             }
         }
+        
+        // ADDED: Observe latest mood
+        if (::moodViewModel.isInitialized) { // Check if ViewModel init was successful
+            observeLatestMood()
+        }
+    }
+    
+    // ADDED: Function to observe and display the latest mood
+    private fun observeLatestMood() {
+        lifecycleScope.launch {
+            moodViewModel.latestMoodEntry.collectLatest { moodEntry ->
+                if (moodEntry == null) {
+                    textViewNoMoodsLoggedYet.visibility = View.VISIBLE
+                    groupMoodDisplay.visibility = View.GONE
+                    currentMoodCardView.visibility = View.VISIBLE // Keep card visible to show the message
+                } else {
+                    textViewNoMoodsLoggedYet.visibility = View.GONE
+                    groupMoodDisplay.visibility = View.VISIBLE
+                    currentMoodCardView.visibility = View.VISIBLE
+
+                    textViewCurrentMoodEmoji.text = getEmojiForMoodLevel(moodEntry.moodLevel)
+                    textViewCurrentMoodDescription.text = getDescriptionForMoodLevel(moodEntry.moodLevel)
+                    
+                    val moodTimestampFormat = SimpleDateFormat("MMM d, hh:mm a", Locale.getDefault())
+                    textViewCurrentMoodTimestamp.text = "Logged: ${moodTimestampFormat.format(Date(moodEntry.timestamp))}"
+
+                    if (!moodEntry.notes.isNullOrBlank()) {
+                        textViewCurrentMoodNotesLabel.visibility = View.VISIBLE
+                        textViewCurrentMoodNotes.visibility = View.VISIBLE
+                        textViewCurrentMoodNotes.text = moodEntry.notes
+                    } else {
+                        textViewCurrentMoodNotesLabel.visibility = View.GONE
+                        textViewCurrentMoodNotes.visibility = View.GONE
+                        textViewCurrentMoodNotes.text = ""
+                    }
+                }
+            }
+        }
     }
 
+    // ADDED: Helper function to get emoji for mood level
+    private fun getEmojiForMoodLevel(moodLevel: Int): String {
+        return when (moodLevel) {
+            1 -> "😭" // Very Sad
+            2 -> "🙁" // Sad
+            3 -> "😐" // Neutral
+            4 -> "🙂" // Okay
+            5 -> "😄" // Happy
+            else -> "❓" // Unknown
+        }
+    }
+
+    // ADDED: Helper function to get description for mood level
+    private fun getDescriptionForMoodLevel(moodLevel: Int): String {
+        return when (moodLevel) {
+            1 -> "Feeling Very Sad"
+            2 -> "Feeling Sad"
+            3 -> "Feeling Neutral"
+            4 -> "Feeling Okay"
+            5 -> "Feeling Happy"
+            else -> "Mood not specified"
+        }
+    }
 
     private fun checkAndRequestActivityRecognitionPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -150,7 +261,6 @@ class DashboardScreen : BaseBottomNavActivity(), SensorEventListener {
         }
     }
 
-    // setupInsets, setupNavigationButtons, loadAndDisplayAppScreenTime, updateScreenTimeUI as before
     private fun setupInsets() {
         findViewById<LinearLayout?>(R.id.headerLayout)?.let { header ->
             ViewCompat.setOnApplyWindowInsetsListener(header) { v, insets ->
@@ -170,15 +280,13 @@ class DashboardScreen : BaseBottomNavActivity(), SensorEventListener {
 
     private fun setupNavigationButtons() {
         findViewById<ImageView?>(R.id.buttonNotify)?.setOnClickListener { startActivity(Intent(this, NotificationScreen::class.java)) }
-        // Removed listeners for ToDo, FocusTracker, BmiTracker buttons as the buttons themselves were removed from XML
     }
-
 
     override fun onResume() {
         super.onResume()
         resetStepsIfNewDay()
         loadStepData()
-        updateUISteps() // This will also send the initial broadcast if steps are > 0
+        updateUISteps() 
 
         loadAndDisplayAppScreenTime()
         if (this::screenTimeUpdateRunnable.isInitialized) {
@@ -235,7 +343,7 @@ class DashboardScreen : BaseBottomNavActivity(), SensorEventListener {
                 previousTotalStepsSaved = totalStepsHardwareValue
                 currentSteps = 0
             }
-            updateUISteps() // Display, save, and broadcast
+            updateUISteps() 
         }
     }
 
@@ -248,12 +356,11 @@ class DashboardScreen : BaseBottomNavActivity(), SensorEventListener {
         stepCounterPrefs.edit().apply {
             putInt(KEY_CURRENT_DAILY_STEPS, currentSteps)
             putFloat(KEY_LAST_SENSOR_HARDWARE_VALUE, totalStepsHardwareValue)
-            putString(KEY_LAST_STEP_SAVE_DATE, todayDateString) // Ensure date is consistent
+            putString(KEY_LAST_STEP_SAVE_DATE, todayDateString) 
             apply()
         }
         Log.d("DashboardScreen", "UI steps updated to $currentSteps and saved. Broadcasting.")
 
-        // Send local broadcast
         val intent = Intent(ACTION_STEPS_UPDATED).apply {
             putExtra(EXTRA_CURRENT_STEPS, currentSteps)
             putExtra(EXTRA_STEPS_DATE, todayDateString)
@@ -261,7 +368,7 @@ class DashboardScreen : BaseBottomNavActivity(), SensorEventListener {
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
     }
 
-    private fun saveStepData() { // Called onPause
+    private fun saveStepData() { 
         stepCounterPrefs.edit().apply {
             putFloat(KEY_PREVIOUS_TOTAL_STEPS_SAVED, previousTotalStepsSaved)
             putString(KEY_LAST_STEP_SAVE_DATE, getCurrentStepDateString())
@@ -285,7 +392,7 @@ class DashboardScreen : BaseBottomNavActivity(), SensorEventListener {
             currentSteps = stepCounterPrefs.getInt(KEY_CURRENT_DAILY_STEPS, 0)
 
             if (totalStepsHardwareValue > 0f && previousTotalStepsSaved == 0f && currentSteps == 0) {
-                if (previousTotalStepsSaved == 0f) {
+                 if (previousTotalStepsSaved == 0f) {
                     Log.w("DashboardScreen", "loadStepData: Same day, but previousTotalStepsSaved is 0. Using totalStepsHardwareValue as baseline if available.")
                     previousTotalStepsSaved = totalStepsHardwareValue
                 }
@@ -295,7 +402,6 @@ class DashboardScreen : BaseBottomNavActivity(), SensorEventListener {
             }
         }
         Log.i("DashboardScreen", "Step data loaded. PrevSaved: $previousTotalStepsSaved, CurrentDaily: $currentSteps, LastSaveDate: $savedDate, CurrentHardware: $totalStepsHardwareValue")
-        // updateUISteps() will be called by onResume or onSensorChanged
     }
 
     private fun resetStepsIfNewDay() {
@@ -308,15 +414,13 @@ class DashboardScreen : BaseBottomNavActivity(), SensorEventListener {
                 stepCounterPrefs.getFloat(KEY_LAST_SENSOR_HARDWARE_VALUE, 0f)
             }
             currentSteps = 0
-            // Save the reset state. updateUISteps will also save and broadcast.
             val editor = stepCounterPrefs.edit()
             editor.putFloat(KEY_PREVIOUS_TOTAL_STEPS_SAVED, previousTotalStepsSaved)
             editor.putInt(KEY_CURRENT_DAILY_STEPS, currentSteps)
             editor.putString(KEY_LAST_STEP_SAVE_DATE, getCurrentStepDateString())
-            // KEY_LAST_SENSOR_HARDWARE_VALUE will be updated by updateUISteps if totalStepsHardwareValue changes
             editor.apply()
 
-            updateUISteps() // This will also broadcast the reset (0 steps for new day)
+            updateUISteps()
             Log.i("DashboardScreen", "Steps reset for new day. New baseline (previousTotalStepsSaved): $previousTotalStepsSaved")
         }
     }

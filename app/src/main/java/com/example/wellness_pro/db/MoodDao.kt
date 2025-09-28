@@ -15,7 +15,11 @@ interface MoodDao {
     @Query("SELECT * FROM mood_entries WHERE timestamp BETWEEN :startTime AND :endTime ORDER BY timestamp ASC")
     fun getMoodEntriesBetween(startTime: Long, endTime: Long): Flow<List<MoodEntry>>
 
-    // Optional: Get all mood entries
+    // Get all mood entries, newest first
     @Query("SELECT * FROM mood_entries ORDER BY timestamp DESC")
     fun getAllMoodEntries(): Flow<List<MoodEntry>>
+
+    // ADDED: Get the most recent mood entry
+    @Query("SELECT * FROM mood_entries ORDER BY timestamp DESC LIMIT 1")
+    fun getLatestMoodEntry(): Flow<MoodEntry?> // Returns nullable MoodEntry
 }
