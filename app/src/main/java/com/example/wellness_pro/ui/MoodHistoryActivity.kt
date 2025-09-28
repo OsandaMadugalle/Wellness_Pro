@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.wellness_pro.R
 import com.example.wellness_pro.db.AppDatabase // For Chart ViewModel
+import com.example.wellness_pro.db.MoodEntry as DbMoodEntry // Alias for clarity
 import com.example.wellness_pro.navbar.BaseBottomNavActivity
 import com.example.wellness_pro.viewmodel.MoodViewModel // For Chart ViewModel
 import com.example.wellness_pro.viewmodel.MoodViewModelFactory // For Chart ViewModel
@@ -27,15 +28,12 @@ import com.github.mikephil.charting.data.LineData // For Chart
 import com.github.mikephil.charting.data.LineDataSet // For Chart
 import com.github.mikephil.charting.formatter.ValueFormatter // For Chart
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+// Gson and TypeToken no longer needed for RecyclerView
+import kotlinx.coroutines.flow.collectLatest // Changed to collectLatest for RecyclerView updates
 import kotlinx.coroutines.launch // For Chart ViewModel
-import java.text.SimpleDateFormat // For Chart
-import java.util.Date // For Chart
-import java.util.Locale // For Chart
-
-// Note: RecyclerView uses models.MoodEntry from SharedPreferences
-// Chart will use db.MoodEntry from Room via ViewModel
+import java.text.SimpleDateFormat // For Chart and RecyclerView
+import java.util.Date // For Chart and RecyclerView
+import java.util.Locale // For Chart and RecyclerView
 
 class MoodHistoryActivity : BaseBottomNavActivity() {
 
@@ -45,112 +43,95 @@ class MoodHistoryActivity : BaseBottomNavActivity() {
     override val layoutId: Int
         get() = R.layout.activity_mood_history
 
-    // RecyclerView related (uses SharedPreferences models.MoodEntry)
+    // RecyclerView related (now uses Room db.MoodEntry via ViewModel)
     private lateinit var recyclerViewMoodHistory: RecyclerView
-    private lateinit var textViewNoMoods: TextView // For RecyclerView
+    private lateinit var textViewNoMoods: TextView // For RecyclerView empty state
     private lateinit var moodEntriesAdapter: MoodEntriesAdapter
-    private val moodEntriesList = mutableListOf<com.example.wellness_pro.models.MoodEntry>() // Prefs model
-    private val moodEntriesKey = "mood_entries_list_json"
     private lateinit var fabLogNewMood: FloatingActionButton
     private lateinit var buttonShareMoodHistory: ImageButton
 
-    // Chart related (uses Room db.MoodEntry via ViewModel)
+    // Common ViewModel for both Chart and RecyclerView
     private lateinit var moodViewModel: MoodViewModel
+
+    // Chart related
     private lateinit var moodChartHistory: LineChart
     private lateinit var textViewNoMoodsChartHistory: TextView // For Chart
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // ViewModel Initialization (common for both chart and RecyclerView)
+        try {
+            // Ensure AppDatabase is initialized if your getInstance() relies on prior async init
+            // For simplicity here, assuming getInstance() handles its own synchronization/initialization check
+            val moodDao = AppDatabase.getInstance().moodDao() // If getInstance() can throw, handle it.
+            val factory = MoodViewModelFactory(moodDao)
+            moodViewModel = ViewModelProvider(this, factory)[MoodViewModel::class.java]
+        } catch (e: Exception) {
+            Log.e("MoodHistoryActivity", "Error initializing MoodViewModel", e)
+            Toast.makeText(this, "Error loading mood data components.", Toast.LENGTH_LONG).show()
+            finish() // Critical component failed, cannot proceed
+            return 
+        }
+
         // RecyclerView Init
         recyclerViewMoodHistory = findViewById(R.id.recyclerViewMoodHistory)
-        textViewNoMoods = findViewById(R.id.textViewNoMoods) // For RecyclerView empty state
+        textViewNoMoods = findViewById(R.id.textViewNoMoods) 
         fabLogNewMood = findViewById(R.id.fabLogNewMood)
         buttonShareMoodHistory = findViewById(R.id.buttonShareMoodHistory)
 
         setupRecyclerView()
+        observeMoodDataForRecyclerView() 
 
         fabLogNewMood.setOnClickListener {
             startActivity(Intent(this, MoodLogActivity::class.java))
         }
 
         buttonShareMoodHistory.setOnClickListener {
-            shareMoodSummary()
+            shareMoodSummary() 
         }
 
         // Chart Init
-        try {
-            val moodDao = AppDatabase.getInstance().moodDao()
-            val factory = MoodViewModelFactory(moodDao)
-            moodViewModel = ViewModelProvider(this, factory)[MoodViewModel::class.java]
-
-            moodChartHistory = findViewById(R.id.moodChartHistory)
-            textViewNoMoodsChartHistory = findViewById(R.id.textViewNoMoodsChartHistory)
-
-            setupMoodChartStyle()
-            observeMoodDataForChart()
-        } catch (e: Exception) {
-            Log.e("MoodHistoryActivity", "Error initializing chart components", e)
-            Toast.makeText(this, "Error loading mood trend chart.", Toast.LENGTH_LONG).show()
-            findViewById<View?>(R.id.moodChartHistory)?.visibility = View.GONE
-            findViewById<View?>(R.id.textViewNoMoodsChartHistory)?.apply {
-                visibility = View.VISIBLE
-                (this as? TextView)?.text = "Chart unavailable."
-            }
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        loadMoodEntriesForRecyclerView() // Load data for RecyclerView from SharedPreferences
-        // Chart data is observed via ViewModel and will update automatically if LiveData/Flow is used correctly
+        moodChartHistory = findViewById(R.id.moodChartHistory)
+        textViewNoMoodsChartHistory = findViewById(R.id.textViewNoMoodsChartHistory)
+        setupMoodChartStyle()
+        observeMoodDataForChart() 
     }
 
     private fun setupRecyclerView() {
-        moodEntriesAdapter = MoodEntriesAdapter(moodEntriesList)
+        moodEntriesAdapter = MoodEntriesAdapter(emptyList()) 
         recyclerViewMoodHistory.layoutManager = LinearLayoutManager(this)
         recyclerViewMoodHistory.adapter = moodEntriesAdapter
     }
 
-    private fun loadMoodEntriesForRecyclerView() { // Renamed to clarify its purpose
-        try {
-            val prefs = getSharedPreferences("WellnessProPrefs", MODE_PRIVATE)
-            val gson = Gson()
-            val json = prefs.getString(moodEntriesKey, null)
-            val typeToken = object : TypeToken<List<com.example.wellness_pro.models.MoodEntry>>() {}.type
-
-            if (json != null) {
-                val entries: List<com.example.wellness_pro.models.MoodEntry> = gson.fromJson(json, typeToken)
-                moodEntriesList.clear()
-                moodEntriesList.addAll(entries.sortedByDescending { it.timestamp })
-                moodEntriesAdapter.notifyDataSetChanged()
+    private fun observeMoodDataForRecyclerView() {
+        lifecycleScope.launch {
+            moodViewModel.allMoodEntriesSorted.collectLatest { entriesFromDb ->
+                moodEntriesAdapter.updateData(entriesFromDb)
+                if (entriesFromDb.isEmpty()) {
+                    textViewNoMoods.visibility = View.VISIBLE
+                    recyclerViewMoodHistory.visibility = View.GONE
+                } else {
+                    textViewNoMoods.visibility = View.GONE
+                    recyclerViewMoodHistory.visibility = View.VISIBLE
+                }
+                Log.d("MoodHistoryActivity", "Updated RecyclerView with ${entriesFromDb.size} mood entries from DB.")
             }
-
-            if (moodEntriesList.isEmpty()) {
-                textViewNoMoods.visibility = View.VISIBLE // Controls RecyclerView empty state
-                recyclerViewMoodHistory.visibility = View.GONE
-            } else {
-                textViewNoMoods.visibility = View.GONE
-                recyclerViewMoodHistory.visibility = View.VISIBLE
-            }
-            Log.d("MoodHistoryActivity", "Loaded ${moodEntriesList.size} mood entries for RecyclerView.")
-
-        } catch (e: Exception) {
-            Log.e("MoodHistoryActivity", "Error loading mood entries for RecyclerView", e)
-            textViewNoMoods.visibility = View.VISIBLE
-            textViewNoMoods.text = "Error loading mood history."
-            recyclerViewMoodHistory.visibility = View.GONE
         }
     }
 
     private fun shareMoodSummary() {
-        if (moodEntriesList.isEmpty()) { // Uses RecyclerView data for sharing
+        val currentMoods = moodEntriesAdapter.getItems() 
+        if (currentMoods.isEmpty()) {
             Toast.makeText(this, "No moods to share yet!", Toast.LENGTH_SHORT).show()
             return
         }
-        val latestMood = moodEntriesList.first()
-        val summary = """My latest mood: ${latestMood.moodEmoji} on ${latestMood.getFormattedDate()}.
-Track your wellness with Wellness Pro!"""
+        val latestMood = currentMoods.first() 
+        val moodEmoji = moodEntriesAdapter.getEmojiForMoodLevel(latestMood.moodLevel) 
+        val formattedDate = SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(Date(latestMood.timestamp))
+        
+        val summary = "My latest mood: $moodEmoji on $formattedDate. Note: ${latestMood.notes ?: "N/A"}\nTrack your wellness with Wellness Pro!" // Changed .note to .notes
+        
         val shareIntent = Intent().apply {
             action = Intent.ACTION_SEND
             putExtra(Intent.EXTRA_TEXT, summary)
@@ -159,7 +140,6 @@ Track your wellness with Wellness Pro!"""
         startActivity(Intent.createChooser(shareIntent, "Share your mood summary"))
     }
 
-    // --- Chart Specific Methods ---
     private fun setupMoodChartStyle() {
         moodChartHistory.description.isEnabled = false
         moodChartHistory.legend.isEnabled = true
@@ -175,19 +155,19 @@ Track your wellness with Wellness Pro!"""
                 return dateFormat.format(Date(value.toLong()))
             }
         }
-        xAxis.granularity = 1f // Ensures labels are for distinct days
+        xAxis.granularity = 1f 
         xAxis.textColor = Color.WHITE
         xAxis.axisLineColor = Color.DKGRAY
-        xAxis.gridColor = ContextCompat.getColor(this, R.color.chart_grid_line) // Use color resource
+        xAxis.gridColor = ContextCompat.getColor(this, R.color.chart_grid_line) 
 
         val yAxisLeft = moodChartHistory.axisLeft
         yAxisLeft.textColor = Color.WHITE
-        yAxisLeft.axisMinimum = 0.5f // To give some space below 1
-        yAxisLeft.axisMaximum = 5.5f // To give some space above 5
+        yAxisLeft.axisMinimum = 0.5f 
+        yAxisLeft.axisMaximum = 5.5f 
         yAxisLeft.granularity = 1f
-        yAxisLeft.setLabelCount(6, true) // For labels like 1, 2, 3, 4, 5
+        yAxisLeft.setLabelCount(6, true) 
         yAxisLeft.axisLineColor = Color.DKGRAY
-        yAxisLeft.gridColor = ContextCompat.getColor(this, R.color.chart_grid_line) // Use color resource
+        yAxisLeft.gridColor = ContextCompat.getColor(this, R.color.chart_grid_line)
 
         moodChartHistory.axisRight.isEnabled = false
         moodChartHistory.setBackgroundColor(Color.TRANSPARENT)
@@ -197,14 +177,13 @@ Track your wellness with Wellness Pro!"""
 
     private fun observeMoodDataForChart() {
         lifecycleScope.launch {
-            // Assuming moodViewModel.weeklyMoodTrend provides List<com.example.wellness_pro.db.MoodEntry>
-            moodViewModel.weeklyMoodTrend.collect { moodEntriesFromDb ->
+            moodViewModel.weeklyMoodTrend.collectLatest { moodEntriesFromDb -> 
                 updateMoodChartData(moodEntriesFromDb)
             }
         }
     }
 
-    private fun updateMoodChartData(moodEntries: List<com.example.wellness_pro.db.MoodEntry>) {
+    private fun updateMoodChartData(moodEntries: List<DbMoodEntry>) {
         if (!::moodChartHistory.isInitialized || !::textViewNoMoodsChartHistory.isInitialized) {
             Log.w("MoodHistoryActivity", "Chart views not initialized, cannot update chart.")
             return
@@ -214,8 +193,8 @@ Track your wellness with Wellness Pro!"""
             moodChartHistory.visibility = View.GONE
             textViewNoMoodsChartHistory.visibility = View.VISIBLE
             textViewNoMoodsChartHistory.text = "Not enough mood entries for a trend yet."
-            moodChartHistory.clear() // Clear any old data
-            moodChartHistory.invalidate() // Refresh chart view
+            moodChartHistory.clear() 
+            moodChartHistory.invalidate() 
             return
         }
 
@@ -223,39 +202,47 @@ Track your wellness with Wellness Pro!"""
         textViewNoMoodsChartHistory.visibility = View.GONE
 
         val entries = ArrayList<Entry>()
-        // Sort entries by timestamp to ensure the line chart draws correctly
         val sortedMoodEntries = moodEntries.sortedBy { it.timestamp }
-        sortedMoodEntries.forEach { moodEntry -> // This is db.MoodEntry
+        sortedMoodEntries.forEach { moodEntry -> 
             entries.add(Entry(moodEntry.timestamp.toFloat(), moodEntry.moodLevel.toFloat()))
         }
 
-        val dataSet = LineDataSet(entries, "Daily Mood Trend") // UPDATED LABEL
+        val dataSet = LineDataSet(entries, "Daily Mood Trend") 
         dataSet.color = ContextCompat.getColor(this, R.color.chart_line_blue)
         dataSet.valueTextColor = Color.WHITE
         dataSet.setCircleColor(ContextCompat.getColor(this, R.color.chart_circle_color))
         dataSet.circleRadius = 4f
         dataSet.valueTextSize = 10f
-        dataSet.setDrawValues(true) // Show values on points
+        dataSet.setDrawValues(true) 
         dataSet.lineWidth = 2f
-        
-        // --- START Enhancements ---
-        dataSet.mode = LineDataSet.Mode.CUBIC_BEZIER // Smoothed line
-
-        // Add a fill color below the line
+        dataSet.mode = LineDataSet.Mode.CUBIC_BEZIER
         dataSet.setDrawFilled(true)
-        dataSet.fillColor = ContextCompat.getColor(this, R.color.chart_fill_color) // Define this color
-        dataSet.fillAlpha = 85 // Transparency of the fill (0-255, 85 is about 33% opaque)
-        // --- END Enhancements ---
+        dataSet.fillColor = ContextCompat.getColor(this, R.color.chart_fill_color) 
+        dataSet.fillAlpha = 85 
 
         val lineData = LineData(dataSet)
         moodChartHistory.data = lineData
-        moodChartHistory.invalidate() // Refresh the chart
+        moodChartHistory.invalidate() 
     }
 }
 
-// MoodEntriesAdapter remains the same, using models.MoodEntry for RecyclerView
-class MoodEntriesAdapter(private val moodEntries: List<com.example.wellness_pro.models.MoodEntry>) :
+class MoodEntriesAdapter(private var moodEntries: List<DbMoodEntry>) : 
     RecyclerView.Adapter<MoodEntriesAdapter.MoodEntryViewHolder>() {
+
+    private val dateFormat = SimpleDateFormat("MMM d, yyyy 'at' hh:mm a", Locale.getDefault())
+
+    fun getEmojiForMoodLevel(moodLevel: Int): String {
+        return when (moodLevel) {
+            1 -> "😭" 
+            2 -> "🙁" 
+            3 -> "😐" 
+            4 -> "🙂" 
+            5 -> "😄" 
+            else -> "❓" 
+        }
+    }
+    
+    fun getItems(): List<DbMoodEntry> = moodEntries 
 
     class MoodEntryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val emojiTextView: TextView = itemView.findViewById(R.id.textViewMoodItemEmoji)
@@ -270,18 +257,18 @@ class MoodEntriesAdapter(private val moodEntries: List<com.example.wellness_pro.
     }
 
     override fun onBindViewHolder(holder: MoodEntryViewHolder, position: Int) {
-        val moodEntry = moodEntries[position] // models.MoodEntry
-        holder.emojiTextView.text = moodEntry.moodEmoji
+        val moodEntry = moodEntries[position] 
+        holder.emojiTextView.text = getEmojiForMoodLevel(moodEntry.moodLevel)
 
         try {
-            holder.timestampTextView.text = moodEntry.getFormattedDate()
+            holder.timestampTextView.text = dateFormat.format(Date(moodEntry.timestamp))
         } catch (e: Exception) {
             holder.timestampTextView.text = "Invalid date"
             Log.e("MoodEntriesAdapter", "Error formatting date for mood entry: ${moodEntry.id}", e)
         }
 
-        if (moodEntry.note != null && moodEntry.note.isNotBlank()) {
-            holder.noteTextView.text = moodEntry.note
+        if (moodEntry.notes != null && moodEntry.notes.isNotBlank()) { // Changed .note to .notes
+            holder.noteTextView.text = moodEntry.notes // Changed .note to .notes
             holder.noteTextView.visibility = View.VISIBLE
         } else {
             holder.noteTextView.visibility = View.GONE
@@ -289,4 +276,9 @@ class MoodEntriesAdapter(private val moodEntries: List<com.example.wellness_pro.
     }
 
     override fun getItemCount() = moodEntries.size
+
+    fun updateData(newEntries: List<DbMoodEntry>) {
+        this.moodEntries = newEntries.sortedByDescending { it.timestamp } 
+        notifyDataSetChanged()
+    }
 }

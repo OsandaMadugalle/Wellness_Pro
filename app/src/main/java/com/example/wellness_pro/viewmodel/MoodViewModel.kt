@@ -9,21 +9,31 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
-// import kotlinx.coroutines.flow.flowOf // No longer needed for hardcoded empty list
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
 class MoodViewModel(private val moodDao: MoodDao) : ViewModel() {
 
+    // refreshTrigger ensures data is refetched when new entries are added
     private val refreshTrigger: MutableStateFlow<Long> = MutableStateFlow(System.currentTimeMillis())
 
-    val weeklyMoodTrend: StateFlow<List<MoodEntry>> = refreshTrigger.flatMapLatest { endTime -> // Renamed currentTime to endTime for clarity
-        val startTime = getStartTimeForWindow(endTime, 7) // Fetch data for the last 7 days
-        moodDao.getMoodEntriesBetween(startTime, endTime)
+    // Flow for the weekly mood trend (last 7 days) - for the chart
+    val weeklyMoodTrend: StateFlow<List<MoodEntry>> = refreshTrigger.flatMapLatest { endTime ->
+        val startTime = getStartTimeForWindow(endTime, 7)
+        moodDao.getMoodEntriesBetween(startTime, endTime) 
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000L),
-        initialValue = emptyList<MoodEntry>()
+        initialValue = emptyList()
+    )
+
+    // Flow for all mood entries, sorted by timestamp - for the RecyclerView history
+    val allMoodEntriesSorted: StateFlow<List<MoodEntry>> = refreshTrigger.flatMapLatest { 
+        moodDao.getAllMoodEntries() // CORRECTED: Was getAllEntriesSortedByTimestamp()
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000L), 
+        initialValue = emptyList() 
     )
 
     fun insertMoodEntry(moodLevel: Int, notes: String? = null) {
@@ -35,7 +45,7 @@ class MoodViewModel(private val moodDao: MoodDao) : ViewModel() {
                 notes = notes
             )
             moodDao.insert(moodEntry)
-            refreshTrigger.value = entryTimestamp // Trigger a refresh to update the flow
+            refreshTrigger.value = entryTimestamp // Update trigger to refetch data for both flows
         }
     }
 

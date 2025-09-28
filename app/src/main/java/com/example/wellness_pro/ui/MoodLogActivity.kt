@@ -1,12 +1,13 @@
 package com.example.wellness_pro.ui
 
+import android.content.Intent // ADDED
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView // Added for motivational message
+import android.widget.TextView 
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
@@ -29,7 +30,7 @@ class MoodLogActivity : BaseBottomNavActivity() {
     private lateinit var moodSelectionLayouts: List<View>
     private lateinit var editTextMoodNotes: EditText
     private lateinit var buttonSaveMood: Button
-    private lateinit var textViewMotivationalMessage: TextView // Added
+    private lateinit var textViewMotivationalMessage: TextView
 
     private var selectedMoodLevel: Int = 0
 
@@ -50,7 +51,7 @@ class MoodLogActivity : BaseBottomNavActivity() {
         try {
             editTextMoodNotes = findViewById(R.id.editTextMoodNotes)
             buttonSaveMood = findViewById(R.id.buttonSaveMood)
-            textViewMotivationalMessage = findViewById(R.id.textViewMotivationalMessage) // Initialized
+            textViewMotivationalMessage = findViewById(R.id.textViewMotivationalMessage)
 
             moodSelectionLayouts = listOf(
                 findViewById(R.id.moodOption1),
@@ -67,7 +68,7 @@ class MoodLogActivity : BaseBottomNavActivity() {
         }
 
         setupMoodInputListeners()
-        updateMoodSelectionVisuals(0) // Initialize visuals, including motivational message
+        updateMoodSelectionVisuals(0) 
 
         buttonSaveMood.setOnClickListener {
             saveMoodEntryViaViewModel()
@@ -93,7 +94,6 @@ class MoodLogActivity : BaseBottomNavActivity() {
             }
         }
 
-        // Update motivational message
         when (selectedLevel) {
             1 -> {
                 textViewMotivationalMessage.text = "It's okay to not be okay. Be gentle with yourself today."
@@ -117,7 +117,7 @@ class MoodLogActivity : BaseBottomNavActivity() {
             }
             else -> {
                 textViewMotivationalMessage.visibility = View.GONE
-                textViewMotivationalMessage.text = "" // Clear text when hidden
+                textViewMotivationalMessage.text = "" 
             }
         }
     }
@@ -131,8 +131,9 @@ class MoodLogActivity : BaseBottomNavActivity() {
         moodViewModel.insertMoodEntry(selectedMoodLevel, if (notes.isNotEmpty()) notes else null)
         Toast.makeText(this, "Mood saved!", Toast.LENGTH_SHORT).show()
 
-        editTextMoodNotes.text.clear()
-        selectedMoodLevel = 0
-        updateMoodSelectionVisuals(0) // Reset selection visuals and motivational text
+        // Navigate to MoodHistoryActivity
+        val intent = Intent(this, MoodHistoryActivity::class.java)
+        startActivity(intent)
+        finish() // Finish MoodLogActivity
     }
 }
