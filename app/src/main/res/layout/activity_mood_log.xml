@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FF0A1F2E"
+    android:background="@color/box_slate_blue" 
+    android:fitsSystemWindows="true"
     tools:context=".ui.MoodLogActivity">
 
     <androidx.core.widget.NestedScrollView
