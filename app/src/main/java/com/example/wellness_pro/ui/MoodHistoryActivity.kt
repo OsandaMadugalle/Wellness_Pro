@@ -229,7 +229,7 @@ Track your wellness with Wellness Pro!"""
             entries.add(Entry(moodEntry.timestamp.toFloat(), moodEntry.moodLevel.toFloat()))
         }
 
-        val dataSet = LineDataSet(entries, "Weekly Mood Trend")
+        val dataSet = LineDataSet(entries, "Daily Mood Trend") // UPDATED LABEL
         dataSet.color = ContextCompat.getColor(this, R.color.chart_line_blue)
         dataSet.valueTextColor = Color.WHITE
         dataSet.setCircleColor(ContextCompat.getColor(this, R.color.chart_circle_color))
@@ -237,11 +237,15 @@ Track your wellness with Wellness Pro!"""
         dataSet.valueTextSize = 10f
         dataSet.setDrawValues(true) // Show values on points
         dataSet.lineWidth = 2f
+        
+        // --- START Enhancements ---
+        dataSet.mode = LineDataSet.Mode.CUBIC_BEZIER // Smoothed line
 
-        // Optional: Add a fill color below the line
-        // dataSet.setDrawFilled(true)
-        // dataSet.fillColor = ContextCompat.getColor(this, R.color.chart_fill_color) // Define this color
-        // dataSet.fillAlpha = 50 // Transparency of the fill
+        // Add a fill color below the line
+        dataSet.setDrawFilled(true)
+        dataSet.fillColor = ContextCompat.getColor(this, R.color.chart_fill_color) // Define this color
+        dataSet.fillAlpha = 85 // Transparency of the fill (0-255, 85 is about 33% opaque)
+        // --- END Enhancements ---
 
         val lineData = LineData(dataSet)
         moodChartHistory.data = lineData

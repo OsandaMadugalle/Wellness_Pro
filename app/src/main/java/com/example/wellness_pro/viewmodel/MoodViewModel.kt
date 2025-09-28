@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.flowOf // Added import
+// import kotlinx.coroutines.flow.flowOf // No longer needed for hardcoded empty list
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
@@ -17,13 +17,9 @@ class MoodViewModel(private val moodDao: MoodDao) : ViewModel() {
 
     private val refreshTrigger: MutableStateFlow<Long> = MutableStateFlow(System.currentTimeMillis())
 
-    val weeklyMoodTrend: StateFlow<List<MoodEntry>> = refreshTrigger.flatMapLatest { currentTime ->
-        // Attempt to explicitly use currentTime as Long.
-        // If the compiler thinks 'currentTime' (the lambda parameter) should be Int, this will error.
-        val explicitLongTime: Long = currentTime
-        
-        // Return a very simple Flow to isolate the flatMapLatest parameter type issue
-        flowOf(emptyList<MoodEntry>()) 
+    val weeklyMoodTrend: StateFlow<List<MoodEntry>> = refreshTrigger.flatMapLatest { endTime -> // Renamed currentTime to endTime for clarity
+        val startTime = getStartTimeForWindow(endTime, 7) // Fetch data for the last 7 days
+        moodDao.getMoodEntriesBetween(startTime, endTime)
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000L),
@@ -39,7 +35,7 @@ class MoodViewModel(private val moodDao: MoodDao) : ViewModel() {
                 notes = notes
             )
             moodDao.insert(moodEntry)
-            refreshTrigger.value = entryTimestamp
+            refreshTrigger.value = entryTimestamp // Trigger a refresh to update the flow
         }
     }
 
