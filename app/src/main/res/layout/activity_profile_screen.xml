@@ -6,8 +6,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FF0A1F2E"
-    android:paddingTop="24dp"
     tools:context=".ProfileScreen">
+
+    <!-- paddingTop is removed from root and applied to content where needed to avoid window inset conflicts -->
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineStart"
@@ -23,16 +24,16 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.95" />
 
+    <!-- Header Section -->
     <ImageView
         android:id="@+id/imageViewAvatar"
         android:layout_width="44dp"
         android:layout_height="44dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="24dp"
         android:contentDescription="@string/user_avatar"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_avatar"
-        tools:srcCompat="@drawable/ic_avatar" />
+        app:srcCompat="@drawable/ic_avatar" />
 
     <Button
         android:id="@+id/buttonLogout"
@@ -40,8 +41,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:minHeight="40dp"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
         android:text="@string/log_out"
         android:textColor="#FFE8F4F8"
         app:backgroundTint="#FFFF5252"
@@ -53,15 +52,15 @@
         android:id="@+id/buttonSettings"
         android:layout_width="44dp"
         android:layout_height="44dp"
-        android:padding="8dp"
-        android:src="@drawable/ic_settings"
+        android:layout_marginEnd="8dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/settings"
-        android:layout_marginEnd="8dp"
+        android:padding="8dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_settings"
         app:layout_constraintEnd_toStartOf="@id/buttonLogout"
         app:layout_constraintTop_toTopOf="@id/buttonLogout"
-        app:layout_constraintBottom_toBottomOf="@id/buttonLogout"
-        android:scaleType="fitCenter" />
+        app:layout_constraintBottom_toBottomOf="@id/buttonLogout" />
 
     <LinearLayout
         android:id="@+id/headerLayout"
@@ -97,6 +96,7 @@
             android:textSize="13sp" />
     </LinearLayout>
 
+    <!-- Progress Section -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/progressLayout"
         android:layout_width="0dp"
@@ -136,701 +136,34 @@
             android:layout_marginTop="8dp"
             android:max="100"
             android:progress="50"
+            android:progressBackgroundTint="#FF1E3A5A"
+            android:progressTint="#FF4CAF50"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textViewLevel"
-            android:progressTint="#FF4CAF50"
-            android:progressBackgroundTint="#FF1E3A5A" />
-
+            app:layout_constraintTop_toBottomOf="@id/textViewLevel" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <TextView
-        android:id="@+id/textViewAchievementsTitle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="@string/achievements"
-        android:textColor="#FFE8F4F8"
-        android:textSize="17sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintTop_toBottomOf="@id/progressLayout" />
-
+    <!-- Scrollable Content Section -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="24dp"
         android:fillViewport="true"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/navBarContainer"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewAchievementsTitle"
-        app:layout_constraintBottom_toTopOf="@id/navBarContainer">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/progressLayout">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingStart="12dp"
             android:paddingEnd="12dp"
-            android:paddingTop="12dp"
-            android:paddingBottom="12dp">
-
-            <androidx.constraintlayout.helper.widget.Flow
-                android:id="@+id/achievementsFlow"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:constraint_referenced_ids="challengeItemHydration,challengeItemMindful,challengeItemSleep,challengeItemDigitalDetox,challengeItemStep,challengeItemPosture,challengeItemFocus,challengeItemHabit,challengeItemNutrition,challengeItemNightOwl,challengeItemGoal,challengeItemLearning,challengeItemClean"
-                app:flow_horizontalGap="12dp"
-                app:flow_verticalGap="12dp"
-                app:flow_wrapMode="chain"
-                app:flow_horizontalStyle="spread_inside"
-                app:flow_maxElementsWrap="4"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/challengeItemHydration"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="#FF1E3A5A"
-                android:padding="10dp">
-
-                <TextView
-                    android:id="@+id/textViewChallengeIconHydration"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/emoji_hydration"
-                    android:textColor="#FFE8F4F8"
-                    android:textSize="22sp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/textViewChallengeDesc1Hydration"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:ellipsize="end"
-                    android:gravity="center_horizontal"
-                    android:maxLines="1"
-                    android:text="@string/ac_hydration"
-                    android:textColor="#FFE8F4F8"
-                    android:textSize="11sp"
-                    app:layout_constrainedWidth="true"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textViewChallengeIconHydration" />
-
-                <TextView
-                    android:id="@+id/textViewChallengeDesc2Hydration"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:ellipsize="end"
-                    android:gravity="center_horizontal"
-                    android:maxLines="1"
-                    android:text="@string/ac_hero"
-                    android:textColor="#FFE8F4F8"
-                    android:textSize="11sp"
-                    app:layout_constrainedWidth="true"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textViewChallengeDesc1Hydration" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/challengeItemMindful"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="#FF1E3A5A"
-                android:padding="10dp">
-
-                <TextView
-                    android:id="@+id/textViewChallengeIconMindful"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/emoji_meditation"
-                    android:textColor="#FFE8F4F8"
-                    android:textSize="22sp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/textViewChallengeDesc1Mindful"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:ellipsize="end"
-                    android:gravity="center_horizontal"
-                    android:maxLines="1"
-                    android:text="@string/ac_mindful"
-                    android:textColor="#FFE8F4F8"
-                    android:textSize="11sp"
-                    app:layout_constrainedWidth="true"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textViewChallengeIconMindful" />
-
-                <TextView
-                    android:id="@+id/textViewChallengeDesc2Mindful"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:ellipsize="end"
-                    android:gravity="center_horizontal"
-                    android:maxLines="1"
-                    android:text="@string/ac_master"
-                    android:textColor="#FFE8F4F8"
-                    android:textSize="11sp"
-                    app:layout_constrainedWidth="true"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textViewChallengeDesc1Mindful" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/challengeItemSleep"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="#FF1E3A5A"
-                android:padding="10dp">
-
-                <TextView
-                    android:id="@+id/textViewChallengeIconSleep"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/emoji_sleep"
-                    android:textColor="#FFE8F4F8"
-                    android:textSize="22sp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/textViewChallengeDesc1Sleep"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:ellipsize="end"
-                    android:gravity="center_horizontal"
-                    android:maxLines="1"
-                    android:text="@string/ac_sleep"
-                    android:textColor="#FFE8F4F8"
-                    android:textSize="11sp"
-                    app:layout_constrainedWidth="true"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textViewChallengeIconSleep" />
-
-                <TextView
-                    android:id="@+id/textViewChallengeDesc2Sleep"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:ellipsize="end"
-                    android:gravity="center_horizontal"
-                    android:maxLines="1"
-                    android:text="@string/ac_sage"
-                    android:textColor="#FFE8F4F8"
-                    android:textSize="11sp"
-                    app:layout_constrainedWidth="true"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textViewChallengeDesc1Sleep" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/challengeItemDigitalDetox"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="#FF1E3A5A"
-                android:padding="10dp">
-
-                <TextView
-                    android:id="@+id/textViewChallengeIconDigitalDetox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/emoji_no_digital"
-                    android:textColor="#FFE8F4F8"
-                    android:textSize="22sp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/textViewChallengeDesc1DigitalDetox"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:ellipsize="end"
-                    android:gravity="center_horizontal"
-                    android:maxLines="1"
-                    android:text="@string/ac_digital"
-                    android:textColor="#FFE8F4F8"
-                    android:textSize="11sp"
-                    app:layout_constrainedWidth="true"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textViewChallengeIconDigitalDetox" />
-
-                <TextView
-                    android:id="@+id/textViewChallengeDesc2DigitalDetox"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:ellipsize="end"
-                    android:gravity="center_horizontal"
-                    android:maxLines="1"
-                    android:text="@string/ac_detoxer"
-                    android:textColor="#FFE8F4F8"
-                    android:textSize="11sp"
-                    app:layout_constrainedWidth="true"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textViewChallengeDesc1DigitalDetox" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/challengeItemStep"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="#FF1E3A5A"
-                android:padding="10dp">
-
-                <TextView
-                    android:id="@+id/textViewChallengeIconStep"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/emoji_walk"
-                    android:textColor="#FFE8F4F8"
-                    android:textSize="22sp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/textViewChallengeDesc1Step"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:ellipsize="end"
-                    android:gravity="center_horizontal"
-                    android:maxLines="1"
-                    android:text="@string/ac_step"
-                    android:textColor="#FFE8F4F8"
-                    android:textSize="11sp"
-                    app:layout_constrainedWidth="true"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textViewChallengeIconStep" />
-
-                <TextView
-                    android:id="@+id/textViewChallengeDesc2Step"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:ellipsize="end"
-                    android:gravity="center_horizontal"
-                    android:maxLines="1"
-                    android:text="@string/ac_champion"
-                    android:textColor="#FFE8F4F8"
-                    android:textSize="11sp"
-                    app:layout_constrainedWidth="true"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textViewChallengeDesc1Step" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/challengeItemPosture"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="#FF1E3A5A"
-                android:padding="10dp">
-
-                <TextView
-                    android:id="@+id/textViewChallengeIconPosture"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/emoji_posture"
-                    android:textColor="#FFE8F4F8"
-                    android:textSize="22sp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/textViewChallengeDesc1Posture"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:ellipsize="end"
-                    android:gravity="center_horizontal"
-                    android:maxLines="1"
-                    android:text="@string/ac_posture"
-                    android:textColor="#FFE8F4F8"
-                    android:textSize="11sp"
-                    app:layout_constrainedWidth="true"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textViewChallengeIconPosture" />
-
-                <TextView
-                    android:id="@+id/textViewChallengeDesc2Posture"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:ellipsize="end"
-                    android:gravity="center_horizontal"
-                    android:maxLines="1"
-                    android:text="@string/ac_pro"
-                    android:textColor="#FFE8F4F8"
-                    android:textSize="11sp"
-                    app:layout_constrainedWidth="true"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textViewChallengeDesc1Posture" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/challengeItemFocus"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="#FF1E3A5A"
-                android:padding="10dp">
-
-                <TextView
-                    android:id="@+id/textViewChallengeIconFocus"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/emoji_brain"
-                    android:textColor="#FFE8F4F8"
-                    android:textSize="22sp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/textViewChallengeDesc1Focus"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:ellipsize="end"
-                    android:gravity="center_horizontal"
-                    android:maxLines="1"
-                    android:text="@string/ac_focus"
-                    android:textColor="#FFE8F4F8"
-                    android:textSize="11sp"
-                    app:layout_constrainedWidth="true"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textViewChallengeIconFocus" />
-
-                <TextView
-                    android:id="@+id/textViewChallengeDesc2Focus"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:ellipsize="end"
-                    android:gravity="center_horizontal"
-                    android:maxLines="1"
-                    android:text="@string/ac_finisher"
-                    android:textColor="#FFE8F4F8"
-                    android:textSize="11sp"
-                    app:layout_constrainedWidth="true"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textViewChallengeDesc1Focus" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/challengeItemHabit"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="#FF1E3A5A"
-                android:padding="10dp">
-
-                <TextView
-                    android:id="@+id/textViewChallengeIconHabit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/emoji_habit"
-                    android:textColor="#FFE8F4F8"
-                    android:textSize="22sp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/textViewChallengeDesc1Habit"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:ellipsize="end"
-                    android:gravity="center_horizontal"
-                    android:maxLines="1"
-                    android:text="@string/ac_habit"
-                    android:textColor="#FFE8F4F8"
-                    android:textSize="11sp"
-                    app:layout_constrainedWidth="true"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textViewChallengeIconHabit" />
-
-                <TextView
-                    android:id="@+id/textViewChallengeDesc2Habit"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:ellipsize="end"
-                    android:gravity="center_horizontal"
-                    android:maxLines="1"
-                    android:text="@string/ac_builder"
-                    android:textColor="#FFE8F4F8"
-                    android:textSize="11sp"
-                    app:layout_constrainedWidth="true"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textViewChallengeDesc1Habit" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/challengeItemNutrition"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="#FF1E3A5A"
-                android:padding="10dp">
-
-                <TextView
-                    android:id="@+id/textViewChallengeIconNutrition"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/emoji_nutrition"
-                    android:textColor="#FFE8F4F8"
-                    android:textSize="22sp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/textViewChallengeDesc1Nutrition"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:ellipsize="end"
-                    android:gravity="center_horizontal"
-                    android:maxLines="1"
-                    android:text="@string/ac_nutrition"
-                    android:textColor="#FFE8F4F8"
-                    android:textSize="11sp"
-                    app:layout_constrainedWidth="true"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textViewChallengeIconNutrition" />
-
-                <TextView
-                    android:id="@+id/textViewChallengeDesc2Nutrition"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:ellipsize="end"
-                    android:gravity="center_horizontal"
-                    android:maxLines="1"
-                    android:text="@string/ac_ninja"
-                    android:textColor="#FFE8F4F8"
-                    android:textSize="11sp"
-                    app:layout_constrainedWidth="true"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textViewChallengeDesc1Nutrition" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/challengeItemNightOwl"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="#FF1E3A5A"
-                android:padding="10dp">
-
-                <TextView
-                    android:id="@+id/textViewChallengeIconNightOwl"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/emoji_night"
-                    android:textColor="#FFE8F4F8"
-                    android:textSize="22sp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/textViewChallengeDesc1NightOwl"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:ellipsize="end"
-                    android:gravity="center_horizontal"
-                    android:maxLines="1"
-                    android:text="@string/ac_night"
-                    android:textColor="#FFE8F4F8"
-                    android:textSize="11sp"
-                    app:layout_constrainedWidth="true"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textViewChallengeIconNightOwl" />
-
-                <TextView
-                    android:id="@+id/textViewChallengeDesc2NightOwl"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:ellipsize="end"
-                    android:gravity="center_horizontal"
-                    android:maxLines="1"
-                    android:text="@string/ac_owl"
-                    android:textColor="#FFE8F4F8"
-                    android:textSize="11sp"
-                    app:layout_constrainedWidth="true"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textViewChallengeDesc1NightOwl" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/challengeItemGoal"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="#FF1E3A5A"
-                android:padding="10dp">
-
-                <TextView
-                    android:id="@+id/textViewChallengeIconGoal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/emoji_goal"
-                    android:textColor="#FFE8F4F8"
-                    android:textSize="22sp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/textViewChallengeDesc1Goal"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:ellipsize="end"
-                    android:gravity="center_horizontal"
-                    android:maxLines="1"
-                    android:text="@string/ac_goal"
-                    android:textColor="#FFE8F4F8"
-                    android:textSize="11sp"
-                    app:layout_constrainedWidth="true"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textViewChallengeIconGoal" />
-
-                <TextView
-                    android:id="@+id/textViewChallengeDesc2Goal"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:ellipsize="end"
-                    android:gravity="center_horizontal"
-                    android:maxLines="1"
-                    android:text="@string/ac_crusher"
-                    android:textColor="#FFE8F4F8"
-                    android:textSize="11sp"
-                    app:layout_constrainedWidth="true"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textViewChallengeDesc1Goal" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/challengeItemLearning"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="#FF1E3A5A"
-                android:padding="10dp">
-
-                <TextView
-                    android:id="@+id/textViewChallengeIconLearning"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/emoji_learn"
-                    android:textColor="#FFE8F4F8"
-                    android:textSize="22sp"
-                    android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/textViewChallengeDesc1Learning"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:ellipsize="end"
-                    android:gravity="center_horizontal"
-                    android:maxLines="1"
-                    android:text="@string/ac_learning"
-                    android:textColor="#FFE8F4F8"
-                    android:textSize="11sp"
-                    app:layout_constrainedWidth="true"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textViewChallengeIconLearning" />
-
-                <TextView
-                    android:id="@+id/textViewChallengeDesc2Learning"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:ellipsize="end"
-                    android:gravity="center_horizontal"
-                    android:maxLines="1"
-                    android:text="@string/ac_legend"
-                    android:textColor="#FFE8F4F8"
-                    android:textSize="11sp"
-                    app:layout_constrainedWidth="true"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textViewChallengeDesc1Learning" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            android:paddingBottom="12dp"/>
     </androidx.core.widget.NestedScrollView>
 
+    <!-- Navigation Bar -->
     <FrameLayout
         android:id="@+id/navBarContainer"
         android:layout_width="match_parent"
