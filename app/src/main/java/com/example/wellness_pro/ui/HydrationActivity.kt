@@ -1,19 +1,24 @@
 package com.example.wellness_pro.ui
 
+import android.Manifest // Added
 import android.app.TimePickerDialog
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.pm.PackageManager // Added
+import android.os.Build // Added
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log // Added
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import android.widget.LinearLayout // Added for headerLayoutHydration
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-// import androidx.appcompat.widget.Toolbar // No longer using Toolbar directly here
+import androidx.activity.result.contract.ActivityResultContracts // Added
+import androidx.core.content.ContextCompat // Added
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -21,6 +26,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.wellness_pro.R
 import com.example.wellness_pro.navbar.BaseBottomNavActivity
+import com.example.wellness_pro.reminders.HydrationReminderManager // Added
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -31,7 +37,7 @@ class HydrationActivity : BaseBottomNavActivity() {
         get() = R.layout.activity_hydration
 
     override val currentNavControllerItemId: Int
-        get() = R.id.navButtonHydration // Ensure this ID exists in your nav menu and layout_reusable_nav_bar.xml
+        get() = R.id.navButtonHydration
 
     private lateinit var recyclerViewReminderTimes: RecyclerView
     private lateinit var textViewNoReminders: TextView
@@ -39,13 +45,14 @@ class HydrationActivity : BaseBottomNavActivity() {
     private lateinit var buttonSaveReminders: Button
     private lateinit var editTextGlassesGoal: EditText
     private lateinit var textViewRemindersSetInfo: TextView
-    private lateinit var headerLayoutHydration: LinearLayout // For applying insets to the new header
+    private lateinit var headerLayoutHydration: LinearLayout
 
     private lateinit var reminderTimesAdapter: ReminderTimesAdapter
     private val reminderTimesList = mutableListOf<String>()
     private var currentGlassesGoal: Int = 0
 
     companion object {
+        private const val TAG = "HydrationActivity"
         private const val PREFS_NAME = "HydrationSettingsPrefs"
         private const val KEY_GLASSES_GOAL = "glassesGoal"
         private const val KEY_REMINDER_TIMES = "reminderTimesSet"
@@ -53,27 +60,34 @@ class HydrationActivity : BaseBottomNavActivity() {
 
     private lateinit var sharedPreferences: SharedPreferences
 
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            Log.d(TAG, "POST_NOTIFICATIONS permission granted.")
+            // Permission is granted. Proceed with scheduling reminders.
+            val timesToSave = reminderTimesAdapter.getTimes()
+            if (timesToSave.isNotEmpty()) {
+                 HydrationReminderManager.scheduleOrUpdateAllReminders(this)
+            } // No need to call cancel here as it's handled before permission check
+        } else {
+            Log.w(TAG, "POST_NOTIFICATIONS permission denied.")
+            Toast.makeText(this, "Reminders will not work without notification permission.", Toast.LENGTH_LONG).show()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         sharedPreferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
-        headerLayoutHydration = findViewById(R.id.headerLayoutHydration) // Initialize new header
+        headerLayoutHydration = findViewById(R.id.headerLayoutHydration)
 
-        // Apply insets for Edge-to-Edge display to the new header
         ViewCompat.setOnApplyWindowInsetsListener(headerLayoutHydration) { view, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-            // Apply top padding to the header to account for the status bar
             view.updatePadding(top = insets.top)
-            // Return CONSUMED to prevent other listeners from overriding this
             WindowInsetsCompat.CONSUMED
         }
-
-        // Toolbar and ActionBar setup removed
-        // findViewById<Toolbar>(R.id.toolbar_hydration) // old toolbar ID, no longer used in this manner
-        // setSupportActionBar(toolbar) // Removed
-        // supportActionBar?.setDisplayHomeAsUpEnabled(true) // Removed
-        // supportActionBar?.setDisplayShowHomeEnabled(true) // Removed
 
         editTextGlassesGoal = findViewById(R.id.editTextGlassesGoal)
         textViewRemindersSetInfo = findViewById(R.id.textViewRemindersSetInfo)
@@ -84,9 +98,7 @@ class HydrationActivity : BaseBottomNavActivity() {
 
         setupRecyclerView()
         setupGlassesGoalListener()
-
         loadHydrationSettings()
-
         updateRemindersSetInfoText()
         updateEmptyViewVisibility()
 
@@ -96,19 +108,55 @@ class HydrationActivity : BaseBottomNavActivity() {
 
         buttonSaveReminders.setOnClickListener {
             val goalToSave = editTextGlassesGoal.text.toString().toIntOrNull() ?: 0
-            if (goalToSave <= 0) {
-                Toast.makeText(this, "Please set a valid daily glasses goal.", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+            if (goalToSave <= 0 && reminderTimesAdapter.getTimes().isNotEmpty()) {
+                // Allow saving reminders even if goal is 0, but not if goal is invalid and reminders exist
+                 editTextGlassesGoal.error = "Set a goal if adding reminders"
+                 Toast.makeText(this, "Please set a valid daily glasses goal if you have reminders.", Toast.LENGTH_SHORT).show()
+                 return@setOnClickListener
+            } else if (goalToSave < 0) { // Goal specifically < 0 is invalid
+                 editTextGlassesGoal.error = "Goal cannot be negative"
+                 Toast.makeText(this, "Goal cannot be negative.", Toast.LENGTH_SHORT).show()
+                 return@setOnClickListener
             }
-            currentGlassesGoal = goalToSave
+
+            currentGlassesGoal = goalToSave // can be 0 if no reminders
             val timesToSave = reminderTimesAdapter.getTimes()
             saveHydrationSettings(currentGlassesGoal, timesToSave)
 
             if (timesToSave.isNotEmpty()) {
                 Toast.makeText(this, "Goal and reminders saved!", Toast.LENGTH_SHORT).show()
+                checkAndRequestNotificationPermissionThenSchedule()
             } else {
-                Toast.makeText(this, "Goal saved! No reminders were set.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Goal saved! All reminders cleared.", Toast.LENGTH_SHORT).show()
+                HydrationReminderManager.cancelAllReminders(this)
             }
+        }
+    }
+
+    private fun checkAndRequestNotificationPermissionThenSchedule() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            when {
+                ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED -> {
+                    Log.d(TAG, "POST_NOTIFICATIONS permission already granted.")
+                    HydrationReminderManager.scheduleOrUpdateAllReminders(this)
+                }
+                shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
+                    // Show an educational UI to the user asking for permission
+                    // For simplicity, we'll show a toast and then request.
+                    Toast.makeText(this, "Notification permission is required for hydration reminders.", Toast.LENGTH_LONG).show()
+                    requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                }
+                else -> {
+                    // Directly request the permission
+                    requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                }
+            }
+        } else {
+            // No runtime permission needed for pre-Tiramisu
+            HydrationReminderManager.scheduleOrUpdateAllReminders(this)
         }
     }
 
@@ -117,6 +165,7 @@ class HydrationActivity : BaseBottomNavActivity() {
         editor.putInt(KEY_GLASSES_GOAL, goal)
         editor.putStringSet(KEY_REMINDER_TIMES, times.toSet())
         editor.apply()
+        Log.d(TAG, "Hydration settings saved. Goal: $goal, Times: ${times.joinToString()}")
     }
 
     private fun loadHydrationSettings() {
@@ -124,12 +173,13 @@ class HydrationActivity : BaseBottomNavActivity() {
         if (currentGlassesGoal > 0) {
             editTextGlassesGoal.setText(currentGlassesGoal.toString())
         } else {
-            editTextGlassesGoal.setText("")
+            editTextGlassesGoal.setText("") // Clear if goal is 0 or not set
         }
 
         val savedTimes = sharedPreferences.getStringSet(KEY_REMINDER_TIMES, emptySet()) ?: emptySet()
         reminderTimesList.clear()
         reminderTimesList.addAll(savedTimes.sorted())
+        Log.d(TAG, "Hydration settings loaded. Goal: $currentGlassesGoal, Times: ${reminderTimesList.joinToString()}")
 
         if (::reminderTimesAdapter.isInitialized) {
             reminderTimesAdapter.notifyDataSetChanged()
@@ -178,6 +228,10 @@ class HydrationActivity : BaseBottomNavActivity() {
             Toast.makeText(this, "You\'ve already set $currentGlassesGoal reminders to meet your goal.", Toast.LENGTH_SHORT).show()
             return
         }
+        if (currentGlassesGoal <= 0 && reminderTimesAdapter.getTimes().isEmpty()){
+             Toast.makeText(this, "Please set a daily glasses goal first.", Toast.LENGTH_SHORT).show()
+            return
+        }
 
         val calendar = Calendar.getInstance()
         val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
@@ -187,13 +241,17 @@ class HydrationActivity : BaseBottomNavActivity() {
             this,
             { _, hourOfDay, minute ->
                 val formattedTime = formatTime(hourOfDay, minute)
-                reminderTimesAdapter.addTime(formattedTime)
-                updateEmptyViewVisibility()
-                updateRemindersSetInfoText()
+                if (!reminderTimesList.contains(formattedTime)) {
+                    reminderTimesAdapter.addTime(formattedTime)
+                    updateEmptyViewVisibility()
+                    updateRemindersSetInfoText()
+                } else {
+                    Toast.makeText(this, "This reminder time already exists.", Toast.LENGTH_SHORT).show()
+                }
             },
             currentHour,
             currentMinute,
-            false
+            false // False for 12-hour format with AM/PM
         )
         timePickerDialog.show()
     }
@@ -208,8 +266,6 @@ class HydrationActivity : BaseBottomNavActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // android.R.id.home handling removed as the new header doesn't have an up button by default
-        // If you add other menu items to an options menu, handle them here.
         return super.onOptionsItemSelected(item)
     }
 }
