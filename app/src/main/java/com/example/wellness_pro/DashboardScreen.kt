@@ -1,9 +1,8 @@
-// file: com/example/playpal/DashboardScreen.kt
 package com.example.wellness_pro
 
-import kotlinx.coroutines.launch // ADD THIS IMPORT
-import androidx.lifecycle.lifecycleScope // ADDED
-import kotlinx.coroutines.flow.collectLatest // ADDED
+import kotlinx.coroutines.launch 
+import androidx.lifecycle.lifecycleScope 
+import kotlinx.coroutines.flow.collectLatest 
 import android.view.View
 import android.Manifest
 import android.content.Context
@@ -19,9 +18,9 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-// import android.widget.Button // Not used directly
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -31,17 +30,12 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-
-import androidx.lifecycle.ViewModelProvider // ADDED
-import androidx.lifecycle.lifecycleScope // ADDED
-import com.google.android.material.card.MaterialCardView // ADDED
-import androidx.constraintlayout.widget.Group // ADDED
-import com.example.wellness_pro.db.AppDatabase // ADDED
-// import com.example.wellness_pro.db.MoodEntry as DbMoodEntry // Not directly used here by this name
-import com.example.wellness_pro.viewmodel.MoodViewModel // ADDED
-import com.example.wellness_pro.viewmodel.MoodViewModelFactory // ADDED
-import kotlinx.coroutines.flow.collectLatest // ADDED
-
+import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.card.MaterialCardView
+import androidx.constraintlayout.widget.Group
+import com.example.wellness_pro.db.AppDatabase
+import com.example.wellness_pro.viewmodel.MoodViewModel
+import com.example.wellness_pro.viewmodel.MoodViewModelFactory
 import com.example.wellness_pro.navbar.BaseActivity
 import com.example.wellness_pro.navbar.BaseBottomNavActivity
 import java.text.SimpleDateFormat
@@ -56,20 +50,32 @@ class DashboardScreen : BaseBottomNavActivity(), SensorEventListener {
     override val currentNavControllerItemId: Int
         get() = R.id.navButtonDashboard
 
+    // --- Cached SharedPreferences Data --- //
+    // Step Counter Cache
+    private var cachedStepPreviousTotalStepsSaved = 0f
+    private var cachedStepLastSaveDate: String = ""
+    private var cachedStepCurrentDailySteps = 0
+    private var cachedStepLastSensorHardwareValue = 0f
+
+    // Hydration Cache
+    private var cachedHydrationDailyGoal = 8 // Default goal
+    private var cachedHydrationCurrentIntake = 0
+    private var cachedHydrationDataDate: String = ""
+
+    // Screen Time Cache
+    private var cachedScreenTimePersistentMillis = 0L
+    private var cachedScreenTimeLastSaveDate: String = ""
+    // --- End Cached SharedPreferences Data --- //
+
     private lateinit var sensorManager: SensorManager
     private var stepCounterSensor: Sensor? = null
-    private var totalStepsHardwareValue = 0f
-    private var previousTotalStepsSaved = 0f
-    private var currentSteps = 0
+    private var currentHardwareStepValue = 0f // Current value from sensor event
 
     private lateinit var textViewStepCounterValue: TextView
     private lateinit var textViewDate: TextView
     private lateinit var textViewScreenTimeValue: TextView
 
-    // ADDED: Mood ViewModel
     private lateinit var moodViewModel: MoodViewModel
-
-    // ADDED: UI elements for Current Mood display
     private lateinit var currentMoodCardView: MaterialCardView
     private lateinit var textViewCurrentMoodEmoji: TextView
     private lateinit var textViewCurrentMoodDescription: TextView
@@ -80,6 +86,12 @@ class DashboardScreen : BaseBottomNavActivity(), SensorEventListener {
     private lateinit var groupMoodDisplay: Group
 
     private lateinit var stepCounterPrefs: SharedPreferences
+    private lateinit var hydrationPrefs: SharedPreferences
+    private lateinit var screenTimePrefs: SharedPreferences
+
+    private lateinit var progressBarHydration: ProgressBar
+    private lateinit var textViewHydrationProgress: TextView
+    private lateinit var textViewNoHydrationData: TextView
 
     companion object {
         const val STEP_PREFS_NAME = "PlayPalStepCounterPrefs"
@@ -91,9 +103,12 @@ class DashboardScreen : BaseBottomNavActivity(), SensorEventListener {
         const val ACTION_STEPS_UPDATED = "com.example.wellness_pro.ACTION_STEPS_UPDATED"
         const val EXTRA_CURRENT_STEPS = "extra_current_steps"
         const val EXTRA_STEPS_DATE = "extra_steps_date"
+
+        const val HYDRATION_PREFS_NAME = "HydrationPrefs"
+        const val KEY_HYDRATION_DAILY_GOAL = "dailyGoal"
+        const val KEY_HYDRATION_INTAKE_PREFIX = "intake_"
     }
 
-    private lateinit var screenTimePrefs: SharedPreferences
     private val screenTimeUpdateHandler = Handler(Looper.getMainLooper())
     private lateinit var screenTimeUpdateRunnable: Runnable
     private val SCREEN_TIME_UPDATE_INTERVAL_MS = 5000L
@@ -116,7 +131,6 @@ class DashboardScreen : BaseBottomNavActivity(), SensorEventListener {
         textViewDate = findViewById(R.id.textViewDate)
         textViewScreenTimeValue = findViewById(R.id.textViewScreenTimeValue)
 
-        // ADDED: Initialize Mood UI Elements
         currentMoodCardView = findViewById(R.id.currentMoodCardView)
         textViewCurrentMoodEmoji = findViewById(R.id.textViewCurrentMoodEmoji)
         textViewCurrentMoodDescription = findViewById(R.id.textViewCurrentMoodDescription)
@@ -126,22 +140,25 @@ class DashboardScreen : BaseBottomNavActivity(), SensorEventListener {
         textViewNoMoodsLoggedYet = findViewById(R.id.textViewNoMoodsLoggedYet)
         groupMoodDisplay = findViewById(R.id.groupMoodDisplay)
 
+        progressBarHydration = findViewById(R.id.progressBarHydration)
+        textViewHydrationProgress = findViewById(R.id.textViewHydrationProgress)
+        textViewNoHydrationData = findViewById(R.id.textViewNoHydrationData)
+
         val sdf = SimpleDateFormat("EEEE, MMM dd, yyyy", Locale.getDefault())
         textViewDate.text = sdf.format(Date())
 
         stepCounterPrefs = getSharedPreferences(STEP_PREFS_NAME, Context.MODE_PRIVATE)
+        hydrationPrefs = getSharedPreferences(HYDRATION_PREFS_NAME, Context.MODE_PRIVATE)
         screenTimePrefs = getSharedPreferences(BaseActivity.SCREEN_TIME_PREFS_NAME, Context.MODE_PRIVATE)
 
-        // ADDED: Initialize MoodViewModel
+        loadInitialDataToCache() // Load all data into cache
+
         try {
-            // Ensure AppDatabase is initialized if it has an async init process
-            // For now, assuming getInstance() is safe to call directly or handles its own init.
             val moodDao = AppDatabase.getInstance().moodDao() 
             val moodViewModelFactory = MoodViewModelFactory(moodDao)
             moodViewModel = ViewModelProvider(this, moodViewModelFactory)[MoodViewModel::class.java]
         } catch (e: Exception) {
             Log.e("DashboardScreen", "Error initializing MoodViewModel: ${e.message}", e)
-            // Hide the mood card if ViewModel fails to initialize
             currentMoodCardView.visibility = View.GONE 
         }
 
@@ -149,32 +166,106 @@ class DashboardScreen : BaseBottomNavActivity(), SensorEventListener {
         setupNavigationButtons()
 
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        checkAndRequestActivityRecognitionPermission()
+        checkAndRequestActivityRecognitionPermission() // This will call setupStepCounterSensor if permission granted
 
         screenTimeUpdateRunnable = Runnable {
             if (this@DashboardScreen.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) &&
                 !this@DashboardScreen.isFinishing &&
                 !this@DashboardScreen.isDestroyed
             ) {
-                loadAndDisplayAppScreenTime()
+                refreshAndDisplayAppScreenTime() // Uses cached values, refreshes if date changes
                 screenTimeUpdateHandler.postDelayed(screenTimeUpdateRunnable, SCREEN_TIME_UPDATE_INTERVAL_MS)
             }
         }
         
-        // ADDED: Observe latest mood
-        if (::moodViewModel.isInitialized) { // Check if ViewModel init was successful
+        if (::moodViewModel.isInitialized) { 
             observeLatestMood()
         }
     }
+
+    private fun loadInitialDataToCache() {
+        // Load Step Data to Cache
+        cachedStepLastSaveDate = stepCounterPrefs.getString(KEY_LAST_STEP_SAVE_DATE, "") ?: ""
+        cachedStepLastSensorHardwareValue = stepCounterPrefs.getFloat(KEY_LAST_SENSOR_HARDWARE_VALUE, 0f)
+        val todayStepDate = getCurrentStepDateString()
+
+        if (cachedStepLastSaveDate != todayStepDate) { // New day for steps
+            cachedStepPreviousTotalStepsSaved = cachedStepLastSensorHardwareValue // Use last known hardware value as new baseline
+            cachedStepCurrentDailySteps = 0
+            cachedStepLastSaveDate = todayStepDate
+            // Persist this new day baseline immediately
+            stepCounterPrefs.edit() 
+                .putFloat(KEY_PREVIOUS_TOTAL_STEPS_SAVED, cachedStepPreviousTotalStepsSaved)
+                .putInt(KEY_CURRENT_DAILY_STEPS, cachedStepCurrentDailySteps)
+                .putString(KEY_LAST_STEP_SAVE_DATE, cachedStepLastSaveDate)
+                .putFloat(KEY_LAST_SENSOR_HARDWARE_VALUE, cachedStepLastSensorHardwareValue) // also update this to current baseline
+                .apply()
+            Log.i("DashboardScreen", "loadInitialDataToCache: New step day. Baseline: $cachedStepPreviousTotalStepsSaved")
+        } else { // Same day
+            cachedStepPreviousTotalStepsSaved = stepCounterPrefs.getFloat(KEY_PREVIOUS_TOTAL_STEPS_SAVED, 0f)
+            cachedStepCurrentDailySteps = stepCounterPrefs.getInt(KEY_CURRENT_DAILY_STEPS, 0)
+        }
+        Log.i("DashboardScreen", "loadInitialDataToCache (Steps): PrevSaved=$cachedStepPreviousTotalStepsSaved, Daily=$cachedStepCurrentDailySteps, LastSaveDate=$cachedStepLastSaveDate, LastHW=$cachedStepLastSensorHardwareValue")
+
+        // Load Hydration Data to Cache
+        cachedHydrationDailyGoal = hydrationPrefs.getInt(KEY_HYDRATION_DAILY_GOAL, 8)
+        val todayHydrationDate = getCurrentHydrationDateString()
+        cachedHydrationCurrentIntake = hydrationPrefs.getInt(KEY_HYDRATION_INTAKE_PREFIX + todayHydrationDate, 0)
+        cachedHydrationDataDate = todayHydrationDate
+        Log.d("DashboardScreen", "loadInitialDataToCache (Hydration): Goal=$cachedHydrationDailyGoal, Intake=$cachedHydrationCurrentIntake, Date=$cachedHydrationDataDate")
+
+        // Load Screen Time Data to Cache
+        val todayScreenTimeDate = BaseActivity.getCurrentDateStringForScreenTime()
+        cachedScreenTimeLastSaveDate = screenTimePrefs.getString(BaseActivity.KEY_LAST_SCREEN_TIME_SAVE_DATE, "") ?: ""
+        cachedScreenTimePersistentMillis = if (todayScreenTimeDate == cachedScreenTimeLastSaveDate) {
+            screenTimePrefs.getLong(BaseActivity.KEY_DAILY_APP_SCREEN_TIME, 0L)
+        } else {
+            0L // New day, reset persistent time for cache
+        }
+        Log.d("DashboardScreen", "loadInitialDataToCache (ScreenTime): PersistentMs=$cachedScreenTimePersistentMillis, LastSaveDate=$cachedScreenTimeLastSaveDate")
+    }
+
+    private fun performDailyStepInitialization() {
+        val todayStepDate = getCurrentStepDateString()
+        if (cachedStepLastSaveDate != todayStepDate) {
+            Log.i("DashboardScreen", "performDailyStepInitialization: New day detected. Previous HW: $cachedStepLastSensorHardwareValue, Current HW: $currentHardwareStepValue")
+            // Use the most recent hardware value as the baseline for the new day.
+            // If currentHardwareStepValue is 0 (sensor not yet delivered), use the last known hardware value.
+            cachedStepPreviousTotalStepsSaved = if (currentHardwareStepValue > 0f) currentHardwareStepValue else cachedStepLastSensorHardwareValue
+            cachedStepCurrentDailySteps = 0
+            cachedStepLastSaveDate = todayStepDate
+            // Persist this new day initial state
+            stepCounterPrefs.edit() 
+                .putFloat(KEY_PREVIOUS_TOTAL_STEPS_SAVED, cachedStepPreviousTotalStepsSaved)
+                .putInt(KEY_CURRENT_DAILY_STEPS, cachedStepCurrentDailySteps)
+                .putString(KEY_LAST_STEP_SAVE_DATE, cachedStepLastSaveDate)
+                .putFloat(KEY_LAST_SENSOR_HARDWARE_VALUE, cachedStepPreviousTotalStepsSaved) // Update last HW to this new baseline
+                .apply()
+            Log.i("DashboardScreen", "performDailyStepInitialization: Steps reset for new day. New baseline: $cachedStepPreviousTotalStepsSaved")
+        }
+        // If it's the same day, cached values from loadInitialDataToCache or subsequent updates should be fine.
+    }
+
+    private fun refreshHydrationDataIfNeeded() {
+        val todayHydrationDate = getCurrentHydrationDateString()
+        // Refresh if the cached date is not today (e.g., app was backgrounded across midnight)
+        // Or if the goal might have changed in HydrationActivity
+        if (cachedHydrationDataDate != todayHydrationDate || hydrationPrefs.getInt(KEY_HYDRATION_DAILY_GOAL, 8) != cachedHydrationDailyGoal ) {
+            cachedHydrationDailyGoal = hydrationPrefs.getInt(KEY_HYDRATION_DAILY_GOAL, 8)
+            cachedHydrationCurrentIntake = hydrationPrefs.getInt(KEY_HYDRATION_INTAKE_PREFIX + todayHydrationDate, 0)
+            cachedHydrationDataDate = todayHydrationDate
+            Log.d("DashboardScreen", "refreshHydrationDataIfNeeded: Refreshed hydration. Goal=$cachedHydrationDailyGoal, Intake=$cachedHydrationCurrentIntake, Date=$cachedHydrationDataDate")
+        }
+        updateHydrationProgressUI() // Always update UI after check
+    }
     
-    // ADDED: Function to observe and display the latest mood
     private fun observeLatestMood() {
         lifecycleScope.launch {
             moodViewModel.latestMoodEntry.collectLatest { moodEntry ->
                 if (moodEntry == null) {
                     textViewNoMoodsLoggedYet.visibility = View.VISIBLE
                     groupMoodDisplay.visibility = View.GONE
-                    currentMoodCardView.visibility = View.VISIBLE // Keep card visible to show the message
+                    currentMoodCardView.visibility = View.VISIBLE 
                 } else {
                     textViewNoMoodsLoggedYet.visibility = View.GONE
                     groupMoodDisplay.visibility = View.VISIBLE
@@ -200,19 +291,17 @@ class DashboardScreen : BaseBottomNavActivity(), SensorEventListener {
         }
     }
 
-    // ADDED: Helper function to get emoji for mood level
     private fun getEmojiForMoodLevel(moodLevel: Int): String {
         return when (moodLevel) {
-            1 -> "😭" // Very Sad
-            2 -> "🙁" // Sad
-            3 -> "😐" // Neutral
-            4 -> "🙂" // Okay
-            5 -> "😄" // Happy
-            else -> "❓" // Unknown
+            1 -> "😭" 
+            2 -> "🙁" 
+            3 -> "😐" 
+            4 -> "🙂" 
+            5 -> "😄" 
+            else -> "❓"
         }
     }
 
-    // ADDED: Helper function to get description for mood level
     private fun getDescriptionForMoodLevel(moodLevel: Int): String {
         return when (moodLevel) {
             1 -> "Feeling Very Sad"
@@ -221,6 +310,30 @@ class DashboardScreen : BaseBottomNavActivity(), SensorEventListener {
             4 -> "Feeling Okay"
             5 -> "Feeling Happy"
             else -> "Mood not specified"
+        }
+    }
+
+    private fun getCurrentHydrationDateString(): String {
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        return sdf.format(Date())
+    }
+
+    private fun updateHydrationProgressUI() {
+        Log.d("DashboardScreen", "Updating Hydration UI (from cache): Goal=$cachedHydrationDailyGoal, Intake=$cachedHydrationCurrentIntake")
+        if (cachedHydrationDailyGoal > 0) {
+            textViewNoHydrationData.visibility = View.GONE
+            progressBarHydration.visibility = View.VISIBLE
+            textViewHydrationProgress.visibility = View.VISIBLE
+
+            progressBarHydration.max = cachedHydrationDailyGoal
+            progressBarHydration.progress = cachedHydrationCurrentIntake.coerceIn(0, cachedHydrationDailyGoal)
+
+            textViewHydrationProgress.text = "$cachedHydrationCurrentIntake/$cachedHydrationDailyGoal glasses"
+        } else {
+            textViewNoHydrationData.visibility = View.VISIBLE
+            progressBarHydration.visibility = View.GONE
+            textViewHydrationProgress.visibility = View.GONE
+            textViewNoHydrationData.text = "Set your hydration goal."
         }
     }
 
@@ -256,7 +369,7 @@ class DashboardScreen : BaseBottomNavActivity(), SensorEventListener {
             textViewStepCounterValue.text = "N/A"
         } else {
             Log.i("DashboardScreen", "Step counter sensor found. Registering listener.")
-            loadStepData()
+            // Initial data already loaded to cache; daily initialization will occur in onResume
             sensorManager.registerListener(this, stepCounterSensor, SensorManager.SENSOR_DELAY_UI)
         }
     }
@@ -284,37 +397,56 @@ class DashboardScreen : BaseBottomNavActivity(), SensorEventListener {
 
     override fun onResume() {
         super.onResume()
-        resetStepsIfNewDay()
-        loadStepData()
-        updateUISteps() 
+        performDailyStepInitialization() // Handles new day logic for steps using cache and current sensor
+        updateUISteps() // Update UI with current cached/calculated steps
 
-        loadAndDisplayAppScreenTime()
+        refreshAndDisplayAppScreenTime() // Uses cached screen time, updates if day changed
         if (this::screenTimeUpdateRunnable.isInitialized) {
             screenTimeUpdateHandler.postDelayed(screenTimeUpdateRunnable, SCREEN_TIME_UPDATE_INTERVAL_MS)
+        }
+        refreshHydrationDataIfNeeded() // Updates hydration from prefs if needed, then updates UI
+        
+        // Re-register sensor listener if it was unregistered in onPause
+        if (stepCounterSensor != null && ContextCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_GRANTED
+            || (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q && stepCounterSensor != null)){
+            sensorManager.registerListener(this, stepCounterSensor, SensorManager.SENSOR_DELAY_UI)
+            Log.d("DashboardScreen", "Sensor listener re-registered in onResume.")
         }
     }
 
     override fun onPause() {
         super.onPause()
-        sensorManager.unregisterListener(this, stepCounterSensor)
-        saveStepData()
+        if(stepCounterSensor != null) { // Only unregister if sensor was available
+            sensorManager.unregisterListener(this, stepCounterSensor)
+            Log.d("DashboardScreen", "Sensor listener unregistered in onPause.")
+        }
+        saveCachedStepDataToPrefs() // Save latest cached step data
         if (this::screenTimeUpdateRunnable.isInitialized) {
             screenTimeUpdateHandler.removeCallbacks(screenTimeUpdateRunnable)
         }
     }
 
-    private fun loadAndDisplayAppScreenTime() {
+    private fun refreshAndDisplayAppScreenTime() {
         val today = BaseActivity.getCurrentDateStringForScreenTime()
-        val lastSaveDate = screenTimePrefs.getString(BaseActivity.KEY_LAST_SCREEN_TIME_SAVE_DATE, "")
-        val persistentScreenTimeMillis = if (today == lastSaveDate) {
-            screenTimePrefs.getLong(BaseActivity.KEY_DAILY_APP_SCREEN_TIME, 0L)
-        } else { 0L }
+        if (cachedScreenTimeLastSaveDate != today) { // Day has changed
+            cachedScreenTimePersistentMillis = 0L // Reset for new day
+            cachedScreenTimeLastSaveDate = today
+            // Update SharedPreferences for the new day's zeroed screen time if necessary (optional here as it's mainly for display)
+             screenTimePrefs.edit().putString(BaseActivity.KEY_LAST_SCREEN_TIME_SAVE_DATE, today).putLong(BaseActivity.KEY_DAILY_APP_SCREEN_TIME, 0L).apply()
+            Log.d("DashboardScreen", "refreshAndDisplayAppScreenTime: New screen time day. Cache reset.")
+        } else {
+            // If same day, ensure cachedScreenTimePersistentMillis is from prefs if it wasn't loaded or was reset
+            // This normally should be handled by loadInitialDataToCache, but as a safeguard:
+            if(cachedScreenTimePersistentMillis == 0L && screenTimePrefs.getString(BaseActivity.KEY_LAST_SCREEN_TIME_SAVE_DATE, "") == today) {
+                 cachedScreenTimePersistentMillis = screenTimePrefs.getLong(BaseActivity.KEY_DAILY_APP_SCREEN_TIME, 0L)
+            }
+        }
 
         var currentSessionMillis = 0L
         if (this.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) && foregroundStartTime > 0) {
             currentSessionMillis = System.currentTimeMillis() - foregroundStartTime
         }
-        val totalDisplayTimeMillis = persistentScreenTimeMillis + currentSessionMillis
+        val totalDisplayTimeMillis = cachedScreenTimePersistentMillis + currentSessionMillis
         updateScreenTimeUI(totalDisplayTimeMillis)
     }
 
@@ -324,105 +456,61 @@ class DashboardScreen : BaseBottomNavActivity(), SensorEventListener {
 
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor?.type == Sensor.TYPE_STEP_COUNTER) {
-            totalStepsHardwareValue = event.values[0]
-            Log.d("DashboardScreen", "Sensor event: New hardware total_steps = $totalStepsHardwareValue")
+            currentHardwareStepValue = event.values[0]
+            Log.d("DashboardScreen", "Sensor event: New hardware total_steps = $currentHardwareStepValue")
 
-            if (previousTotalStepsSaved == 0f && totalStepsHardwareValue > 0f) {
-                if (isNewStepDay(stepCounterPrefs.getString(KEY_LAST_STEP_SAVE_DATE, "") ?: "")) {
-                    previousTotalStepsSaved = totalStepsHardwareValue
-                    currentSteps = 0
-                } else if (stepCounterPrefs.getFloat(KEY_PREVIOUS_TOTAL_STEPS_SAVED, 0f) == 0f) {
-                    previousTotalStepsSaved = totalStepsHardwareValue
-                    currentSteps = 0
-                }
+            // Handle initial baseline if not set or if sensor restarted
+            if (cachedStepPreviousTotalStepsSaved == 0f && currentHardwareStepValue > 0f) {
+                // If it's a new day, performDailyStepInitialization in onResume should handle it.
+                // If same day but baseline is 0 (e.g. fresh install, first sensor event), set baseline.
+                if (cachedStepLastSaveDate == getCurrentStepDateString()) {
+                    cachedStepPreviousTotalStepsSaved = currentHardwareStepValue
+                    cachedStepCurrentDailySteps = 0
+                    Log.i("DashboardScreen", "Sensor event: Initial baseline set for today to $currentHardwareStepValue")
+                } 
             }
-            currentSteps = (totalStepsHardwareValue - previousTotalStepsSaved).toInt()
+            
+            cachedStepCurrentDailySteps = (currentHardwareStepValue - cachedStepPreviousTotalStepsSaved).toInt()
 
-            if (currentSteps < 0) {
-                Log.w("DashboardScreen", "Sensor event: Negative current steps ($currentSteps). Resetting baseline.")
-                previousTotalStepsSaved = totalStepsHardwareValue
-                currentSteps = 0
+            if (cachedStepCurrentDailySteps < 0) { // Indicates a device restart or sensor anomaly
+                Log.w("DashboardScreen", "Sensor event: Negative current steps ($cachedStepCurrentDailySteps). Resetting baseline.")
+                cachedStepPreviousTotalStepsSaved = currentHardwareStepValue
+                cachedStepCurrentDailySteps = 0
             }
-            updateUISteps() 
+            cachedStepLastSensorHardwareValue = currentHardwareStepValue // Always update last known hardware value
+            updateUISteps()
         }
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) { /* Not used */ }
 
     private fun updateUISteps() {
-        textViewStepCounterValue.text = currentSteps.toString()
-        val todayDateString = getCurrentStepDateString()
-
-        stepCounterPrefs.edit().apply {
-            putInt(KEY_CURRENT_DAILY_STEPS, currentSteps)
-            putFloat(KEY_LAST_SENSOR_HARDWARE_VALUE, totalStepsHardwareValue)
-            putString(KEY_LAST_STEP_SAVE_DATE, todayDateString) 
-            apply()
-        }
-        Log.d("DashboardScreen", "UI steps updated to $currentSteps and saved. Broadcasting.")
+        textViewStepCounterValue.text = cachedStepCurrentDailySteps.toString()
+        // Persist current state of cached step data
+        saveCurrentCachedStepsToPrefs()
+        Log.d("DashboardScreen", "UI steps updated to $cachedStepCurrentDailySteps (from cache) and saved to prefs.")
 
         val intent = Intent(ACTION_STEPS_UPDATED).apply {
-            putExtra(EXTRA_CURRENT_STEPS, currentSteps)
-            putExtra(EXTRA_STEPS_DATE, todayDateString)
+            putExtra(EXTRA_CURRENT_STEPS, cachedStepCurrentDailySteps)
+            putExtra(EXTRA_STEPS_DATE, cachedStepLastSaveDate) // Use cached date
         }
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
     }
-
-    private fun saveStepData() { 
-        stepCounterPrefs.edit().apply {
-            putFloat(KEY_PREVIOUS_TOTAL_STEPS_SAVED, previousTotalStepsSaved)
-            putString(KEY_LAST_STEP_SAVE_DATE, getCurrentStepDateString())
-            putInt(KEY_CURRENT_DAILY_STEPS, currentSteps)
-            putFloat(KEY_LAST_SENSOR_HARDWARE_VALUE, totalStepsHardwareValue)
+    
+    private fun saveCurrentCachedStepsToPrefs(){
+         stepCounterPrefs.edit().apply {
+            putFloat(KEY_PREVIOUS_TOTAL_STEPS_SAVED, cachedStepPreviousTotalStepsSaved)
+            putString(KEY_LAST_STEP_SAVE_DATE, cachedStepLastSaveDate)
+            putInt(KEY_CURRENT_DAILY_STEPS, cachedStepCurrentDailySteps)
+            putFloat(KEY_LAST_SENSOR_HARDWARE_VALUE, cachedStepLastSensorHardwareValue)
             apply()
         }
-        Log.i("DashboardScreen", "Step data fully saved. PrevSaved: $previousTotalStepsSaved, CurrentDaily: $currentSteps, Date: ${getCurrentStepDateString()}, LastHardware: $totalStepsHardwareValue")
     }
 
-    private fun loadStepData() {
-        val savedDate = stepCounterPrefs.getString(KEY_LAST_STEP_SAVE_DATE, "") ?: ""
-        val lastHardwareValueFromPrefs = stepCounterPrefs.getFloat(KEY_LAST_SENSOR_HARDWARE_VALUE, 0f)
-
-        if (isNewStepDay(savedDate)) {
-            Log.i("DashboardScreen", "loadStepData: New day detected.")
-            previousTotalStepsSaved = if (totalStepsHardwareValue > 0f) totalStepsHardwareValue else lastHardwareValueFromPrefs
-            currentSteps = 0
-        } else {
-            previousTotalStepsSaved = stepCounterPrefs.getFloat(KEY_PREVIOUS_TOTAL_STEPS_SAVED, 0f)
-            currentSteps = stepCounterPrefs.getInt(KEY_CURRENT_DAILY_STEPS, 0)
-
-            if (totalStepsHardwareValue > 0f && previousTotalStepsSaved == 0f && currentSteps == 0) {
-                 if (previousTotalStepsSaved == 0f) {
-                    Log.w("DashboardScreen", "loadStepData: Same day, but previousTotalStepsSaved is 0. Using totalStepsHardwareValue as baseline if available.")
-                    previousTotalStepsSaved = totalStepsHardwareValue
-                }
-            } else if (totalStepsHardwareValue > 0f && previousTotalStepsSaved > totalStepsHardwareValue) {
-                Log.w("DashboardScreen", "loadStepData: Sensor hardware value ($totalStepsHardwareValue) is less than saved baseline ($previousTotalStepsSaved). Resetting baseline.")
-                previousTotalStepsSaved = totalStepsHardwareValue
-            }
-        }
-        Log.i("DashboardScreen", "Step data loaded. PrevSaved: $previousTotalStepsSaved, CurrentDaily: $currentSteps, LastSaveDate: $savedDate, CurrentHardware: $totalStepsHardwareValue")
-    }
-
-    private fun resetStepsIfNewDay() {
-        val lastSaveDate = stepCounterPrefs.getString(KEY_LAST_STEP_SAVE_DATE, "") ?: ""
-        if (isNewStepDay(lastSaveDate)) {
-            Log.i("DashboardScreen", "resetStepsIfNewDay: New day confirmed. Current hardware sensor value: $totalStepsHardwareValue")
-            previousTotalStepsSaved = if (totalStepsHardwareValue > 0f) {
-                totalStepsHardwareValue
-            } else {
-                stepCounterPrefs.getFloat(KEY_LAST_SENSOR_HARDWARE_VALUE, 0f)
-            }
-            currentSteps = 0
-            val editor = stepCounterPrefs.edit()
-            editor.putFloat(KEY_PREVIOUS_TOTAL_STEPS_SAVED, previousTotalStepsSaved)
-            editor.putInt(KEY_CURRENT_DAILY_STEPS, currentSteps)
-            editor.putString(KEY_LAST_STEP_SAVE_DATE, getCurrentStepDateString())
-            editor.apply()
-
-            updateUISteps()
-            Log.i("DashboardScreen", "Steps reset for new day. New baseline (previousTotalStepsSaved): $previousTotalStepsSaved")
-        }
+    // This is called from onPause to save the final state.
+    private fun saveCachedStepDataToPrefs() { 
+        saveCurrentCachedStepsToPrefs() // Use the common method
+        Log.i("DashboardScreen", "saveCachedStepDataToPrefs (onPause): PrevSaved=$cachedStepPreviousTotalStepsSaved, Daily=$cachedStepCurrentDailySteps, Date=$cachedStepLastSaveDate, LastHW=$cachedStepLastSensorHardwareValue")
     }
 
     private fun getCurrentStepDateString(): String {
@@ -430,8 +518,9 @@ class DashboardScreen : BaseBottomNavActivity(), SensorEventListener {
         return sdf.format(Date())
     }
 
-    private fun isNewStepDay(savedDateString: String): Boolean {
-        if (savedDateString.isEmpty()) return true
-        return savedDateString != getCurrentStepDateString()
-    }
+    // Not directly used anymore, logic integrated into performDailyStepInitialization and loadInitialDataToCache
+    // private fun isNewStepDay(savedDateString: String): Boolean {
+    //     if (savedDateString.isEmpty()) return true
+    //     return savedDateString != getCurrentStepDateString()
+    // }
 }

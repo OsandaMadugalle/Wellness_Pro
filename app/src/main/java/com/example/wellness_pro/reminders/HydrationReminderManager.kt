@@ -4,12 +4,13 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.widget.Toast
+// Import HydrationActivity to access its constants for SharedPreferences
+import com.example.wellness_pro.ui.HydrationActivity // Make sure this path is correct
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -18,15 +19,22 @@ import java.util.TreeSet
 object HydrationReminderManager {
 
     internal const val TAG = "HydrationReminderMgr"
-    private const val PREFS_NAME = "HydrationSettingsPrefs" // Must match HydrationActivity
-    private const val KEY_REMINDER_TIMES = "reminderTimesSet" // Must match HydrationActivity
+
+    // Use the SharedPreferences name defined in HydrationActivity/DashboardScreen
+    private const val PREFS_NAME = HydrationActivity.PREFS_NAME // This should now be "HydrationPrefs"
+    
+    // The key for reminder times is also defined in HydrationActivity. 
+    // If it's not public, you might need to use the string directly, but it's better to reference it.
+    // Assuming HydrationActivity.KEY_REMINDER_TIMES was how it was intended, or directly using the string:
+    private const val KEY_REMINDER_TIMES = "reminderTimesSet" // This is the actual string value from HydrationActivity
+
     // NOTIFICATION_ID from here is not directly used by HydrationAlarmReceiver anymore for posting,
     // but REQUEST_CODE_ALARM is still for this manager's PendingIntent uniqueness.
     // HydrationAlarmReceiver uses its own NOTIFICATION_ID_HYDRATION for posting.
     private const val REQUEST_CODE_ALARM = 200
 
     fun scheduleOrUpdateAllReminders(context: Context) {
-        Log.d(TAG, "scheduleOrUpdateAllReminders called")
+        Log.d(TAG, "scheduleOrUpdateAllReminders called, using PREFS_NAME: $PREFS_NAME")
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         cancelExistingAlarms(context, alarmManager) // Clear previous alarms first
 
@@ -34,17 +42,14 @@ object HydrationReminderManager {
 
         if (nextAlarmTimeMillis != null) {
             val intent = Intent(context, HydrationAlarmReceiver::class.java).apply {
-                // Set the action that HydrationAlarmReceiver expects
                 action = HydrationAlarmReceiver.ACTION_TRIGGER_HYDRATION_REMINDER
-                // Pass the reminder time as an extra
-                // HydrationAlarmReceiver expects this as a String, let's use the formatted time
                 putExtra(HydrationAlarmReceiver.EXTRA_REMINDER_TIME, formatMillisToDateTime(nextAlarmTimeMillis))
             }
             Log.d(TAG, "Intent created with action: ${intent.action} and extra: ${intent.getStringExtra(HydrationAlarmReceiver.EXTRA_REMINDER_TIME)}")
 
             val pendingIntent = PendingIntent.getBroadcast(
                 context,
-                REQUEST_CODE_ALARM, // This request code is for the PendingIntent itself
+                REQUEST_CODE_ALARM, 
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
@@ -75,15 +80,17 @@ object HydrationReminderManager {
     }
 
     private fun calculateNextAlarmTimeMillis(context: Context, currentTimeMillis: Long): Long? {
+        // This will now use the corrected PREFS_NAME ("HydrationPrefs")
         val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        // KEY_REMINDER_TIMES is "reminderTimesSet"
         val reminderTimesStringSet = sharedPreferences.getStringSet(KEY_REMINDER_TIMES, emptySet()) ?: emptySet()
 
         if (reminderTimesStringSet.isEmpty()) {
-            Log.d(TAG, "No reminder times found in SharedPreferences.")
+            Log.d(TAG, "No reminder times found in SharedPreferences (using $PREFS_NAME and key $KEY_REMINDER_TIMES).")
             return null
         }
 
-        val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault()) // This is how times are saved from HydrationActivity
+        val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault()) 
         val sortedTimesToday = TreeSet<Long>()
 
         val currentCalendar = Calendar.getInstance().apply {
@@ -135,22 +142,18 @@ object HydrationReminderManager {
     }
 
     private fun cancelExistingAlarms(context: Context, alarmManager: AlarmManager) {
-        // Create an intent that matches the one used for scheduling (including action and extras if they affect matching)
-        // For cancellation, typically matching the base intent (class and request code) is enough
-        // but if FLAG_UPDATE_CURRENT was used, a fully matching intent might be needed by some Android versions.
-        // Let's keep it simple for now, as action and extras in the intent to be cancelled are often not critical for AlarmManager.cancel().
         val intent = Intent(context, HydrationAlarmReceiver::class.java).apply {
-            action = HydrationAlarmReceiver.ACTION_TRIGGER_HYDRATION_REMINDER // Match the action for robustness
+            action = HydrationAlarmReceiver.ACTION_TRIGGER_HYDRATION_REMINDER 
         }
         val pendingIntent = PendingIntent.getBroadcast(
             context,
             REQUEST_CODE_ALARM,
             intent,
-            PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE // Use FLAG_NO_CREATE to check existence
+            PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE 
         )
         if (pendingIntent != null) {
             alarmManager.cancel(pendingIntent)
-            pendingIntent.cancel() // Also cancel the PendingIntent itself
+            pendingIntent.cancel() 
             Log.d(TAG, "Cancelled existing hydration alarms with matching intent.")
         } else {
             Log.d(TAG, "No existing hydration alarm PendingIntent found to cancel with this specific intent structure.")

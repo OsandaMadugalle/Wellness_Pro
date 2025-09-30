@@ -211,5 +211,9 @@
     <!-- Widget Specific -->
     <string name="todays_habits_widget_description">Shows today\'s habit completion</string>
     <string name="clear_all_notifications">Clear</string>
+        <!-- ... other strings ... -->
+
+        <string name="decrement_hydration_goal">Decrement daily hydration goal</string>
+        <string name="increment_hydration_goal">Increment daily hydration goal</string>
 
 </resources>

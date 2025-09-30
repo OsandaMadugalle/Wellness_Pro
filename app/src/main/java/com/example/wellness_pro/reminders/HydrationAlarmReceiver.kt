@@ -49,6 +49,11 @@ class HydrationAlarmReceiver : BroadcastReceiver() {
             // For general hydration, we might not have a specific habitId from the intent.
             // We'll use a generic one for DB logging.
             showNotification(context, reminderTimeInfo, GENERIC_HYDRATION_ID)
+
+            // CRUCIAL: Reschedule the next alarm
+            Log.d(TAG, "onReceive - Rescheduling next reminder after current one fired.")
+            HydrationReminderManager.scheduleOrUpdateAllReminders(context) // ADDED THIS LINE
+
         } else {
             Log.w(TAG, "onReceive - Received intent with unexpected action: ${intent.action}")
         }
