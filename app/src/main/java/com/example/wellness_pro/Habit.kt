@@ -27,7 +27,6 @@ data class Habit(
 ) {
     fun getEmojiForType(): String {
         return when (type) {
-            "Hydration" -> "💧"
             "Steps" -> "🚶"
             "Meditation" -> "🧘"
             "Workout" -> "🏋️"

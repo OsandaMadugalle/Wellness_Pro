@@ -62,8 +62,9 @@ class SetHabitScreen : BaseActivity() {
     // private lateinit var switchHydrationReminder: SwitchMaterial
     // private lateinit var editTextReminderIntervalMinutes: EditText
 
-    private val habitTypes = listOf("Hydration", "Steps", "Meditation", "Workout", "Reading")
-    private var currentSelectedHabitType: String = habitTypes[0]
+    // Removed "Hydration" from this list
+    private val habitTypes = listOf("Steps", "Meditation", "Workout", "Reading")
+    private var currentSelectedHabitType: String = if (habitTypes.isNotEmpty()) habitTypes[0] else ""
 
     private var existingHabitId: String? = null
     private var isEditMode: Boolean = false
@@ -128,8 +129,15 @@ class SetHabitScreen : BaseActivity() {
             Log.d(LIFECYCLE_TAG, "onCreate - Setting up for NEW habit mode...")
             textViewScreenTitle.text = getString(R.string.set_new_habit_title)
             buttonSetHabit.text = getString(R.string.set_habit_button)
-            textViewSelectedItem.text = currentSelectedHabitType
-            updateValueContainer(currentSelectedHabitType)
+            if (habitTypes.isNotEmpty()) {
+                currentSelectedHabitType = habitTypes[0]
+                textViewSelectedItem.text = currentSelectedHabitType
+                updateValueContainer(currentSelectedHabitType)
+            } else {
+                Log.e(LIFECYCLE_TAG, "Habit types list is empty! Cannot set default type.")
+                textViewSelectedItem.text = "No types available"
+                // Consider disabling parts of the UI or showing an error
+            }
             updateScheduleButtonStates(buttonDaily) // Default to Daily
             Log.d(LIFECYCLE_TAG, "onCreate - NEW habit mode setup COMPLETED.")
         }
@@ -268,10 +276,7 @@ class SetHabitScreen : BaseActivity() {
     private fun updateValueContainer(habitType: String) {
         Log.d(DEBUG_TAG, "updateValueContainer called for type: $habitType")
         when (habitType) {
-            "Hydration" -> {
-                textViewValueUnit.text = "glasses/day"
-                editTextValueAmount.hint = "e.g., 8"
-            }
+            // "Hydration" case removed
             "Steps" -> {
                 textViewValueUnit.text = "steps"
                 editTextValueAmount.hint = "e.g., 10000"
@@ -285,8 +290,13 @@ class SetHabitScreen : BaseActivity() {
                 editTextValueAmount.hint = "e.g., 20"
             }
             else -> {
+                // This will be the default if habitTypes becomes empty or an unexpected type is passed.
+                // For newly created habits from the current habitTypes list, this 'else' won't be hit.
                 textViewValueUnit.text = "units"
                 editTextValueAmount.hint = "value"
+                 if (!habitTypes.contains(habitType) && habitType.isNotEmpty()) {
+                    Log.w(DEBUG_TAG, "updateValueContainer called with an unknown or filtered habit type: $habitType. Falling back to default units.")
+                }
             }
         }
         editTextValueAmount.setText("") 
@@ -295,10 +305,15 @@ class SetHabitScreen : BaseActivity() {
     private fun showHabitTypePopupMenu(anchorView: View) {
         Log.d(DEBUG_TAG, "showHabitTypePopupMenu called")
         val popupMenu = PopupMenu(this, anchorView)
-        habitTypes.forEach { habitType ->
-            popupMenu.menu.add(habitType)
+        if (habitTypes.isEmpty()) {
+            popupMenu.menu.add("No habit types available").setEnabled(false)
+        } else {
+            habitTypes.forEach { habitType ->
+                popupMenu.menu.add(habitType)
+            }
         }
         popupMenu.setOnMenuItemClickListener { menuItem ->
+            if (habitTypes.isEmpty() || !menuItem.isEnabled) return@setOnMenuItemClickListener false
             currentSelectedHabitType = menuItem.title.toString()
             textViewSelectedItem.text = currentSelectedHabitType
             updateValueContainer(currentSelectedHabitType)
@@ -344,12 +359,20 @@ class SetHabitScreen : BaseActivity() {
             return
         }
 
+        // If the habit being edited is of a type no longer in habitTypes (e.g., Hydration),
+        // we should probably prevent editing or handle it gracefully.
+        // For now, it will load, but user won't be able to switch its type to another filtered type via the popup.
+        if (!habitTypes.contains(habitToEdit.type) && habitTypes.isNotEmpty()) {
+             Log.w(DEBUG_TAG, "Editing a habit of type '${habitToEdit.type}' which is no longer in the active habitTypes list. The type selector will not include it if changed.")
+             // Potentially, you might want to default to the first available type or show a message
+        }
+
         currentSelectedHabitType = habitToEdit.type
         textViewSelectedItem.text = currentSelectedHabitType
         editTextValueAmount.setText(habitToEdit.targetValue.toString())
         updateValueContainer(currentSelectedHabitType) 
 
-        selectedSchedule = habitToEdit.schedule // CORRECTED
+        selectedSchedule = habitToEdit.schedule 
         when (selectedSchedule) {
             "Daily" -> updateScheduleButtonStates(buttonDaily)
             "Weekly" -> updateScheduleButtonStates(buttonWeekly)
@@ -372,6 +395,11 @@ class SetHabitScreen : BaseActivity() {
         val habitName = currentSelectedHabitType
         val targetValueStr = editTextValueAmount.text.toString()
 
+        if (habitName.isEmpty() || (habitTypes.isEmpty() && !isEditMode)) {
+            Toast.makeText(this, "No habit type selected or available.", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
         if (targetValueStr.isBlank()) {
             editTextValueAmount.error = "Target value cannot be empty."
             Toast.makeText(this, "Please enter a target value.", Toast.LENGTH_SHORT).show()
@@ -388,17 +416,20 @@ class SetHabitScreen : BaseActivity() {
             allHabitsList.find { it.id == existingHabitId }?.apply {
                 this.type = habitName
                 this.targetValue = targetValue
-                this.schedule = selectedSchedule // CORRECTED
+                this.schedule = selectedSchedule 
                 this.reminderTimeHour = selectedHour
                 this.reminderTimeMinute = selectedMinute
                 this.unit = textViewValueUnit.text.toString().removeSuffix("/day").trim()
-            } ?: return false 
+            } ?: run {
+                Log.e(DEBUG_TAG, "Failed to find habit with ID $existingHabitId for update.")
+                return false 
+            }
         } else {
             Habit(
                 id = UUID.randomUUID().toString(),
                 type = habitName,
                 targetValue = targetValue,
-                schedule = selectedSchedule, // CORRECTED
+                schedule = selectedSchedule, 
                 reminderTimeHour = selectedHour,
                 reminderTimeMinute = selectedMinute,
                 unit = textViewValueUnit.text.toString().removeSuffix("/day").trim()
@@ -410,6 +441,7 @@ class SetHabitScreen : BaseActivity() {
             if (index != -1) {
                 allHabitsList[index] = newOrUpdatedHabit
             } else { 
+                 Log.w(DEBUG_TAG, "processAndSaveHabitData: existing habit for edit mode not found in allHabitsList. Adding as new. ID: ${newOrUpdatedHabit.id}")
                 allHabitsList.add(newOrUpdatedHabit)
             }
         } else {

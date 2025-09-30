@@ -53,7 +53,8 @@ class HabitsScreen : BaseBottomNavActivity() {
     private var habitsList: MutableList<Habit> = mutableListOf()
     private var selectedHabit: Habit? = null
 
-    private val countableHabitTypes = listOf("Steps", "Hydration", "Reading", "Workout")
+    // Removed "Hydration" from this list
+    private val countableHabitTypes = listOf("Steps", "Reading", "Workout")
 
     private val stepsUpdatedReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -153,7 +154,7 @@ class HabitsScreen : BaseBottomNavActivity() {
             findViewById<View?>(R.id.headerLayout)?.let { header ->
                 if (header.getTag(R.id.tag_padding_top) == null) header.setTag(R.id.tag_padding_top, header.paddingTop)
             }
-            findViewById<View?>(R.id.navBarContainer)?.let { navBar ->
+            findViewById<View?>(R.id.navBarContainer)?.let { navBar -> // This ID might be navBarContainerBottom if you standardized
                 if (navBar.getTag(R.id.tag_padding_bottom) == null) navBar.setTag(R.id.tag_padding_bottom, navBar.paddingBottom)
             }
 
@@ -252,7 +253,7 @@ class HabitsScreen : BaseBottomNavActivity() {
         if (habit.completionHistory[todayNormalized] == true) {
             habit.completionHistory.remove(todayNormalized)
             if (habit.targetValue > 0) {
-                habit.currentValue = 0
+                habit.currentValue = 0 // For countable habits like steps, reset to 0 if unmarked.
             }
             updateStreak(habit)
             saveHabits()
@@ -276,10 +277,7 @@ class HabitsScreen : BaseBottomNavActivity() {
                         if (isHabitCompletedToday(updatedHabit)) {
                             if (updatedHabit.currentValue < updatedHabit.targetValue) updatedHabit.currentValue = updatedHabit.targetValue
                         } else {
-                            if (updatedHabit.type != "Steps") {
-                                // Consider if currentValue should be reset for non-Steps, non-completed countable habits
-                                // For now, this is handled by toggling or incrementing logic primarily
-                            }
+                            // Removed special handling for "Steps" here as it's now handled by updateStepsHabitFromDashboardData or general logic
                         }
                     }
                     updatedHabit
@@ -287,11 +285,16 @@ class HabitsScreen : BaseBottomNavActivity() {
             } else {
                 mutableListOf()
             }
-            habitsList = loadedHabits.filter { !it.isArchived }.toMutableList()
-            Log.d("HabitsScreen", "Loaded ${habitsList.size} active habits.")
+            // Filter out archived habits AND habits of type "Hydration"
+            habitsList = loadedHabits
+                .filter { !it.isArchived && !it.type.equals("Hydration", ignoreCase = true) }
+                .toMutableList()
 
-            if (selectedHabit != null) {
-                selectedHabit = habitsList.find { it.id == selectedHabit!!.id }
+            Log.d("HabitsScreen", "Loaded ${habitsList.size} active (and non-hydration) habits.")
+
+            if (selectedHabit != null && !habitsList.any { it.id == selectedHabit!!.id }) {
+                // If current selectedHabit was Hydration (or archived) and is now filtered out, reset selection
+                selectedHabit = null
             }
             if (selectedHabit == null && habitsList.isNotEmpty()) {
                 selectedHabit = habitsList.firstOrNull()
@@ -352,7 +355,7 @@ class HabitsScreen : BaseBottomNavActivity() {
         habitStatusLayout.isVisible = true
 
         val inflater = LayoutInflater.from(this)
-        habitsList.forEach { habit ->
+        habitsList.forEach { habit -> // Hydration habits are already filtered out from habitsList
             val habitItemView = inflater.inflate(R.layout.list_item_habit, habitItemsContainer, false)
             habitItemView.tag = habit.id
 
@@ -369,8 +372,9 @@ class HabitsScreen : BaseBottomNavActivity() {
             descriptionTextView.text = habit.getDescriptionText()
             updateHabitItemCompletionIcon(progressIcon, habit)
 
-            if (habit.type.equals("Hydration", ignoreCase = true) && habit.targetValue > 0) {
-                if (!isHabitCompletedToday(habit) && habit.currentValue < habit.targetValue) {
+            // Generic increment button logic for countable habits (excluding Hydration now)
+            if (countableHabitTypes.any { it.equals(habit.type, ignoreCase = true) } && habit.targetValue > 0) {
+                 if (!isHabitCompletedToday(habit) && habit.currentValue < habit.targetValue) {
                     incrementButton.visibility = View.VISIBLE
                     incrementButton.setOnClickListener { view ->
                         incrementHabitProgress(habit)
@@ -391,26 +395,18 @@ class HabitsScreen : BaseBottomNavActivity() {
             }
 
             progressIcon.setOnClickListener { // Checkmark icon
-                when {
-                    habit.type.equals("Steps", ignoreCase = true) -> {
-                        if (isHabitCompletedToday(habit) || habit.currentValue >= habit.targetValue) {
-                            performToggleAction(habit, progressIcon)
-                        } else {
-                            Toast.makeText(this@HabitsScreen, "Walk ${habit.targetValue - habit.currentValue} more steps to complete!", Toast.LENGTH_LONG).show()
-                        }
-                    }
-                    habit.type.equals("Hydration", ignoreCase = true) && habit.targetValue > 0 -> {
-                        if (isHabitCompletedToday(habit) || habit.currentValue >= habit.targetValue) {
-                            performToggleAction(habit, progressIcon)
-                        } else {
-                            Toast.makeText(this@HabitsScreen, "Use the '+' button to log water. (${habit.currentValue}/${habit.targetValue} ${habit.unit ?: "units"})", Toast.LENGTH_LONG).show()
-                        }
-                    }
-                    else -> {
+                // Simplified logic as Hydration specific toast is no longer needed here if Hydration is filtered
+                if (habit.type.equals("Steps", ignoreCase = true)) {
+                    if (isHabitCompletedToday(habit) || habit.currentValue >= habit.targetValue) {
                         performToggleAction(habit, progressIcon)
+                    } else {
+                        Toast.makeText(this@HabitsScreen, "Walk ${habit.targetValue - habit.currentValue} more steps to complete!", Toast.LENGTH_LONG).show()
                     }
+                } else {
+                    performToggleAction(habit, progressIcon)
                 }
-                if (habit.type.equals("Hydration", ignoreCase = true) && habit.targetValue > 0) {
+                 // Re-check increment button visibility for the toggled habit
+                if (countableHabitTypes.any { it.equals(habit.type, ignoreCase = true) } && habit.targetValue > 0) {
                     if (!isHabitCompletedToday(habit) && habit.currentValue < habit.targetValue) {
                         incrementButton.visibility = View.VISIBLE
                     } else {
@@ -440,8 +436,9 @@ class HabitsScreen : BaseBottomNavActivity() {
         iconImageView?.let { updateHabitItemCompletionIcon(it, habit) }
         if (habit.id == selectedHabit?.id) {
              updateBottomSummaryPanel()
-             updateSpecificHabitItemUI(habit) 
         }
+        // Update the specific item in the list directly as its state (and potentially description) changed
+        updateSpecificHabitItemUI(habit)
     }
 
     private fun showDeleteConfirmationDialog(habitToDelete: Habit) {
@@ -473,13 +470,14 @@ class HabitsScreen : BaseBottomNavActivity() {
             Log.w("HabitsScreen", "Could not find habit '${habitToDelete.type}' in SharedPreferences to archive.")
         }
 
-        if (habitsList.removeIf { it.id == habitToDelete.id }) {
-            Toast.makeText(this, "'${habitToDelete.type}' deleted", Toast.LENGTH_SHORT).show()
-            if (originalSelectedHabitId == habitToDelete.id) {
-                selectedHabit = habitsList.firstOrNull()
-            }
-            displayHabits()
+        // Reload habits which will apply the Hydration filter and archived filter
+        loadHabits()
+        // If the deleted habit was the selected one, select the first available, or none if list is empty
+        if (originalSelectedHabitId == habitToDelete.id) {
+            selectedHabit = habitsList.firstOrNull()
         }
+        displayHabits() // Refresh the entire UI
+        Toast.makeText(this, "'${habitToDelete.type}' deleted", Toast.LENGTH_SHORT).show() // Moved after displayHabits for better UX
     }
 
     private fun updateHabitItemCompletionIcon(iconView: ImageView, habit: Habit) {
@@ -509,17 +507,8 @@ class HabitsScreen : BaseBottomNavActivity() {
         habitStatusLayout.isVisible = true
         daysOfWeekLayout?.isVisible = true
 
+        // Since Hydration is filtered out, no need for special title handling for it here.
         var title = getString(R.string.habit_type_status, currentHabit.type)
-        if (currentHabit.type.equals("Hydration", ignoreCase = true) && currentHabit.targetValue > 0) {
-            if (isHabitCompletedToday(currentHabit) || currentHabit.currentValue >= currentHabit.targetValue) {
-                title += " (Target Met)"
-            } else {
-                val remaining = currentHabit.targetValue - currentHabit.currentValue
-                if (remaining > 0) {
-                    title += " ($remaining ${currentHabit.unit ?: "units"} to go)"
-                }
-            }
-        }
         textViewHabitStatusTitle.text = title
 
         val progress = if (currentHabit.targetValue > 0) {
@@ -604,15 +593,18 @@ class HabitsScreen : BaseBottomNavActivity() {
         if (wasDone) { // Becoming incomplete
             habit.completionHistory.remove(todayNorm)
             if (habit.targetValue > 0) {
-                habit.currentValue = 0
+                // For countable habits, reset to 0 unless it's Steps (which gets updated by broadcast)
+                if (!habit.type.equals("Steps", ignoreCase = true)) {
+                    habit.currentValue = 0
+                }
             }
-            Log.d("HabitsScreen", "Habit '${habit.type}' UNMARKED for today. CurrentValue reset to ${habit.currentValue}")
+            Log.d("HabitsScreen", "Habit '${habit.type}' UNMARKED for today. CurrentValue updated to ${habit.currentValue}")
         } else { // Becoming complete
             habit.completionHistory[todayNorm] = true
             habit.lastCompletionTimestamp = System.currentTimeMillis()
             if (habit.targetValue > 0) {
                 if (habit.currentValue < habit.targetValue) habit.currentValue = habit.targetValue 
-            } else {
+            } else { // For non-countable habits, mark as 1 if it was 0, or keep if already > 0
                 if (habit.currentValue == 0) habit.currentValue = 1
             }
             Log.d("HabitsScreen", "Habit '${habit.type}' MARKED for today. CurrentValue set/kept at ${habit.currentValue}")
@@ -639,29 +631,34 @@ class HabitsScreen : BaseBottomNavActivity() {
         val todayNormalized = normalizeTimestampToDay(System.currentTimeMillis())
         var expectedPreviousDay = todayNormalized
 
+        // Check if today is completed
         if (completedDaysTimestamps.firstOrNull() == expectedPreviousDay) {
             currentStreak = 1
+            // Check consecutive previous days
             for (i in 1 until completedDaysTimestamps.size) {
                 expectedPreviousDay = normalizeTimestampToDay(expectedPreviousDay - (24 * 60 * 60 * 1000L))
                 if (completedDaysTimestamps[i] == expectedPreviousDay) {
                     currentStreak++
                 } else {
-                    break
+                    break // Streak broken
                 }
             }
         } else {
+            // If today is not completed, check if yesterday was, for a streak ending yesterday
             expectedPreviousDay = normalizeTimestampToDay(todayNormalized - (24 * 60 * 60 * 1000L))
             if (completedDaysTimestamps.firstOrNull() == expectedPreviousDay) {
                 currentStreak = 1
+                // Check consecutive previous days from yesterday
                 for (i in 1 until completedDaysTimestamps.size) {
                     expectedPreviousDay = normalizeTimestampToDay(expectedPreviousDay - (24 * 60 * 60 * 1000L))
                     if (completedDaysTimestamps[i] == expectedPreviousDay) {
                         currentStreak++
                     } else {
-                        break
+                        break // Streak broken
                     }
                 }
             } else {
+                // No completion today or yesterday that's part of a streak
                 currentStreak = 0
             }
         }
@@ -684,17 +681,21 @@ class HabitsScreen : BaseBottomNavActivity() {
                 mutableListOf()
             }
 
-            habitsList.forEach { currentHabit ->
+            habitsList.forEach { currentHabit -> // habitsList now excludes Hydration
                 val indexInMaster = masterHabitList.indexOfFirst { it.id == currentHabit.id }
                 if (indexInMaster != -1) {
                     masterHabitList[indexInMaster] = currentHabit
                 } else {
-                    if (!currentHabit.isArchived) {
+                    if (!currentHabit.isArchived) { // Should not add Hydration habits back if they were filtered
+                         // This safeguard might re-add a non-Hydration habit if it was somehow missed during load and is now in habitsList
                         masterHabitList.add(currentHabit)
-                        Log.w("HabitsScreen", "Safeguard: Added habit '${currentHabit.type}' to master list during save, as it was missing.")
+                        Log.w("HabitsScreen", "Safeguard: Added non-archived habit '${currentHabit.type}' to master list during save, as it was missing.")
                     }
                 }
             }
+            // Note: This save process does NOT remove Hydration from the master list in SharedPreferences,
+            // it only stops saving updates for it from this screen if it's filtered out of habitsList.
+            // Archived Hydration habits also remain in masterHabitList unless explicitly removed elsewhere.
             prefs.edit().putString("habits_list_json", Gson().toJson(masterHabitList)).apply()
             Log.d("HabitsScreen", "Habits (master) list saved. Count: ${masterHabitList.size}")
 
@@ -705,6 +706,8 @@ class HabitsScreen : BaseBottomNavActivity() {
     }
 
     private fun updateSpecificHabitItemUI(changedHabit: Habit) {
+        // If changedHabit is Hydration, this might not find it in habitItemsContainer if it was filtered out
+        // However, if called for a non-Hydration habit, it should work fine.
         for (i in 0 until habitItemsContainer.childCount) {
             val view = habitItemsContainer.getChildAt(i)
             if (view.tag == changedHabit.id) {
@@ -715,7 +718,8 @@ class HabitsScreen : BaseBottomNavActivity() {
                 progressIcon?.let { updateHabitItemCompletionIcon(it, changedHabit) }
                 descriptionTextView?.text = changedHabit.getDescriptionText()
                 
-                if (changedHabit.type.equals("Hydration", ignoreCase = true) && changedHabit.targetValue > 0) {
+                // Generic increment button logic update for visible habits
+                if (countableHabitTypes.any { it.equals(changedHabit.type, ignoreCase = true) } && changedHabit.targetValue > 0) {
                     if (!isHabitCompletedToday(changedHabit) && changedHabit.currentValue < changedHabit.targetValue) {
                         incrementButton?.visibility = View.VISIBLE
                     } else {
