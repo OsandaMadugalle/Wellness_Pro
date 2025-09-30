@@ -15,11 +15,12 @@ interface AppNotificationDao {
     @Query("SELECT * FROM app_notifications ORDER BY timestamp DESC")
     fun getAllNotifications(): LiveData<List<AppNotification>>
 
+    // Method to delete all notifications
+    @Query("DELETE FROM app_notifications")
+    suspend fun clearAll()
+
     // You can add other methods like update, delete, etc., as needed
     // For example:
     // @Query("UPDATE app_notifications SET isRead = 1 WHERE id = :notificationId")
     // suspend fun markAsRead(notificationId: String)
-    //
-    // @Query("DELETE FROM app_notifications")
-    // suspend fun clearAll()
 }

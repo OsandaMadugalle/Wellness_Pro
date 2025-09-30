@@ -1,40 +1,56 @@
 package com.example.wellness_pro.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-// import androidx.lifecycle.Transformations // Remove this import
-import androidx.lifecycle.switchMap // Add this import for the extension function
+import androidx.lifecycle.switchMap 
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import com.example.wellness_pro.db.AppDatabase
 import com.example.wellness_pro.db.AppNotification
+import kotlinx.coroutines.launch
 
 class NotificationViewModel(application: Application) : AndroidViewModel(application) {
 
-    // This LiveData will be switched based on database initialization status
+    companion object {
+        private const val TAG = "NotificationViewModel"
+    }
+
     val allNotifications: LiveData<List<AppNotification>>
 
     init {
+        Log.d(TAG, "Initializing NotificationViewModel...")
         val appDatabase = AppDatabase // Companion object
 
-        // Observe the isInitialized StateFlow from AppDatabase
-        // Convert StateFlow to LiveData for easier observation and transformation
         val dbInitializedLiveData: LiveData<Boolean> = appDatabase.isInitialized.asLiveData()
+        Log.d(TAG, "Observing AppDatabase.isInitialized. Current value (from StateFlow): ${appDatabase.isInitialized.value}")
 
-        // When dbInitializedLiveData becomes true, switch to the actual DAO's LiveData
-        // Otherwise, provide an empty list or null (here, an empty LiveData source)
-        allNotifications = dbInitializedLiveData.switchMap { isInitialized -> // Use the switchMap extension function
+        allNotifications = dbInitializedLiveData.switchMap { isInitialized ->
+            Log.d(TAG, "dbInitializedLiveData emitted: $isInitialized")
             if (isInitialized) {
-                // Database is ready, get DAO and return its LiveData
+                Log.i(TAG, "Database IS INITIALIZED. Switching to DAO's getAllNotifications().")
                 AppDatabase.getInstance().appNotificationDao().getAllNotifications()
             } else {
-                // Database not ready, return a LiveData with an empty list
-                // Or you could return a LiveData that never emits until initialized
-                MutableLiveData(emptyList()) // Or null if your UI handles it
+                Log.w(TAG, "Database IS NOT INITIALIZED. Switching to empty list LiveData.")
+                MutableLiveData(emptyList<AppNotification>()) // Ensure type is explicit
+            }
+        }
+        Log.d(TAG, "NotificationViewModel initialization complete.")
+    }
+
+    /**
+     * Clears all notifications from the database.
+     */
+    fun clearAllNotifications() {
+        viewModelScope.launch {
+            try {
+                AppDatabase.getInstance().appNotificationDao().clearAll()
+                Log.i(TAG, "Successfully called clearAll on DAO.")
+            } catch (e: Exception) {
+                Log.e(TAG, "Error clearing all notifications from database", e)
             }
         }
     }
-
-    // You can add other methods here if needed
 }

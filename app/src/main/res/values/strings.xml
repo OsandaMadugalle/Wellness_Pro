@@ -210,5 +210,6 @@
 
     <!-- Widget Specific -->
     <string name="todays_habits_widget_description">Shows today\'s habit completion</string>
+    <string name="clear_all_notifications">Clear</string>
 
 </resources>
