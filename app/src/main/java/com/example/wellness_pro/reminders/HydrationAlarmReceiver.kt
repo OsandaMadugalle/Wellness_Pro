@@ -1,8 +1,7 @@
-// file: com/example/playpal/reminders/HydrationAlarmReceiver.kt
 package com.example.wellness_pro.reminders
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
+// import android.app.NotificationChannel // Not strictly needed if WellnessProApplication creates it
+// import android.app.NotificationManager // Not strictly needed if WellnessProApplication creates it
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -10,9 +9,11 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import com.example.wellness_pro.HabitsScreen // Or your main screen to open on tap
-import com.example.wellness_pro.R // Make sure you have your app icon resource
-import com.example.wellness_pro.db.AppDatabase // Assuming this is your Room database class
+import androidx.core.app.NotificationManagerCompat // Use Compat version
+import com.example.wellness_pro.LaunchScreen // CHANGED: To open LaunchScreen
+import com.example.wellness_pro.R
+import com.example.wellness_pro.WellnessProApplication // ADDED: To use its channel ID constant
+import com.example.wellness_pro.db.AppDatabase
 import com.example.wellness_pro.db.AppNotification
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -23,68 +24,68 @@ class HydrationAlarmReceiver : BroadcastReceiver() {
 
     companion object {
         private const val TAG = "HydrationAlarmReceiver"
-        const val NOTIFICATION_ID = 1001 // This is for the system notification
-        const val CHANNEL_ID = "hydration_reminder_channel"
-        const val ACTION_TRIGGER_HYDRATION_REMINDER = "com.example.wellness_pro.ACTION_TRIGGER_HYDRATION_REMINDER" // Corrected package name
-        const val EXTRA_HABIT_ID = "habit_id_for_reminder"
+        // NOTIFICATION_ID can be made more dynamic if multiple hydration notifications should stack
+        // For now, a single ID means new notifications update the existing one.
+        const val NOTIFICATION_ID_HYDRATION = 1001 // Renamed for clarity
+        // CHANNEL_ID is now referenced from WellnessProApplication to ensure consistency
+        // const val CHANNEL_ID = "hydration_reminder_channel" // This will use WellnessProApplication.HYDRATION_CHANNEL_ID
+
+        const val ACTION_TRIGGER_HYDRATION_REMINDER = "com.example.wellness_pro.ACTION_TRIGGER_HYDRATION_REMINDER"
+
+        // EXTRA_REMINDER_TIME can be used to pass the specific time for which this reminder is firing
+        // This can be useful for logging or for making notification IDs unique if needed.
+        const val EXTRA_REMINDER_TIME = "extra_reminder_time"
+        private const val GENERIC_HYDRATION_ID = "GENERAL_HYDRATION_REMINDER" // ADDED
     }
 
     override fun onReceive(context: Context, intent: Intent) {
         Log.d(TAG, "onReceive - Alarm received! Timestamp: ${System.currentTimeMillis()}")
         Log.d(TAG, "onReceive - Intent Action: ${intent.action}")
-        Log.d(TAG, "onReceive - Intent Extras: ${intent.extras?.keySet()?.joinToString { key -> "$key: ${intent.extras?.get(key)}" }}")
 
         if (intent.action == ACTION_TRIGGER_HYDRATION_REMINDER) {
-            val habitId = intent.getStringExtra(EXTRA_HABIT_ID)
-            Log.i(TAG, "onReceive - Matched ACTION_TRIGGER_HYDRATION_REMINDER for habit ID: $habitId")
+            val reminderTimeInfo = intent.getStringExtra(EXTRA_REMINDER_TIME) ?: "Unknown time"
+            Log.i(TAG, "onReceive - Matched ACTION_TRIGGER_HYDRATION_REMINDER for time: $reminderTimeInfo")
 
-            if (habitId.isNullOrBlank()) {
-                Log.e(TAG, "onReceive - Habit ID is null or blank. Cannot process reminder. Aborting.")
-                return
-            }
-            Log.d(TAG, "onReceive - Proceeding to show notification for habit ID: $habitId")
-            showNotification(context, habitId) // Pass habitId along
+            // For general hydration, we might not have a specific habitId from the intent.
+            // We'll use a generic one for DB logging.
+            showNotification(context, reminderTimeInfo, GENERIC_HYDRATION_ID)
         } else {
             Log.w(TAG, "onReceive - Received intent with unexpected action: ${intent.action}")
         }
     }
 
-    private fun showNotification(context: Context, habitId: String) {
-        Log.d(TAG, "showNotification - Called for habit ID: $habitId")
-        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    private fun showNotification(context: Context, reminderTimeInfo: String, loggingId: String) {
+        Log.d(TAG, "showNotification - Called for reminder: $reminderTimeInfo, loggingId: $loggingId")
+        // Use NotificationManagerCompat for better compatibility
+        val notificationManager = NotificationManagerCompat.from(context)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "Hydration Reminders"
-            val descriptionText = "Reminders to drink water"
-            val importance = NotificationManager.IMPORTANCE_HIGH
-            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
-                description = descriptionText
-            }
-            notificationManager.createNotificationChannel(channel)
-            Log.d(TAG, "showNotification - Notification channel '$CHANNEL_ID' created or ensured.")
-        }
+        // Channel creation is handled in WellnessProApplication, but good practice to ensure it here too
+        // especially if this receiver could be triggered before Application.onCreate in some edge cases.
+        // However, WellnessProApplication's HYDRATION_CHANNEL_ID should be used.
+        // Notification channel creation logic (if needed here) should use WellnessProApplication.HYDRATION_CHANNEL_ID
 
-        val openAppIntent = Intent(context, HabitsScreen::class.java).apply {
+        val openAppIntent = Intent(context, LaunchScreen::class.java).apply { // CHANGED to LaunchScreen
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
-            // Optionally, pass habitId to the screen if you want to navigate to a specific habit
-            // putExtra("focus_habit_id", habitId) 
+            //putExtra("reminder_fired_at", reminderTimeInfo) // Optional: pass info to the activity
         }
+
+        // Using reminderTimeInfo.hashCode() to make request code for PendingIntent more unique if needed for different times
+        val requestCode = reminderTimeInfo.hashCode()
         val pendingIntentFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         } else {
             PendingIntent.FLAG_UPDATE_CURRENT
         }
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(context, habitId.hashCode(), openAppIntent, pendingIntentFlags) // Use habitId.hashCode() for a more unique request code for the PI
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(context, requestCode, openAppIntent, pendingIntentFlags)
         Log.d(TAG, "showNotification - PendingIntent for notification tap created.")
 
-        // TODO: Potentially fetch habit details using habitId to customize notification title/text further
-        // For now, using generic text as before.
-        val notificationIcon = R.drawable.ic_launcher_foreground // Ensure this drawable exists
+        val notificationIcon = R.drawable.ic_water_drop // IMPORTANT: Ensure you have this drawable
+                                                        // Or change to a generic one like R.mipmap.ic_launcher
 
         val notificationTitle = "Stay Hydrated!"
-        val notificationContent = "Time for a glass of water. Keep up with your hydration goal!"
+        val notificationContent = "Time for a glass of water ($reminderTimeInfo)." // Added time info
 
-        val notificationBuilder = NotificationCompat.Builder(context, CHANNEL_ID)
+        val notificationBuilder = NotificationCompat.Builder(context, WellnessProApplication.HYDRATION_CHANNEL_ID) // Use channel from Application class
             .setSmallIcon(notificationIcon)
             .setContentTitle(notificationTitle)
             .setContentText(notificationContent)
@@ -92,41 +93,42 @@ class HydrationAlarmReceiver : BroadcastReceiver() {
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
-            .setOnlyAlertOnce(true) // Avoids re-alerting if the notification is updated but still visible
+            .setOnlyAlertOnce(true)
 
-        Log.d(TAG, "showNotification - Attempting to display system notification (ID: $NOTIFICATION_ID) for habit: $habitId")
         try {
-            notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build()) // Use a consistent NOTIFICATION_ID or a unique one per habit if multiple can appear
-            Log.i(TAG, "showNotification - System notification displayed successfully for habit ID: $habitId.")
+            // Use NOTIFICATION_ID_HYDRATION. If multiple reminders need to stack, this ID needs to be unique per alarm.
+            // For now, each new hydration reminder will update the previous one.
+            notificationManager.notify(NOTIFICATION_ID_HYDRATION, notificationBuilder.build())
+            Log.i(TAG, "showNotification - System notification displayed successfully for: $reminderTimeInfo.")
+        } catch (e: SecurityException) {
+            Log.e(TAG, "showNotification - SecurityException displaying notification (missing POST_NOTIFICATIONS permission?): ${e.message}", e)
         } catch (e: Exception) {
-            Log.e(TAG, "showNotification - Error displaying system notification for habit ID $habitId: ${e.message}", e)
-            // If it fails here, saving to DB might still be useful for an in-app list, but the user won't get a system tray notification.
+            Log.e(TAG, "showNotification - Error displaying system notification for $reminderTimeInfo: ${e.message}", e)
         }
-        
-        Log.d(TAG, "showNotification - Proceeding to save notification to database for habit ID: $habitId")
-        saveNotificationToDatabase(context, habitId, notificationTitle, notificationContent)
+
+        saveNotificationToDatabase(context, loggingId, notificationTitle, notificationContent)
     }
 
-    private fun saveNotificationToDatabase(context: Context, habitIdOrigin: String, title: String, message: String) {
-        Log.d(TAG, "saveNotificationToDatabase - Called for habitIdOrigin: $habitIdOrigin, Title: $title")
+    private fun saveNotificationToDatabase(context: Context, originId: String, title: String, message: String) {
+        Log.d(TAG, "saveNotificationToDatabase - Called for originId: $originId, Title: $title")
         CoroutineScope(Dispatchers.IO).launch {
             Log.d(TAG, "saveNotificationToDatabase - Coroutine started on Dispatchers.IO")
             try {
-                val notificationDao = AppDatabase.getInstance().appNotificationDao()
+                val notificationDao = AppDatabase.getInstance().appNotificationDao() // CORRECTED: Removed context argument
                 val appNotification = AppNotification(
-                    id = UUID.randomUUID().toString(), 
+                    id = UUID.randomUUID().toString(),
                     title = title,
-                    message = "$message (Related to habit: $habitIdOrigin)", // Include habitId for context
+                    message = message, // Message already includes reminderTimeInfo
                     timestamp = System.currentTimeMillis(),
                     isRead = false,
-                    relatedHabitId = habitIdOrigin // Store the originating habit ID
+                    relatedHabitId = originId // Will be GENERIC_HYDRATION_ID for these
                 )
                 Log.d(TAG, "saveNotificationToDatabase - AppNotification object created: $appNotification")
-                
+
                 notificationDao.insertNotification(appNotification)
-                Log.i(TAG, "saveNotificationToDatabase - Notification successfully saved to app database. ID: ${appNotification.id}, Related Habit ID: $habitIdOrigin")
+                Log.i(TAG, "saveNotificationToDatabase - Notification successfully saved. ID: ${appNotification.id}, Related ID: $originId")
             } catch (e: Exception) {
-                Log.e(TAG, "saveNotificationToDatabase - ERROR saving notification to database for habit ID $habitIdOrigin: ${e.message}", e)
+                Log.e(TAG, "saveNotificationToDatabase - ERROR saving notification for $originId: ${e.message}", e)
             }
         }
     }

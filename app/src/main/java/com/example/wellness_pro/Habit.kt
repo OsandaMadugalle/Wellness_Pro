@@ -4,7 +4,7 @@ import java.util.UUID
 
 data class Habit(
     val id: String = UUID.randomUUID().toString(),
-    val type: String,
+    var type: String,
     var targetValue: Int,
     var unit: String,
     var schedule: String,

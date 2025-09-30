@@ -48,6 +48,14 @@
         android:text="@string/habits"
         android:textSize="10sp"
         android:textColor="#FFE8F4F8"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:paddingStart="2dp"
+        android:paddingEnd="2dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginEnd="1dp"
+        android:singleLine="true"
+        android:ellipsize="end"
         app:icon="@drawable/ic_habits"
         app:iconGravity="top"
         app:iconPadding="2dp"
@@ -57,8 +65,18 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/navButtonDashboard"
-        app:layout_constraintEnd_toStartOf="@+id/navButtonMoodJournal"
-        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintEnd_toStartOf="@+id/navButtonHydration"
+        app:layout_constraintHorizontal_weight="1" />
+
+    <!-- Navigation Item 3: Hydration (NEW) -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/navButtonHydration"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/hydration"
+        android:textSize="10sp"
+        android:textColor="#FFE8F4F8"
         android:minWidth="0dp"
         android:minHeight="0dp"
         android:paddingStart="2dp"
@@ -66,18 +84,8 @@
         android:layout_marginStart="1dp"
         android:layout_marginEnd="1dp"
         android:singleLine="true"
-        android:ellipsize="end"/>
-
-    <!-- Navigation Item 3: Mood Journal -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/navButtonMoodJournal"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/mood_journal"
-        android:textSize="10sp"
-        android:textColor="#FFE8F4F8"
-        app:icon="@drawable/ic_energy"
+        android:ellipsize="end"
+        app:icon="@drawable/ic_hand"
         app:iconGravity="top"
         app:iconPadding="2dp"
         app:iconSize="24dp"
@@ -86,8 +94,18 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/navButtonHabits"
-        app:layout_constraintEnd_toStartOf="@+id/navButtonProfile"
-        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintEnd_toStartOf="@+id/navButtonMoodJournal"
+        app:layout_constraintHorizontal_weight="1" />
+
+    <!-- Navigation Item 4: Mood Journal (WAS 3) -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/navButtonMoodJournal"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/mood_journal"
+        android:textSize="10sp"
+        android:textColor="#FFE8F4F8"
         android:minWidth="0dp"
         android:minHeight="0dp"
         android:paddingStart="2dp"
@@ -95,9 +113,20 @@
         android:layout_marginStart="1dp"
         android:layout_marginEnd="1dp"
         android:singleLine="true"
-        android:ellipsize="end"/>
+        android:ellipsize="end"
+        app:icon="@drawable/ic_energy"
+        app:iconGravity="top"
+        app:iconPadding="2dp"
+        app:iconSize="24dp"
+        app:iconTint="#FFE8F4F8"
+        app:backgroundTint="@android:color/transparent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/navButtonHydration"
+        app:layout_constraintEnd_toStartOf="@+id/navButtonProfile"
+        app:layout_constraintHorizontal_weight="1" />
 
-    <!-- Navigation Item 4: Profile -->
+    <!-- Navigation Item 5: Profile (WAS 4) -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/navButtonProfile"
         style="@style/Widget.MaterialComponents.Button.TextButton"
@@ -106,6 +135,14 @@
         android:text="@string/profile"
         android:textSize="10sp"
         android:textColor="#FFE8F4F8"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:paddingStart="2dp"
+        android:paddingEnd="2dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginEnd="1dp"
+        android:singleLine="true"
+        android:ellipsize="end"
         app:icon="@drawable/ic_user"
         app:iconGravity="top"
         app:iconPadding="2dp"
@@ -116,14 +153,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/navButtonMoodJournal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_weight="1"
-        android:minWidth="0dp"
-        android:minHeight="0dp"
-        android:paddingStart="2dp"
-        android:paddingEnd="2dp"
-        android:layout_marginStart="1dp"
-        android:layout_marginEnd="1dp"
-        android:singleLine="true"
-        android:ellipsize="end"/>
+        app:layout_constraintHorizontal_weight="1" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

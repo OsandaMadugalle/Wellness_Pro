@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_content_hydration"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FF0A1F2E"
+    android:fitsSystemWindows="true" 
+    tools:context=".ui.HydrationActivity">
+    <!-- XML Comment for fitsSystemWindows: Added for consistency with MoodHistoryActivity -->
+
+    <!-- Header Layout (similar to MoodHistoryActivity) -->
+    <LinearLayout
+        android:id="@+id/headerLayoutHydration"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="#FF0A1F2E" 
+        android:elevation="4dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="16dp"
+        android:paddingTop="16dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/textViewHydrationTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Hydration Reminders"
+            android:textColor="#FFE8F4F8"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            app:autoSizeMaxTextSize="30sp"
+            app:autoSizeMinTextSize="20sp"
+            app:autoSizeStepGranularity="2sp"
+            app:autoSizeTextType="uniform" />
+
+    </LinearLayout>
+
+    <!-- Scrollable Content Area -->
+    <ScrollView
+        android:id="@+id/contentScrollViewHydration"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/headerLayoutHydration"
+        app:layout_constraintBottom_toTopOf="@+id/navBarContainerBottom"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/contentLayoutHydration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="16dp">
+
+            <TextView
+                android:id="@+id/textViewGlassesGoalLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Daily Glasses Goal:"
+                android:textColor="#FFE8F4F8"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/editTextGlassesGoal"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:inputType="number"
+                android:maxLength="2"
+                android:maxLines="1"
+                android:textColor="#FFE8F4F8"
+                android:backgroundTint="#FF4CAF50"
+                android:textColorHint="#FFA0A0A0"
+                android:hint="e.g. 8"
+                android:gravity="center"
+                app:layout_constraintBaseline_toBaselineOf="@+id/textViewGlassesGoalLabel"
+                app:layout_constraintStart_toEndOf="@+id/textViewGlassesGoalLabel" />
+
+            <TextView
+                android:id="@+id/textViewRemindersSetInfo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:textColor="#FFA0A0A0"
+                android:textSize="14sp"
+                app:layout_constraintBaseline_toBaselineOf="@+id/editTextGlassesGoal"
+                app:layout_constraintStart_toEndOf="@+id/editTextGlassesGoal"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:text="Reminders: 0 / 8" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewReminderTimes"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:minHeight="150dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintTop_toBottomOf="@+id/editTextGlassesGoal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/buttonAddTime"
+                tools:listitem="@layout/item_reminder_time" />
+
+            <TextView
+                android:id="@+id/textViewNoReminders"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No reminders set yet. Add times below."
+                android:textColor="#FFA0A0A0"
+                android:textSize="18sp"
+                android:visibility="gone"
+                app:layout_constraintTop_toTopOf="@id/recyclerViewReminderTimes"
+                app:layout_constraintBottom_toBottomOf="@id/recyclerViewReminderTimes"
+                app:layout_constraintStart_toStartOf="@id/recyclerViewReminderTimes"
+                app:layout_constraintEnd_toEndOf="@id/recyclerViewReminderTimes" />
+
+            <Button
+                android:id="@+id/buttonAddTime"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="Add Reminder Time"
+                android:backgroundTint="#FF4CAF50"
+                android:textColor="@android:color/white"
+                app:layout_constraintBottom_toTopOf="@+id/buttonSaveReminders"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/recyclerViewReminderTimes" />
+
+            <Button
+                android:id="@+id/buttonSaveReminders"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Save Reminders &amp; Goal"
+                android:backgroundTint="#FF2196F3"
+                android:textColor="@android:color/white"
+                app:layout_constraintBottom_toBottomOf="parent" 
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/buttonAddTime" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+    <FrameLayout
+        android:id="@+id/navBarContainerBottom" 
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <include layout="@layout/layout_reusable_nav_bar" />
+
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
