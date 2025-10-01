@@ -68,7 +68,7 @@ class MoodHistoryActivity : BaseBottomNavActivity() {
             moodViewModel = ViewModelProvider(this, factory)[MoodViewModel::class.java]
         } catch (e: Exception) {
             Log.e("MoodHistoryActivity", "Error initializing MoodViewModel", e)
-            Toast.makeText(this, "Error loading mood data components.", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.error_loading_mood_data_components), Toast.LENGTH_LONG).show()
             finish() // Critical component failed, cannot proceed
             return
         }
@@ -122,7 +122,7 @@ class MoodHistoryActivity : BaseBottomNavActivity() {
     private fun shareMoodSummary() {
         val currentMoods = moodEntriesAdapter.getItems()
         if (currentMoods.isEmpty()) {
-            Toast.makeText(this, "No moods to share yet!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.no_moods_to_share_yet), Toast.LENGTH_SHORT).show()
             return
         }
         val latestMood = currentMoods.first()
@@ -136,7 +136,7 @@ class MoodHistoryActivity : BaseBottomNavActivity() {
             putExtra(Intent.EXTRA_TEXT, summary)
             type = "text/plain"
         }
-        startActivity(Intent.createChooser(shareIntent, "Share your mood summary"))
+        startActivity(Intent.createChooser(shareIntent, getString(R.string.share_your_mood_summary)))
     }
 
     private fun setupMoodChartStyle() {
@@ -170,7 +170,7 @@ class MoodHistoryActivity : BaseBottomNavActivity() {
 
         moodChartHistory.axisRight.isEnabled = false
         moodChartHistory.setBackgroundColor(ContextCompat.getColor(this, android.R.color.transparent))
-        moodChartHistory.setNoDataText("Log your moods to see your trend!")
+        moodChartHistory.setNoDataText(getString(R.string.log_your_moods_to_see_your_trend))
         moodChartHistory.setNoDataTextColor(ContextCompat.getColor(this, R.color.textColorSecondary))
     }
 
@@ -191,7 +191,7 @@ class MoodHistoryActivity : BaseBottomNavActivity() {
         if (moodEntries.isEmpty()) {
             moodChartHistory.visibility = View.GONE
             textViewNoMoodsChartHistory.visibility = View.VISIBLE
-            textViewNoMoodsChartHistory.text = "Not enough mood entries for a trend yet."
+            textViewNoMoodsChartHistory.text = getString(R.string.not_enough_mood_entries_for_a_trend_yet)
             moodChartHistory.clear()
             moodChartHistory.invalidate()
             return
@@ -206,7 +206,7 @@ class MoodHistoryActivity : BaseBottomNavActivity() {
             entries.add(Entry(moodEntry.timestamp.toFloat(), moodEntry.moodLevel.toFloat()))
         }
 
-        val dataSet = LineDataSet(entries, "Daily Mood Trend")
+        val dataSet = LineDataSet(entries, getString(R.string.daily_mood_trend_chart_title))
         dataSet.color = ContextCompat.getColor(this, R.color.chart_line_blue)
         dataSet.valueTextColor = ContextCompat.getColor(this, R.color.textColorPrimary)
         dataSet.setCircleColor(ContextCompat.getColor(this, R.color.chart_circle_color))
@@ -262,7 +262,7 @@ class MoodEntriesAdapter(private var moodEntries: List<DbMoodEntry>) :
         try {
             holder.timestampTextView.text = dateFormat.format(Date(moodEntry.timestamp))
         } catch (e: Exception) {
-            holder.timestampTextView.text = "Invalid date"
+            holder.timestampTextView.text = holder.itemView.context.getString(R.string.invalid_date)
             Log.e("MoodEntriesAdapter", "Error formatting date for mood entry: ${moodEntry.id}", e)
         }
 

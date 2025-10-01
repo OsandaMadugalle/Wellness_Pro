@@ -29,7 +29,7 @@
         android:layout_height="40dp"
         android:src="@drawable/ic_remove_circle"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="Remove Reminder"
+        android:contentDescription="@string/remove_reminder"
         android:scaleType="centerInside"
         app:tint="@color/iconTintMuted"
         app:layout_constraintEnd_toEndOf="parent"

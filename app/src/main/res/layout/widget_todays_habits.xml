@@ -11,7 +11,7 @@
         android:id="@+id/widget_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Today's Habits"
+        android:text="@string/today_s_habits"
         android:textColor="?android:attr/textColorPrimary"
         android:textSize="18sp"
         android:layout_gravity="center_horizontal"/>
@@ -20,7 +20,7 @@
         android:id="@+id/widget_percentage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="0%"
+        android:text="@string/widget_percentage_placeholder"
         android:textColor="?android:attr/textColorPrimary"
         android:textSize="24sp"
         android:textStyle="bold"

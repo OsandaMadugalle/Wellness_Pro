@@ -30,7 +30,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Set Hydration Goal &amp; Reminders"
+            android:text="@string/set_hydration_goal_amp_reminders"
             android:textColor="@color/textColorPrimary"
             android:textSize="26sp"
             android:textStyle="bold"
@@ -59,7 +59,7 @@
             android:id="@+id/textViewSetGlassesGoalLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Daily Glasses Goal:"
+            android:text="@string/daily_glasses_goal"
             android:textColor="@color/textColorPrimary"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
@@ -77,7 +77,7 @@
             android:textColor="@color/textColorPrimary"
             android:backgroundTint="@color/colorAccentGreen"
             android:textColorHint="@color/textColorHint"
-            android:hint="e.g. 8"
+            android:hint="@string/e_g_8"
             android:gravity="center"
             app:layout_constraintBaseline_toBaselineOf="@id/textViewSetGlassesGoalLabel"
             app:layout_constraintStart_toEndOf="@id/textViewSetGlassesGoalLabel" />
@@ -87,7 +87,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="Set reminders below."
+            android:text="@string/set_reminders_below"
             android:textColor="@color/textColorSecondary"
             android:textSize="14sp"
             app:layout_constraintBaseline_toBaselineOf="@id/editTextSetGlassesGoal"
@@ -111,7 +111,7 @@
             android:id="@+id/textViewSetNoReminders"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No reminders set yet. Add times below."
+            android:text="@string/no_reminders_set_yet_add_times_below"
             android:textColor="@color/textColorSecondary"
             android:textSize="18sp"
             android:visibility="gone"
@@ -139,7 +139,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:text="Add Reminder Time"
+            android:text="@string/add_reminder_time"
             android:backgroundTint="@color/colorAccentGreen"
             android:textColor="@color/white" />
 
@@ -147,7 +147,7 @@
             android:id="@+id/buttonSaveHydrationSettings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Save Settings"
+            android:text="@string/save_settings"
             android:backgroundTint="@color/colorAccentBlue"
             android:textColor="@color/white" />
     </LinearLayout>

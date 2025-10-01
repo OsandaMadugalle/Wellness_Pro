@@ -143,7 +143,7 @@ class HabitsScreen : BaseBottomNavActivity() {
             }
         } catch (e: Exception) {
             Log.e("HabitsScreen", "Error in initializeViews: ${e.message}", e)
-            Toast.makeText(this, "Error initializing screen layout. Critical views might be missing.", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.error_initializing_screen_layout), Toast.LENGTH_LONG).show()
         }
     }
 
@@ -302,7 +302,7 @@ class HabitsScreen : BaseBottomNavActivity() {
 
         } catch (e: Exception) {
             Log.e("HabitsScreen", "Error loading habits", e)
-            Toast.makeText(this, "Could not load habits.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.could_not_load_habits), Toast.LENGTH_SHORT).show()
             habitsList.clear()
             selectedHabit = null
         }
@@ -400,7 +400,7 @@ class HabitsScreen : BaseBottomNavActivity() {
                     if (isHabitCompletedToday(habit) || habit.currentValue >= habit.targetValue) {
                         performToggleAction(habit, progressIcon)
                     } else {
-                        Toast.makeText(this@HabitsScreen, "Walk ${habit.targetValue - habit.currentValue} more steps to complete!", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@HabitsScreen, getString(R.string.walk_more_steps_to_complete, habit.targetValue - habit.currentValue), Toast.LENGTH_LONG).show()
                     }
                 } else {
                     performToggleAction(habit, progressIcon)
@@ -443,13 +443,13 @@ class HabitsScreen : BaseBottomNavActivity() {
 
     private fun showDeleteConfirmationDialog(habitToDelete: Habit) {
         AlertDialog.Builder(this, R.style.AlertDialogCustom)
-            .setTitle("Delete Habit")
-            .setMessage("Are you sure you want to delete the habit '${habitToDelete.type}'?")
-            .setPositiveButton("Delete") { dialog, _ ->
+            .setTitle(getString(R.string.delete_habit_confirmation_title))
+            .setMessage(getString(R.string.delete_habit_confirmation_message, habitToDelete.type))
+            .setPositiveButton(getString(R.string.delete)) { dialog, _ ->
                 deleteHabit(habitToDelete)
                 dialog.dismiss()
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(getString(R.string.cancel), null)
             .show()
     }
 
@@ -477,7 +477,7 @@ class HabitsScreen : BaseBottomNavActivity() {
             selectedHabit = habitsList.firstOrNull()
         }
         displayHabits() // Refresh the entire UI
-        Toast.makeText(this, "'${habitToDelete.type}' deleted", Toast.LENGTH_SHORT).show() // Moved after displayHabits for better UX
+        Toast.makeText(this, getString(R.string.habit_deleted_message, habitToDelete.type), Toast.LENGTH_SHORT).show() // Moved after displayHabits for better UX
     }
 
     private fun updateHabitItemCompletionIcon(iconView: ImageView, habit: Habit) {
@@ -701,7 +701,7 @@ class HabitsScreen : BaseBottomNavActivity() {
 
         } catch (e: Exception) {
             Log.e("HabitsScreen", "Error saving habits", e)
-            Toast.makeText(this, "Error saving habits.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.error_saving_habits), Toast.LENGTH_SHORT).show()
         }
     }
 

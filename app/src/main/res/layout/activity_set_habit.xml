@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Habit Type:" />
+        android:text="@string/habit_type" />
     <Spinner
         android:id="@+id/spinnerHabitType"
         android:layout_width="match_parent"
@@ -18,7 +18,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Target Value:" />
+        android:text="@string/target_value" />
     <EditText
         android:id="@+id/editTextTargetValue"
         android:layout_width="match_parent"
@@ -28,7 +28,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Unit (e.g., glasses, km, minutes):" />
+        android:text="@string/unit_e_g_glasses_km_minutes" />
     <EditText
         android:id="@+id/editTextUnit"
         android:layout_width="match_parent"
@@ -37,7 +37,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Schedule:" />
+        android:text="@string/schedule" />
     <Spinner
         android:id="@+id/spinnerSchedule"
         android:layout_width="match_parent"
@@ -49,12 +49,12 @@
         android:id="@+id/buttonSetReminder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Set Reminder (Optional)" />
+        android:text="@string/set_reminder_optional" />
     <TextView
         android:id="@+id/textViewReminderTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="No reminder set" />
+        android:text="@string/no_reminder_set" />
 
     <Button
         android:id="@+id/buttonSaveHabit"
@@ -62,6 +62,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="24dp"
-        android:text="Save Habit" />
+        android:text="@string/save_habit" />
 
 </LinearLayout>

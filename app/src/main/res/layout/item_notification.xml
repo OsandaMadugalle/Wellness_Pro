@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:textColor="@color/textColorPrimary"
-            android:text="Notification Title" />
+            android:text="@string/notification_title_placeholder" />
 
         <TextView
             android:id="@+id/textViewNotificationDate"
@@ -32,7 +32,7 @@
             android:textSize="12sp"
             android:textColor="@color/textColorSecondary"
             android:layout_marginTop="4dp"
-            android:text="Date" />
+            android:text="@string/date_placeholder" />
 
         <TextView
             android:id="@+id/textViewNotificationTime"
@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:textSize="12sp"
             android:textColor="@color/textColorSecondary"
-            android:text="Time" />
+            android:text="@string/time" />
 
     </LinearLayout>
 
