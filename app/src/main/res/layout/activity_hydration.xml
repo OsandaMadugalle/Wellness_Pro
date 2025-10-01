@@ -5,7 +5,7 @@
     android:id="@+id/main_content_hydration"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FF0A1F2E"
+    android:background="@color/backgroundColor"
     android:fitsSystemWindows="true"
     tools:context=".ui.HydrationActivity">
 
@@ -13,7 +13,7 @@
         android:id="@+id/headerLayoutHydration"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="#FF0A1F2E"
+        android:background="@color/backgroundColor"
         android:elevation="4dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -32,7 +32,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="Hydration Tracking"
-            android:textColor="#FFE8F4F8"
+            android:textColor="@color/textColorPrimary"
             android:textSize="30sp"
             android:textStyle="bold"
             app:autoSizeMaxTextSize="30sp"
@@ -68,7 +68,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Today's Progress:"
-                android:textColor="#FFE8F4F8"
+                android:textColor="@color/textColorPrimary"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 app:layout_constraintTop_toTopOf="parent"
@@ -92,7 +92,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:textColor="#FFE8F4F8"
+                android:textColor="@color/textColorPrimary"
                 android:textSize="18sp"
                 app:layout_constraintTop_toBottomOf="@id/progressBarHydrationStatus"
                 app:layout_constraintStart_toStartOf="parent"
@@ -116,8 +116,8 @@
                     android:layout_weight="1"
                     android:layout_marginEnd="8dp"
                     android:text="-1 Glass"
-                    android:backgroundTint="#FFEF5350"
-                    android:textColor="@android:color/white"
+                    android:backgroundTint="@color/colorAccentRed"
+                    android:textColor="@color/white"
                     android:textSize="18sp" />
 
                 <Button
@@ -127,8 +127,8 @@
                     android:layout_weight="1"
                     android:layout_marginStart="8dp"
                     android:text="+1 Glass"
-                    android:backgroundTint="#FF4CAF50"
-                    android:textColor="@android:color/white"
+                    android:backgroundTint="@color/colorAccentGreen"
+                    android:textColor="@color/white"
                     android:textSize="18sp" />
 
             </LinearLayout>
@@ -139,7 +139,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="No goal set. Go to settings to set your daily goal and reminders."
-                android:textColor="#FFA0A0A0"
+                android:textColor="@color/textColorSecondary"
                 android:textSize="16sp"
                 android:gravity="center_horizontal"
                 android:visibility="gone"
@@ -152,8 +152,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Set Goal &amp; Reminders"
-                android:backgroundTint="#FF007BFF"
-                android:textColor="@android:color/white"
+                android:backgroundTint="@color/colorAccentBlue"
+                android:textColor="@color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />

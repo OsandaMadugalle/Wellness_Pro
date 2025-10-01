@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FF0A1F2E"
+    android:background="@color/backgroundColor"
     tools:context=".ProfileScreen">
 
     <!-- paddingTop is removed from root and applied to content where needed to avoid window inset conflicts -->
@@ -42,8 +42,8 @@
         android:layout_height="wrap_content"
         android:minHeight="40dp"
         android:text="@string/log_out"
-        android:textColor="#FFE8F4F8"
-        app:backgroundTint="#FFFF5252"
+        android:textColor="@color/textColorPrimary"
+        app:backgroundTint="@color/colorAccentRed"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintTop_toTopOf="@id/imageViewAvatar"
         app:layout_constraintBottom_toBottomOf="@id/imageViewAvatar" />
@@ -81,7 +81,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:text="@string/name"
-            android:textColor="#FFE8F4F8"
+            android:textColor="@color/textColorPrimary"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -92,7 +92,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:text="@string/mail"
-            android:textColor="#FFE8F4F8"
+            android:textColor="@color/textColorPrimary"
             android:textSize="13sp" />
     </LinearLayout>
 
@@ -111,7 +111,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/level"
-            android:textColor="#FFE8F4F8"
+            android:textColor="@color/textColorPrimary"
             android:textSize="13sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
@@ -122,7 +122,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/xp"
-            android:textColor="#FFE8F4F8"
+            android:textColor="@color/textColorPrimary"
             android:textSize="13sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -136,8 +136,8 @@
             android:layout_marginTop="8dp"
             android:max="100"
             android:progress="50"
-            android:progressBackgroundTint="#FF1E3A5A"
-            android:progressTint="#FF4CAF50"
+            android:progressBackgroundTint="@color/cardBackgroundColor"
+            android:progressTint="@color/colorAccentGreen"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textViewLevel" />

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#FF1E3A5A"
+    android:background="@color/cardBackgroundColor"
     android:padding="12dp"
     android:layout_marginBottom="8dp">
 
@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="🎯"
-        android:textColor="#FFE8F4F8"
+        android:textColor="@color/textColorPrimary"
         android:textSize="28sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -36,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Habit Title"
-            android:textColor="#FFE8F4F8"
+            android:textColor="@color/textColorPrimary"
             android:textSize="18sp"
             android:textStyle="bold"
             tools:ignore="HardcodedText" />
@@ -46,7 +46,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Target / Schedule"
-            android:textColor="#FFE8F4F8"
+            android:textColor="@color/textColorPrimary"
             android:textSize="13sp"
             android:layout_marginTop="2dp"
             tools:ignore="HardcodedText" />
@@ -68,7 +68,7 @@
             android:layout_height="32dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/delete_habit_description"
-            app:tint="#FFE8F4F8"
+            app:tint="@color/iconTint"
             android:src="@android:drawable/ic_menu_delete" />
 
         <ImageButton
@@ -78,7 +78,7 @@
             android:layout_marginStart="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/edit_habit_description"
-            app:tint="#FFE8F4F8"
+            app:tint="@color/iconTint"
             android:src="@android:drawable/ic_menu_edit" />
 
         <!-- ADDED Increment Button -->
@@ -88,7 +88,7 @@
             android:layout_height="32dp"
             android:layout_marginStart="12dp"
             android:src="@android:drawable/ic_input_add"
-            app:tint="#FF4CAF50"
+            app:tint="@color/colorAccentGreen"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/increment_habit_progress"
             android:visibility="gone"
@@ -101,7 +101,7 @@
             android:layout_marginStart="12dp"
             android:contentDescription="@string/habit_completion_status_icon"
             app:srcCompat="@drawable/ic_check_circle_outline"
-            app:tint="#FFE8F4F8"/>
+            app:tint="@color/iconTint"/>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

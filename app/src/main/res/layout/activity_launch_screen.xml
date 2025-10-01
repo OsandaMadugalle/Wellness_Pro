@@ -4,7 +4,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FF0A1F2E"
+    android:background="@color/backgroundColor"
     android:gravity="center"
     android:orientation="vertical"
     android:padding="16dp"
@@ -26,7 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/app_name"
-        android:textColor="#FFE8F4F8"
+        android:textColor="@color/textColorPrimary"
         android:textSize="28sp"
         android:textStyle="bold" />
 
@@ -39,7 +39,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/game_hard_live_well"
-        android:textColor="#FFE8F4F8"
+        android:textColor="@color/textColorPrimary"
         android:textSize="18sp" />
 
     <Space
@@ -51,7 +51,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:indeterminate="true"
-        android:indeterminateTint="#FF4CAF50" />
+        android:indeterminateTint="@color/colorAccentGreen" />
 
     <Space
         android:layout_width="match_parent"
@@ -62,7 +62,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/loading"
-        android:textColor="#FFE8F4F8"
+        android:textColor="@color/textColorPrimary"
         android:textSize="14sp" />
 
 </LinearLayout>

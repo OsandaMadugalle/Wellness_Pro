@@ -14,7 +14,7 @@
         android:id="@+id/textViewReminderTimeItem"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textColor="#FFE8F4F8"
+        android:textColor="@color/textColorPrimary"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/buttonRemoveTimeItem"
@@ -31,7 +31,7 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="Remove Reminder"
         android:scaleType="centerInside"
-        app:tint="#FF757575"
+        app:tint="@color/iconTintMuted"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>

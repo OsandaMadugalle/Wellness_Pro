@@ -5,7 +5,7 @@
     android:id="@+id/main_content_set_hydration"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FF0A1F2E"
+    android:background="@color/backgroundColor"
     android:fitsSystemWindows="true"
     tools:context=".ui.SetHydrationActivity">
 
@@ -13,7 +13,7 @@
         android:id="@+id/headerLayoutSetHydration"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="#FF0A1F2E"
+        android:background="@color/backgroundColor"
         android:elevation="4dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Set Hydration Goal &amp; Reminders"
-            android:textColor="#FFE8F4F8"
+            android:textColor="@color/textColorPrimary"
             android:textSize="26sp"
             android:textStyle="bold"
             android:gravity="center"
@@ -60,7 +60,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Daily Glasses Goal:"
-            android:textColor="#FFE8F4F8"
+            android:textColor="@color/textColorPrimary"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -74,9 +74,9 @@
             android:inputType="number"
             android:maxLength="2"
             android:maxLines="1"
-            android:textColor="#FFE8F4F8"
-            android:backgroundTint="#FF4CAF50"
-            android:textColorHint="#FFA0A0A0"
+            android:textColor="@color/textColorPrimary"
+            android:backgroundTint="@color/colorAccentGreen"
+            android:textColorHint="@color/textColorHint"
             android:hint="e.g. 8"
             android:gravity="center"
             app:layout_constraintBaseline_toBaselineOf="@id/textViewSetGlassesGoalLabel"
@@ -88,7 +88,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:text="Set reminders below."
-            android:textColor="#FFA0A0A0"
+            android:textColor="@color/textColorSecondary"
             android:textSize="14sp"
             app:layout_constraintBaseline_toBaselineOf="@id/editTextSetGlassesGoal"
             app:layout_constraintStart_toEndOf="@id/editTextSetGlassesGoal"
@@ -112,7 +112,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="No reminders set yet. Add times below."
-            android:textColor="#FFA0A0A0"
+            android:textColor="@color/textColorSecondary"
             android:textSize="18sp"
             android:visibility="gone"
             app:layout_constraintTop_toTopOf="@id/recyclerViewSetReminderTimes"
@@ -140,16 +140,16 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:text="Add Reminder Time"
-            android:backgroundTint="#FF4CAF50"
-            android:textColor="@android:color/white" />
+            android:backgroundTint="@color/colorAccentGreen"
+            android:textColor="@color/white" />
 
         <Button
             android:id="@+id/buttonSaveHydrationSettings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Save Settings"
-            android:backgroundTint="#FF2196F3"
-            android:textColor="@android:color/white" />
+            android:backgroundTint="@color/colorAccentBlue"
+            android:textColor="@color/white" />
     </LinearLayout>
 
 

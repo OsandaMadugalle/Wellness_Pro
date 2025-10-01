@@ -5,14 +5,14 @@
     android:id="@+id/main_content_habits"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FF0A1F2E"
+    android:background="@color/backgroundColor"
     tools:context=".HabitsScreen">
 
     <LinearLayout
         android:id="@+id/headerLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="#FF0A1F2E"
+        android:background="@color/backgroundColor"
         android:elevation="4dp"
         android:gravity="center"
         android:orientation="vertical"
@@ -29,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/Habits"
-            android:textColor="#FFE8F4F8"
+            android:textColor="@color/textColorPrimary"
             android:textSize="30sp"
             android:textStyle="bold"
             app:autoSizeMaxTextSize="30sp"
@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/long_term_habit_tracking"
-            android:textColor="#FFE8F4F8"
+            android:textColor="@color/textColorPrimary"
             android:textSize="15sp"
             android:textStyle="bold" />
     </LinearLayout>
@@ -62,7 +62,7 @@
         android:id="@+id/setHabitLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="#FF1E3A5A"
+        android:background="@color/cardBackgroundColor"
         android:orientation="horizontal"
         android:paddingStart="16dp"
         android:paddingTop="8dp"
@@ -83,7 +83,7 @@
             android:layout_weight="1"
             android:text="@string/want_to_set_a_habit"
             android:textStyle="bold"
-            android:textColor="#FFE8F4F8"
+            android:textColor="@color/textColorPrimary"
             android:textSize="15sp" />
 
         <Button
@@ -95,15 +95,15 @@
             android:paddingStart="12dp"
             android:paddingEnd="12dp"
             android:text="@string/set_a_habit"
-            android:textColor="#FFE8F4F8"
-            app:backgroundTint="#FF4CAF50" />
+            android:textColor="@color/textColorPrimary"
+            app:backgroundTint="@color/colorAccentGreen" />
     </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/habitStatusLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="#FF1E3A5A"
+        android:background="@color/cardBackgroundColor"
         android:padding="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
@@ -117,7 +117,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/habit_status"
-            android:textColor="#FFE8F4F8"
+            android:textColor="@color/textColorPrimary"
             android:textSize="17sp"
             android:textStyle="bold"
             app:layout_constraintTop_toTopOf="parent"
@@ -130,8 +130,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:progress="60"
-            android:progressTint="#FF4CAF50"
-            android:progressBackgroundTint="#FF1E3A5A"
+            android:progressTint="@color/colorAccentGreen"
+            android:progressBackgroundTint="@color/cardBackgroundColor"
             app:layout_constraintTop_toBottomOf="@+id/textViewHabitStatusTitle"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -142,7 +142,7 @@
             android:layout_height="wrap_content"
             android:text="@string/presentage"
             android:textStyle="bold"
-            android:textColor="#FFE8F4F8"
+            android:textColor="@color/textColorPrimary"
             android:textSize="13sp"
             android:layout_marginTop="4dp"
             app:layout_constraintTop_toBottomOf="@+id/progressBarHabit"
@@ -154,7 +154,7 @@
             android:layout_height="wrap_content"
             android:text="@string/days_duration"
             android:textStyle="bold"
-            android:textColor="#FFE8F4F8"
+            android:textColor="@color/textColorPrimary"
             android:textSize="13sp"
             app:layout_constraintTop_toTopOf="@+id/textViewProgressPercentage"
             app:layout_constraintStart_toStartOf="parent"
@@ -167,7 +167,7 @@
             android:layout_height="wrap_content"
             android:text="@string/habit_xp"
             android:textStyle="bold"
-            android:textColor="#FFE8F4F8"
+            android:textColor="@color/textColorPrimary"
             android:textSize="13sp"
             app:layout_constraintTop_toTopOf="@+id/textViewProgressPercentage"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -199,7 +199,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/s"
-                android:textColor="#FFE8F4F8"
+                android:textColor="@color/textColorPrimary"
                 android:textSize="14sp"
                 android:textStyle="bold" />
             <ImageView
@@ -208,7 +208,7 @@
                 android:layout_height="28dp"
                 android:layout_marginTop="4dp"
                 app:srcCompat="@drawable/empty_circle"
-                app:tint="#FFE8F4F8"/>
+                app:tint="@color/iconTint"/>
         </LinearLayout>
 
         <!-- Monday -->
@@ -223,7 +223,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/m"
-                android:textColor="#FFE8F4F8"
+                android:textColor="@color/textColorPrimary"
                 android:textSize="14sp"
                 android:textStyle="bold" />
             <ImageView
@@ -232,7 +232,7 @@
                 android:layout_height="28dp"
                 android:layout_marginTop="4dp"
                 app:srcCompat="@drawable/empty_circle"
-                app:tint="#FFE8F4F8"/>
+                app:tint="@color/iconTint"/>
         </LinearLayout>
 
         <!-- Tuesday -->
@@ -247,7 +247,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/t"
-                android:textColor="#FFE8F4F8"
+                android:textColor="@color/textColorPrimary"
                 android:textSize="14sp"
                 android:textStyle="bold" />
             <ImageView
@@ -256,7 +256,7 @@
                 android:layout_height="28dp"
                 android:layout_marginTop="4dp"
                 app:srcCompat="@drawable/empty_circle"
-                app:tint="#FFE8F4F8"/>
+                app:tint="@color/iconTint"/>
         </LinearLayout>
 
         <!-- Wednesday -->
@@ -271,7 +271,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/w"
-                android:textColor="#FFE8F4F8"
+                android:textColor="@color/textColorPrimary"
                 android:textSize="14sp"
                 android:textStyle="bold" />
             <ImageView
@@ -280,7 +280,7 @@
                 android:layout_height="28dp"
                 android:layout_marginTop="4dp"
                 app:srcCompat="@drawable/empty_circle"
-                app:tint="#FFE8F4F8"/>
+                app:tint="@color/iconTint"/>
         </LinearLayout>
 
         <!-- Thursday -->
@@ -295,7 +295,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/t"
-                android:textColor="#FFE8F4F8"
+                android:textColor="@color/textColorPrimary"
                 android:textSize="14sp"
                 android:textStyle="bold" />
             <ImageView
@@ -304,7 +304,7 @@
                 android:layout_height="28dp"
                 android:layout_marginTop="4dp"
                 app:srcCompat="@drawable/empty_circle"
-                app:tint="#FFE8F4F8"/>
+                app:tint="@color/iconTint"/>
         </LinearLayout>
 
         <!-- Friday -->
@@ -319,7 +319,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/f"
-                android:textColor="#FFE8F4F8"
+                android:textColor="@color/textColorPrimary"
                 android:textSize="14sp"
                 android:textStyle="bold" />
             <ImageView
@@ -328,7 +328,7 @@
                 android:layout_height="28dp"
                 android:layout_marginTop="4dp"
                 app:srcCompat="@drawable/empty_circle"
-                app:tint="#FFE8F4F8"/>
+                app:tint="@color/iconTint"/>
         </LinearLayout>
 
         <!-- Saturday -->
@@ -343,7 +343,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/s"
-                android:textColor="#FFE8F4F8"
+                android:textColor="@color/textColorPrimary"
                 android:textSize="14sp"
                 android:textStyle="bold" />
             <ImageView
@@ -352,7 +352,7 @@
                 android:layout_height="28dp"
                 android:layout_marginTop="4dp"
                 app:srcCompat="@drawable/empty_circle"
-                app:tint="#FFE8F4F8"/>
+                app:tint="@color/iconTint"/>
         </LinearLayout>
 
         <androidx.constraintlayout.helper.widget.Flow

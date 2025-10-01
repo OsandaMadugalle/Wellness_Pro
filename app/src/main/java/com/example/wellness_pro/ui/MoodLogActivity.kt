@@ -88,7 +88,7 @@ class MoodLogActivity : BaseBottomNavActivity() {
         moodSelectionLayouts.forEachIndexed { index, layout ->
             val isSelected = (index + 1) == selectedLevel
             if (isSelected) {
-                layout.setBackgroundColor(ContextCompat.getColor(this, R.color.button_blue_selected))
+                layout.setBackgroundColor(ContextCompat.getColor(this, R.color.button_blue))
             } else {
                 layout.setBackgroundColor(Color.TRANSPARENT) 
             }

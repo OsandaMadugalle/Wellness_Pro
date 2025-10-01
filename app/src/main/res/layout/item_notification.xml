@@ -9,7 +9,7 @@
     android:layout_marginBottom="4dp"
     app:cardCornerRadius="8dp"
     app:cardElevation="4dp"
-    app:cardBackgroundColor="#FF1E3A5A">
+    app:cardBackgroundColor="@color/cardBackgroundColor">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -22,7 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-            android:textColor="#FFE8F4F8"
+            android:textColor="@color/textColorPrimary"
             android:text="Notification Title" />
 
         <TextView
@@ -30,7 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="12sp"
-            android:textColor="#FFA0A0A0"
+            android:textColor="@color/textColorSecondary"
             android:layout_marginTop="4dp"
             android:text="Date" />
 
@@ -39,7 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="12sp"
-            android:textColor="#FFA0A0A0"
+            android:textColor="@color/textColorSecondary"
             android:text="Time" />
 
     </LinearLayout>

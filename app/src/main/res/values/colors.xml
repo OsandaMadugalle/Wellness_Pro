@@ -1,83 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">@color/app_background_dark</color>
-    <color name="colorSecondary">@color/button_blue</color>
-    <color name="colorAccent">@color/box_slate_blue</color>
+    <!-- Primary Palette -->
+    <color name="colorPrimary">#FF1E3A5A</color>
+    <color name="colorPrimaryDark">#FF0A1F2E</color>
+    <color name="colorOnPrimary">#FFE8F4F8</color>
 
-    <color name="app_background_dark">#0A0A0A</color>
-    <color name="text_white">#FFFFFF</color>
-    <color name="text_black">#000000</color>
-    <color name="text_field_white">#FFFFFF</color>
-    <color name="box_very_dark">#151414</color>
-    <color name="box_slate_blue">#0C212E</color>
+    <!-- Accent Palette -->
+    <color name="colorAccentGreen">#FF4CAF50</color>
+    <color name="colorAccentBlue">#FF2196F3</color>
+    <color name="colorAccentRed">#FFEF5350</color>
 
-    <!-- button -->
-    <color name="button_blue">#114DB3</color>
-    <color name="button_red">#E91E63</color>
-    <color name="button_grey">#8A8188</color>
-    <color name="button_custom_dark_background">#151414</color>
+    <!-- Text Palette -->
+    <color name="textColorPrimary">#FFE8F4F8</color>
+    <color name="textColorSecondary">#FFA0A0A0</color>
+    <color name="textColorHint">#FFA0A0A0</color>
+    <color name="text_white">#FFFFFFFF</color>
 
-    <!-- navbar -->
-    <color name="nav_black">#000000</color>
-    <color name="icon_white">#FFFFFF</color>
+    <!-- UI Components -->
+    <color name="backgroundColor">#FF0A1F2E</color>
+    <color name="cardBackgroundColor">#FF1E3A5A</color>
+    <color name="dividerColor">#33E8F4F8</color>
+    <color name="iconTint">#FFE8F4F8</color>
+    <color name="iconTintMuted">#FF757575</color>
+
+    <!-- Standard Colors -->
     <color name="white">#FFFFFFFF</color>
-    <color name="active_nav_icon_color">#FFFFFFFF</color>
-    <color name="inactive_nav_icon_color">#A0A0A0</color>
-    <color name="active_nav_text_color">#FFFFFFFF</color>
-    <color name="inactive_nav_text_color">#FFB0B0B0</color>
-    <color name="hint_text_color">#A0A0A0</color>
+    <color name="black">#FF000000</color>
 
-    <color name="purple_200">#CE93D8</color>
-    <color name="purple_500">#9C27B0</color>
-    <color name="grey_300">#E0E0E0</color>
-    <color name="grey_400">#BDBDBD</color> <!-- Added grey_400 -->
-    <color name="grey_500">#9E9E9E</color>
+    <color name="box_slate_blue">#FF1E3A5A</color>
 
-    <color name="text_grey">#FF8E8E93</color>
-    <color name="text_grey_light">#FFBFBFBF</color>
-    <color name="text_white_secondary">#CCCCCC</color> <!-- Added -->
+    <!-- Dialog & Picker Colors -->
+    <color name="dialog_background_color">@color/cardBackgroundColor</color>
+    <color name="dialog_title_text_color">@color/textColorPrimary</color>
+    <color name="dialog_message_text_color">@color/textColorPrimary</color>
+    <color name="dialog_button_text_color">@color/colorAccentGreen</color>
+    <color name="dialog_button_ripple_color">#334CAF50</color>
+    <color name="timepicker_header_color">@color/colorPrimary</color>
+    <color name="timepicker_header_text_color">@color/colorOnPrimary</color>
+    <color name="timepicker_clock_text_color">@color/textColorPrimary</color>
+    <color name="timepicker_accent_color">@color/colorAccentGreen</color>
+    <color name="icon_grey_light">#D3D3D3</color>
 
-    <!-- BMI -->
-    <color name="bmi_underweight">#FF3498DB</color>
-    <color name="bmi_normal">#FF2ECC71</color>
-    <color name="bmi_overweight">#FFF1C40F</color>
-    <color name="bmi_obese">#FFE74C3C</color>
-    <color name="chart_grid_line">#40FFFFFF</color>
-    <color name="chart_line_blue">#FF569EFF</color> <!-- Using this for chart line -->
-    <color name="chart_circle_color">#FF00BCD4</color> <!-- ADDED for chart circles -->
-    <color name="chart_fill_color">#AED6F1</color> <!-- Added for chart fill -->
+    <!-- Button Colors -->
+    <color name="button_blue">#0D47A1</color> <!-- Use your desired hex code -->
 
-    <!-- Focus -->
-    <color name="chart_axis_text_light_gray">#D3D3D3</color>
-    <color name="chart_grid_dark_gray">#A9A9A9</color>
-    <color name="chart_bar_blue">#82B1FF</color>
-    <!-- ... other colors ... -->
-    <color name="button_blue_selected">#FF03A9F4</color> <!-- Example -->
-    <color name="green_completed">#FF4CAF50</color> <!-- Example -->
+    <!-- Add the missing color definition here -->
+    <color name="chart_grid_line">#424242</color>
 
-    <!-- Add or update icon_grey_light -->
-    <color name="icon_grey_light">#FFB0B0B0</color>
-        <!-- ... other colors ... -->
-    <color name="dialog_background_color">#FF363636</color> <!-- Example: Dark Grey -->
-    <color name="dialog_title_text_color">#FFFFFFFF</color> <!-- Example: White -->
-    <color name="dialog_message_text_color">#FFE0E0E0</color> <!-- Example: Light Grey -->
-    <color name="dialog_button_text_color">#FF82B1FF</color> <!-- Example: Light Blue -->
-    <color name="dialog_button_ripple_color">#4082B1FF</color>
- <!-- Example selected color -->
-    <!-- <color name="button_blue">#FF2196F3</color> -->
- <!-- Your existing button_blue -->
-    <!-- <color name="button_grey">#FF607D8B</color> -->
-
-    <!-- Your existing colors -->
-    <!-- <color name="app_background_dark">#FF121212</color> -->
- <!-- Example, use your actual dark background -->
-    <!-- <color name="text_white">#FFFFFFFF</color> -->
-
-    <!-- <color name="button_blue">#FF03A9F4</color> -->
-
-    <!-- ... other colors ... -->
-    <color name="timepicker_header_color">#FF00796B</color> <!-- Example: Teal -->
-    <color name="timepicker_header_text_color">#FFFFFFFF</color> <!-- Example: White -->
-    <color name="timepicker_clock_text_color">#FF000000</color> <!-- Example: Black -->
-    <color name="timepicker_accent_color">#FF00796B</color> <!-- Example: Teal for selected items -->
+    <!-- You might also have these from your chart code -->
+    <color name="chart_line_blue">#81D4FA</color>
+    <color name="chart_circle_color">#B3E5FC</color>
+    <color name="chart_fill_color">#81D4FA</color>
 </resources>

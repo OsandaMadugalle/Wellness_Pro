@@ -5,7 +5,7 @@
     android:id="@+id/main_content_mood_history"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FF0A1F2E"
+    android:background="@color/backgroundColor"
     android:fitsSystemWindows="true"
     tools:context=".ui.MoodHistoryActivity">
 
@@ -14,7 +14,7 @@
         android:id="@+id/headerLayoutMoodHistory"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="#FF0A1F2E"
+        android:background="@color/backgroundColor"
         android:elevation="4dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Mood History"
-            android:textColor="#FFE8F4F8"
+            android:textColor="@color/textColorPrimary"
             android:textSize="26sp"
             android:textStyle="bold"
             android:gravity="center"
@@ -48,7 +48,7 @@
             android:src="@android:drawable/ic_menu_share"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Share Mood History"
-            app:tint="#FFE8F4F8"
+            app:tint="@color/iconTint"
             android:layout_marginStart="8dp"/>
     </LinearLayout>
 
@@ -78,7 +78,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Daily Mood Trend"
-                android:textColor="#FFE8F4F8"
+                android:textColor="@color/textColorPrimary"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:gravity="center_horizontal"
@@ -100,7 +100,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Not enough mood entries for a trend yet."
-                android:textColor="#FFA0A0A0"
+                android:textColor="@color/textColorSecondary"
                 android:textSize="16sp"
                 android:visibility="gone"
                 app:layout_constraintTop_toTopOf="@id/moodChartHistory"
@@ -123,7 +123,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="No mood entries yet."
-                android:textColor="#FFA0A0A0"
+                android:textColor="@color/textColorSecondary"
                 android:textSize="18sp"
                 android:visibility="gone"
                 app:layout_constraintTop_toTopOf="@id/recyclerViewMoodHistory"
@@ -141,8 +141,8 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:src="@android:drawable/ic_input_add"
-        app:tint="#FFE8F4F8"
-        app:backgroundTint="#FF4CAF50"
+        app:tint="@color/iconTint"
+        app:backgroundTint="@color/colorAccentGreen"
         app:layout_constraintBottom_toTopOf="@id/navBarContainerBottom"
         app:layout_constraintEnd_toEndOf="parent"
         android:contentDescription="Log New Mood" />

@@ -110,8 +110,8 @@ abstract class BaseBottomNavActivity : BaseActivity() {
 
             button.isSelected = isActive // Standard Android state for selection
             // Custom styling for active/inactive state
-            val iconTintColor = if (isActive) R.color.active_nav_icon_color else R.color.inactive_nav_icon_color
-            val textColorVal = if (isActive) R.color.active_nav_text_color else R.color.inactive_nav_text_color
+            val iconTintColor = if (isActive) R.color.colorAccentGreen else R.color.iconTint
+            val textColorVal = if (isActive) R.color.colorAccentGreen else R.color.iconTint
             try {
                 button.setIconTintResource(iconTintColor)
                 button.setTextColor(ContextCompat.getColor(this, textColorVal))
