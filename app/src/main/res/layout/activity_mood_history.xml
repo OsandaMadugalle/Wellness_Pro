@@ -33,9 +33,10 @@
             android:layout_weight="1"
             android:text="Mood History"
             android:textColor="#FFE8F4F8"
-            android:textSize="30sp"
+            android:textSize="26sp"
             android:textStyle="bold"
-            app:autoSizeMaxTextSize="30sp"
+            android:gravity="center"
+            app:autoSizeMaxTextSize="26sp"
             app:autoSizeMinTextSize="20sp"
             app:autoSizeStepGranularity="2sp"
             app:autoSizeTextType="uniform" />
@@ -58,9 +59,8 @@
         android:layout_height="0dp"
         android:fillViewport="true"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
         app:layout_constraintTop_toBottomOf="@+id/headerLayoutMoodHistory"
-        app:layout_constraintBottom_toTopOf="@+id/fabLogNewMood"
+        app:layout_constraintBottom_toTopOf="@+id/navBarContainerBottom"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -71,7 +71,7 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:paddingTop="8dp"
-            android:paddingBottom="8dp">
+            android:paddingBottom="88dp">
 
             <TextView
                 android:id="@+id/textViewChartTitleMoodHistory"
@@ -89,7 +89,7 @@
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/moodChartHistory"
                 android:layout_width="0dp"
-                android:layout_height="220dp"
+                android:layout_height="200dp"
                 android:layout_marginTop="8dp"
                 app:layout_constraintTop_toBottomOf="@+id/textViewChartTitleMoodHistory"
                 app:layout_constraintStart_toStartOf="parent"
@@ -112,10 +112,8 @@
                 android:id="@+id/recyclerViewMoodHistory"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:minHeight="200dp"
                 android:layout_marginTop="16dp"
                 app:layout_constraintTop_toBottomOf="@id/moodChartHistory"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 tools:listitem="@layout/list_item_mood_entry" />
