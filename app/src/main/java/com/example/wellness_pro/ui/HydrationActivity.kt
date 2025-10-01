@@ -32,7 +32,8 @@ class HydrationActivity : BaseBottomNavActivity() {
     private lateinit var progressBarHydrationStatus: ProgressBar
     private lateinit var textViewHydrationProgressInfo: TextView
     private lateinit var textViewNoGoalSetHydration: TextView
-    private lateinit var buttonLogOneGlass: Button
+    private lateinit var buttonAddOneGlass: Button
+    private lateinit var buttonRemoveOneGlass: Button
     private lateinit var buttonGoToSetHydrationSettings: Button
 
     private var currentDailyGoal: Int = 0
@@ -41,7 +42,7 @@ class HydrationActivity : BaseBottomNavActivity() {
     companion object {
         private const val TAG = "HydrationActivity"
         // Re-using constants from SetHydrationActivity to ensure consistency
-        const val PREFS_NAME = SetHydrationActivity.PREFS_NAME 
+        const val PREFS_NAME = SetHydrationActivity.PREFS_NAME
         const val KEY_GLASSES_GOAL = SetHydrationActivity.KEY_GLASSES_GOAL
         const val KEY_HYDRATION_INTAKE_PREFIX = "intake_" // Standard prefix
     }
@@ -53,25 +54,31 @@ class HydrationActivity : BaseBottomNavActivity() {
 
         sharedPreferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
+        // Initialize views
         headerLayoutHydration = findViewById(R.id.headerLayoutHydration)
         progressBarHydrationStatus = findViewById(R.id.progressBarHydrationStatus)
         textViewHydrationProgressInfo = findViewById(R.id.textViewHydrationProgressInfo)
         textViewNoGoalSetHydration = findViewById(R.id.textViewNoGoalSetHydration)
-        buttonLogOneGlass = findViewById(R.id.buttonLogOneGlass)
+        buttonAddOneGlass = findViewById(R.id.buttonAddOneGlass)
+        buttonRemoveOneGlass = findViewById(R.id.buttonRemoveOneGlass)
         buttonGoToSetHydrationSettings = findViewById(R.id.buttonGoToSetHydrationSettings)
+
+        buttonAddOneGlass.setOnClickListener {
+            logOneGlassConsumed()
+        }
+
+        buttonRemoveOneGlass.setOnClickListener {
+            removeOneGlassConsumed()
+        }
+
+        buttonGoToSetHydrationSettings.setOnClickListener {
+            startActivity(Intent(this, SetHydrationActivity::class.java))
+        }
 
         ViewCompat.setOnApplyWindowInsetsListener(headerLayoutHydration) { view, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             view.updatePadding(top = insets.top)
             WindowInsetsCompat.CONSUMED
-        }
-
-        buttonLogOneGlass.setOnClickListener {
-            logOneGlassConsumed()
-        }
-
-        buttonGoToSetHydrationSettings.setOnClickListener {
-            startActivity(Intent(this, SetHydrationActivity::class.java))
         }
     }
 
@@ -99,7 +106,9 @@ class HydrationActivity : BaseBottomNavActivity() {
             textViewNoGoalSetHydration.visibility = View.GONE
             progressBarHydrationStatus.visibility = View.VISIBLE
             textViewHydrationProgressInfo.visibility = View.VISIBLE
-            buttonLogOneGlass.isEnabled = true
+            buttonAddOneGlass.isEnabled = true
+            buttonRemoveOneGlass.isEnabled = currentIntakeToday > 0
+
 
             progressBarHydrationStatus.max = currentDailyGoal
             progressBarHydrationStatus.progress = currentIntakeToday.coerceIn(0, currentDailyGoal)
@@ -114,7 +123,8 @@ class HydrationActivity : BaseBottomNavActivity() {
             progressBarHydrationStatus.visibility = View.GONE
             textViewHydrationProgressInfo.visibility = View.GONE
             textViewHydrationProgressInfo.text = "0/0 glasses"
-            buttonLogOneGlass.isEnabled = false // Disable logging if no goal is set
+            buttonAddOneGlass.isEnabled = false // Disable logging if no goal is set
+            buttonRemoveOneGlass.isEnabled = false
         }
     }
 
@@ -134,7 +144,24 @@ class HydrationActivity : BaseBottomNavActivity() {
 
         Log.d(TAG, "Logged one glass. Today's intake for $todayDateString: $currentIntakeToday")
         Toast.makeText(this, "Water intake: $currentIntakeToday/$currentDailyGoal glasses", Toast.LENGTH_SHORT).show()
-        
+
         updateHydrationProgressDisplay()
+    }
+
+    private fun removeOneGlassConsumed() {
+        if (currentIntakeToday > 0) {
+            val editor = sharedPreferences.edit()
+            val todayDateString = getCurrentHydrationDateString()
+            val intakeKey = KEY_HYDRATION_INTAKE_PREFIX + todayDateString
+
+            currentIntakeToday--
+            editor.putInt(intakeKey, currentIntakeToday)
+            editor.apply()
+
+            Log.d(TAG, "Removed one glass. Today's intake for $todayDateString: $currentIntakeToday")
+            Toast.makeText(this, "Water intake: $currentIntakeToday/$currentDailyGoal glasses", Toast.LENGTH_SHORT).show()
+
+            updateHydrationProgressDisplay()
+        }
     }
 }
