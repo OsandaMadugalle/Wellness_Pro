@@ -1,7 +1,6 @@
 package com.example.wellness_pro.ui
 
 import android.content.Intent
-import android.graphics.Color // For Chart
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -71,35 +70,35 @@ class MoodHistoryActivity : BaseBottomNavActivity() {
             Log.e("MoodHistoryActivity", "Error initializing MoodViewModel", e)
             Toast.makeText(this, "Error loading mood data components.", Toast.LENGTH_LONG).show()
             finish() // Critical component failed, cannot proceed
-            return 
+            return
         }
 
         // RecyclerView Init
         recyclerViewMoodHistory = findViewById(R.id.recyclerViewMoodHistory)
-        textViewNoMoods = findViewById(R.id.textViewNoMoods) 
+        textViewNoMoods = findViewById(R.id.textViewNoMoods)
         fabLogNewMood = findViewById(R.id.fabLogNewMood)
         buttonShareMoodHistory = findViewById(R.id.buttonShareMoodHistory)
 
         setupRecyclerView()
-        observeMoodDataForRecyclerView() 
+        observeMoodDataForRecyclerView()
 
         fabLogNewMood.setOnClickListener {
             startActivity(Intent(this, MoodLogActivity::class.java))
         }
 
         buttonShareMoodHistory.setOnClickListener {
-            shareMoodSummary() 
+            shareMoodSummary()
         }
 
         // Chart Init
         moodChartHistory = findViewById(R.id.moodChartHistory)
         textViewNoMoodsChartHistory = findViewById(R.id.textViewNoMoodsChartHistory)
         setupMoodChartStyle()
-        observeMoodDataForChart() 
+        observeMoodDataForChart()
     }
 
     private fun setupRecyclerView() {
-        moodEntriesAdapter = MoodEntriesAdapter(emptyList()) 
+        moodEntriesAdapter = MoodEntriesAdapter(emptyList())
         recyclerViewMoodHistory.layoutManager = LinearLayoutManager(this)
         recyclerViewMoodHistory.adapter = moodEntriesAdapter
     }
@@ -121,17 +120,17 @@ class MoodHistoryActivity : BaseBottomNavActivity() {
     }
 
     private fun shareMoodSummary() {
-        val currentMoods = moodEntriesAdapter.getItems() 
+        val currentMoods = moodEntriesAdapter.getItems()
         if (currentMoods.isEmpty()) {
             Toast.makeText(this, "No moods to share yet!", Toast.LENGTH_SHORT).show()
             return
         }
-        val latestMood = currentMoods.first() 
-        val moodEmoji = moodEntriesAdapter.getEmojiForMoodLevel(latestMood.moodLevel) 
+        val latestMood = currentMoods.first()
+        val moodEmoji = moodEntriesAdapter.getEmojiForMoodLevel(latestMood.moodLevel)
         val formattedDate = SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(Date(latestMood.timestamp))
-        
+
         val summary = "My latest mood: $moodEmoji on $formattedDate. Note: ${latestMood.notes ?: "N/A"}\nTrack your wellness with Wellness Pro!" // Changed .note to .notes
-        
+
         val shareIntent = Intent().apply {
             action = Intent.ACTION_SEND
             putExtra(Intent.EXTRA_TEXT, summary)
@@ -143,7 +142,7 @@ class MoodHistoryActivity : BaseBottomNavActivity() {
     private fun setupMoodChartStyle() {
         moodChartHistory.description.isEnabled = false
         moodChartHistory.legend.isEnabled = true
-        moodChartHistory.legend.textColor = Color.WHITE
+        moodChartHistory.legend.textColor = ContextCompat.getColor(this, R.color.textColorPrimary)
         moodChartHistory.setTouchEnabled(true)
         moodChartHistory.setPinchZoom(true)
 
@@ -155,29 +154,29 @@ class MoodHistoryActivity : BaseBottomNavActivity() {
                 return dateFormat.format(Date(value.toLong()))
             }
         }
-        xAxis.granularity = 1f 
-        xAxis.textColor = Color.WHITE
-        xAxis.axisLineColor = Color.DKGRAY
-        xAxis.gridColor = ContextCompat.getColor(this, R.color.chart_grid_line) 
+        xAxis.granularity = 1f
+        xAxis.textColor = ContextCompat.getColor(this, R.color.textColorPrimary)
+        xAxis.axisLineColor = ContextCompat.getColor(this, R.color.textColorSecondary)
+        xAxis.gridColor = ContextCompat.getColor(this, R.color.chart_grid_line)
 
         val yAxisLeft = moodChartHistory.axisLeft
-        yAxisLeft.textColor = Color.WHITE
-        yAxisLeft.axisMinimum = 0.5f 
-        yAxisLeft.axisMaximum = 5.5f 
+        yAxisLeft.textColor = ContextCompat.getColor(this, R.color.textColorPrimary)
+        yAxisLeft.axisMinimum = 0.5f
+        yAxisLeft.axisMaximum = 5.5f
         yAxisLeft.granularity = 1f
-        yAxisLeft.setLabelCount(6, true) 
-        yAxisLeft.axisLineColor = Color.DKGRAY
+        yAxisLeft.setLabelCount(6, true)
+        yAxisLeft.axisLineColor = ContextCompat.getColor(this, R.color.textColorSecondary)
         yAxisLeft.gridColor = ContextCompat.getColor(this, R.color.chart_grid_line)
 
         moodChartHistory.axisRight.isEnabled = false
-        moodChartHistory.setBackgroundColor(Color.TRANSPARENT)
+        moodChartHistory.setBackgroundColor(ContextCompat.getColor(this, android.R.color.transparent))
         moodChartHistory.setNoDataText("Log your moods to see your trend!")
-        moodChartHistory.setNoDataTextColor(Color.LTGRAY)
+        moodChartHistory.setNoDataTextColor(ContextCompat.getColor(this, R.color.textColorSecondary))
     }
 
     private fun observeMoodDataForChart() {
         lifecycleScope.launch {
-            moodViewModel.weeklyMoodTrend.collectLatest { moodEntriesFromDb -> 
+            moodViewModel.weeklyMoodTrend.collectLatest { moodEntriesFromDb ->
                 updateMoodChartData(moodEntriesFromDb)
             }
         }
@@ -193,8 +192,8 @@ class MoodHistoryActivity : BaseBottomNavActivity() {
             moodChartHistory.visibility = View.GONE
             textViewNoMoodsChartHistory.visibility = View.VISIBLE
             textViewNoMoodsChartHistory.text = "Not enough mood entries for a trend yet."
-            moodChartHistory.clear() 
-            moodChartHistory.invalidate() 
+            moodChartHistory.clear()
+            moodChartHistory.invalidate()
             return
         }
 
@@ -203,46 +202,46 @@ class MoodHistoryActivity : BaseBottomNavActivity() {
 
         val entries = ArrayList<Entry>()
         val sortedMoodEntries = moodEntries.sortedBy { it.timestamp }
-        sortedMoodEntries.forEach { moodEntry -> 
+        sortedMoodEntries.forEach { moodEntry ->
             entries.add(Entry(moodEntry.timestamp.toFloat(), moodEntry.moodLevel.toFloat()))
         }
 
-        val dataSet = LineDataSet(entries, "Daily Mood Trend") 
+        val dataSet = LineDataSet(entries, "Daily Mood Trend")
         dataSet.color = ContextCompat.getColor(this, R.color.chart_line_blue)
-        dataSet.valueTextColor = Color.WHITE
+        dataSet.valueTextColor = ContextCompat.getColor(this, R.color.textColorPrimary)
         dataSet.setCircleColor(ContextCompat.getColor(this, R.color.chart_circle_color))
         dataSet.circleRadius = 4f
         dataSet.valueTextSize = 10f
-        dataSet.setDrawValues(true) 
+        dataSet.setDrawValues(true)
         dataSet.lineWidth = 2f
         dataSet.mode = LineDataSet.Mode.CUBIC_BEZIER
         dataSet.setDrawFilled(true)
-        dataSet.fillColor = ContextCompat.getColor(this, R.color.chart_fill_color) 
-        dataSet.fillAlpha = 85 
+        dataSet.fillColor = ContextCompat.getColor(this, R.color.chart_fill_color)
+        dataSet.fillAlpha = 85
 
         val lineData = LineData(dataSet)
         moodChartHistory.data = lineData
-        moodChartHistory.invalidate() 
+        moodChartHistory.invalidate()
     }
 }
 
-class MoodEntriesAdapter(private var moodEntries: List<DbMoodEntry>) : 
+class MoodEntriesAdapter(private var moodEntries: List<DbMoodEntry>) :
     RecyclerView.Adapter<MoodEntriesAdapter.MoodEntryViewHolder>() {
 
     private val dateFormat = SimpleDateFormat("MMM d, yyyy 'at' hh:mm a", Locale.getDefault())
 
     fun getEmojiForMoodLevel(moodLevel: Int): String {
         return when (moodLevel) {
-            1 -> "😭" 
-            2 -> "🙁" 
-            3 -> "😐" 
-            4 -> "🙂" 
-            5 -> "😄" 
-            else -> "❓" 
+            1 -> "😭"
+            2 -> "🙁"
+            3 -> "😐"
+            4 -> "🙂"
+            5 -> "😄"
+            else -> "❓"
         }
     }
-    
-    fun getItems(): List<DbMoodEntry> = moodEntries 
+
+    fun getItems(): List<DbMoodEntry> = moodEntries
 
     class MoodEntryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val emojiTextView: TextView = itemView.findViewById(R.id.textViewMoodItemEmoji)
@@ -257,7 +256,7 @@ class MoodEntriesAdapter(private var moodEntries: List<DbMoodEntry>) :
     }
 
     override fun onBindViewHolder(holder: MoodEntryViewHolder, position: Int) {
-        val moodEntry = moodEntries[position] 
+        val moodEntry = moodEntries[position]
         holder.emojiTextView.text = getEmojiForMoodLevel(moodEntry.moodLevel)
 
         try {
@@ -278,7 +277,7 @@ class MoodEntriesAdapter(private var moodEntries: List<DbMoodEntry>) :
     override fun getItemCount() = moodEntries.size
 
     fun updateData(newEntries: List<DbMoodEntry>) {
-        this.moodEntries = newEntries.sortedByDescending { it.timestamp } 
+        this.moodEntries = newEntries.sortedByDescending { it.timestamp }
         notifyDataSetChanged()
     }
 }

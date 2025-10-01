@@ -339,7 +339,7 @@ class HabitsScreen : BaseBottomNavActivity() {
         if (habitsList.isEmpty()) {
             val noHabitsTv = TextView(this).apply {
                 text = getString(R.string.no_habits_yet_message)
-                setTextColor(ContextCompat.getColor(this@HabitsScreen, R.color.text_white))
+                setTextColor(ContextCompat.getColor(this@HabitsScreen, R.color.textColorPrimary))
                 textSize = 16f
                 textAlignment = View.TEXT_ALIGNMENT_CENTER
                 setPadding(0, 60, 0, 60)
@@ -488,7 +488,7 @@ class HabitsScreen : BaseBottomNavActivity() {
         } else {
             iconView.setImageResource(R.drawable.ic_check_circle_outline)
             iconView.colorFilter = PorterDuffColorFilter(
-                ContextCompat.getColor(this, R.color.icon_grey_light),
+                ContextCompat.getColor(this, R.color.iconTintMuted),
                 PorterDuff.Mode.SRC_IN
             )
             iconView.contentDescription = getString(R.string.habit_status_incomplete)
@@ -543,10 +543,10 @@ class HabitsScreen : BaseBottomNavActivity() {
                 val imgView = dayOfWeekImageViews[viewIdx]
                 if (isDayDone) {
                     imgView.setImageResource(R.drawable.fill_circle)
-                    imgView.colorFilter = PorterDuffColorFilter(ContextCompat.getColor(this, R.color.button_blue), PorterDuff.Mode.SRC_IN)
+                    imgView.colorFilter = PorterDuffColorFilter(ContextCompat.getColor(this, R.color.colorAccentBlue), PorterDuff.Mode.SRC_IN)
                 } else {
                     imgView.setImageResource(R.drawable.empty_circle)
-                    imgView.colorFilter = PorterDuffColorFilter(ContextCompat.getColor(this, R.color.icon_grey_light), PorterDuff.Mode.SRC_IN)
+                    imgView.colorFilter = PorterDuffColorFilter(ContextCompat.getColor(this, R.color.iconTintMuted), PorterDuff.Mode.SRC_IN)
                 }
 
                 val todayCal = Calendar.getInstance()
