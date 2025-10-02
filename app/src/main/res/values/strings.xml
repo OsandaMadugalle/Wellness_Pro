@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Wellness Pro</string>
-    <string name="track_wellness">Track Your Wellness With Our App.</string>
+    <string name="track_wellness">Track Your Wellness.</string>
 
     <!-- Nav Bar -->
     <string name="dashboard">Dashboard</string>
