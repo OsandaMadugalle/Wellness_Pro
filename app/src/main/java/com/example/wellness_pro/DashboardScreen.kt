@@ -256,7 +256,6 @@ class DashboardScreen : BaseBottomNavActivity(), SensorEventListener {
             cachedHydrationDataDate = todayHydrationDate
             Log.d("DashboardScreen", "refreshHydrationDataIfNeeded: Refreshed hydration. Goal=$cachedHydrationDailyGoal, Intake=$cachedHydrationCurrentIntake, Date=$cachedHydrationDataDate")
         }
-        updateHydrationProgressUI() // Always update UI after check
     }
     
     private fun observeLatestMood() {
@@ -404,7 +403,8 @@ class DashboardScreen : BaseBottomNavActivity(), SensorEventListener {
         if (this::screenTimeUpdateRunnable.isInitialized) {
             screenTimeUpdateHandler.postDelayed(screenTimeUpdateRunnable, SCREEN_TIME_UPDATE_INTERVAL_MS)
         }
-        refreshHydrationDataIfNeeded() // Updates hydration from prefs if needed, then updates UI
+        refreshHydrationDataIfNeeded() // Updates hydration from prefs if needed
+        updateHydrationProgressUI() // Always update UI after check
         
         // Re-register sensor listener if it was unregistered in onPause
         if (stepCounterSensor != null && ContextCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_GRANTED
