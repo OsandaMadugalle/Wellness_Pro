@@ -101,6 +101,7 @@
             android:layout_marginStart="12dp"
             android:contentDescription="@string/habit_completion_status_icon"
             app:srcCompat="@drawable/ic_check_circle_outline"
+            android:scaleType="fitCenter"
             app:tint="@color/iconTint"/>
     </LinearLayout>
 
