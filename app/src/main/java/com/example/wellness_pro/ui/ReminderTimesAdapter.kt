@@ -7,11 +7,24 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.wellness_pro.R
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 class ReminderTimesAdapter(
     private val reminderTimes: MutableList<String>,
     private val onRemoveClicked: (position: Int) -> Unit
 ) : RecyclerView.Adapter<ReminderTimesAdapter.ViewHolder>() {
+
+    private val timeFormatter = DateTimeFormatter.ofPattern("h:mm a", Locale.US)
+
+    init {
+        sortTimes()
+    }
+
+    private fun sortTimes() {
+        reminderTimes.sortWith(compareBy { LocalTime.parse(it, timeFormatter) })
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -32,8 +45,9 @@ class ReminderTimesAdapter(
     fun addTime(time: String) {
         if (!reminderTimes.contains(time)) { // Prevent duplicates
             reminderTimes.add(time)
-            reminderTimes.sort() // Keep the list sorted for consistent display
-            notifyItemInserted(reminderTimes.indexOf(time))
+            sortTimes()
+            // Using notifyDataSetChanged() is the simplest way to update the UI after a sort.
+            notifyDataSetChanged()
         }
     }
 
@@ -41,7 +55,7 @@ class ReminderTimesAdapter(
         if (position >= 0 && position < reminderTimes.size) {
             reminderTimes.removeAt(position)
             notifyItemRemoved(position)
-            notifyItemRangeChanged(position, reminderTimes.size) // To update subsequent positions
+            notifyItemRangeChanged(position, reminderTimes.size)
         }
     }
 
