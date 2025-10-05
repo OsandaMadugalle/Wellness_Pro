@@ -30,8 +30,7 @@
         android:src="@drawable/ic_remove_circle"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/remove_reminder"
-        android:scaleType="centerInside"
-        app:tint="@color/iconTintMuted"
+        android:scaleType="fitCenter"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
