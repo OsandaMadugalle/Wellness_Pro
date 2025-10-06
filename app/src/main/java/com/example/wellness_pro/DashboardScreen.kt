@@ -246,16 +246,12 @@ class DashboardScreen : BaseBottomNavActivity(), SensorEventListener {
         // If it's the same day, cached values from loadInitialDataToCache or subsequent updates should be fine.
     }
 
-    private fun refreshHydrationDataIfNeeded() {
+    private fun refreshHydrationData() {
         val todayHydrationDate = getCurrentHydrationDateString()
-        // Refresh if the cached date is not today (e.g., app was backgrounded across midnight)
-        // Or if the goal might have changed in HydrationActivity
-        if (cachedHydrationDataDate != todayHydrationDate || hydrationPrefs.getInt(KEY_HYDRATION_DAILY_GOAL, 8) != cachedHydrationDailyGoal ) {
-            cachedHydrationDailyGoal = hydrationPrefs.getInt(KEY_HYDRATION_DAILY_GOAL, 8)
-            cachedHydrationCurrentIntake = hydrationPrefs.getInt(KEY_HYDRATION_INTAKE_PREFIX + todayHydrationDate, 0)
-            cachedHydrationDataDate = todayHydrationDate
-            Log.d("DashboardScreen", "refreshHydrationDataIfNeeded: Refreshed hydration. Goal=$cachedHydrationDailyGoal, Intake=$cachedHydrationCurrentIntake, Date=$cachedHydrationDataDate")
-        }
+        cachedHydrationDailyGoal = hydrationPrefs.getInt(KEY_HYDRATION_DAILY_GOAL, 8)
+        cachedHydrationCurrentIntake = hydrationPrefs.getInt(KEY_HYDRATION_INTAKE_PREFIX + todayHydrationDate, 0)
+        cachedHydrationDataDate = todayHydrationDate
+        Log.d("DashboardScreen", "refreshHydrationData: Refreshed hydration. Goal=$cachedHydrationDailyGoal, Intake=$cachedHydrationCurrentIntake, Date=$cachedHydrationDataDate")
     }
     
     private fun observeLatestMood() {
@@ -403,7 +399,7 @@ class DashboardScreen : BaseBottomNavActivity(), SensorEventListener {
         if (this::screenTimeUpdateRunnable.isInitialized) {
             screenTimeUpdateHandler.postDelayed(screenTimeUpdateRunnable, SCREEN_TIME_UPDATE_INTERVAL_MS)
         }
-        refreshHydrationDataIfNeeded() // Updates hydration from prefs if needed
+        refreshHydrationData() // Updates hydration from prefs
         updateHydrationProgressUI() // Always update UI after check
         
         // Re-register sensor listener if it was unregistered in onPause
