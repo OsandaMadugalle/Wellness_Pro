@@ -17,6 +17,7 @@ import androidx.core.view.updatePadding
 import com.example.wellness_pro.R
 import com.example.wellness_pro.navbar.BaseBottomNavActivity
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -32,6 +33,7 @@ class HydrationActivity : BaseBottomNavActivity() {
     private lateinit var progressBarHydrationStatus: ProgressBar
     private lateinit var textViewHydrationProgressInfo: TextView
     private lateinit var textViewNoGoalSetHydration: TextView
+    private lateinit var textViewNextReminderLabel: TextView
     private lateinit var buttonAddOneGlass: Button
     private lateinit var buttonRemoveOneGlass: Button
     private lateinit var buttonGoToSetHydrationSettings: Button
@@ -41,10 +43,10 @@ class HydrationActivity : BaseBottomNavActivity() {
 
     companion object {
         private const val TAG = "HydrationActivity"
-        // Re-using constants from SetHydrationActivity to ensure consistency
         const val PREFS_NAME = SetHydrationActivity.PREFS_NAME
         const val KEY_GLASSES_GOAL = SetHydrationActivity.KEY_GLASSES_GOAL
-        const val KEY_HYDRATION_INTAKE_PREFIX = "intake_" // Standard prefix
+        const val KEY_HYDRATION_INTAKE_PREFIX = "intake_"
+        private const val KEY_REMINDER_TIMES = "reminderTimesSet"
     }
 
     private lateinit var sharedPreferences: SharedPreferences
@@ -59,6 +61,7 @@ class HydrationActivity : BaseBottomNavActivity() {
         progressBarHydrationStatus = findViewById(R.id.progressBarHydrationStatus)
         textViewHydrationProgressInfo = findViewById(R.id.textViewHydrationProgressInfo)
         textViewNoGoalSetHydration = findViewById(R.id.textViewNoGoalSetHydration)
+        textViewNextReminderLabel = findViewById(R.id.textViewNextReminderLabel)
         buttonAddOneGlass = findViewById(R.id.buttonAddOneGlass)
         buttonRemoveOneGlass = findViewById(R.id.buttonRemoveOneGlass)
         buttonGoToSetHydrationSettings = findViewById(R.id.buttonGoToSetHydrationSettings)
@@ -86,6 +89,7 @@ class HydrationActivity : BaseBottomNavActivity() {
         super.onResume()
         loadHydrationStatus()
         updateHydrationProgressDisplay()
+        displayNextReminderTime()
     }
 
     private fun getCurrentHydrationDateString(): String {
@@ -125,6 +129,45 @@ class HydrationActivity : BaseBottomNavActivity() {
             textViewHydrationProgressInfo.text = "0/0 glasses"
             buttonAddOneGlass.isEnabled = false // Disable logging if no goal is set
             buttonRemoveOneGlass.isEnabled = false
+        }
+    }
+
+    private fun displayNextReminderTime() {
+        val reminderTimes = sharedPreferences.getStringSet(KEY_REMINDER_TIMES, emptySet())?.toList()?.sorted()
+        if (reminderTimes.isNullOrEmpty()) {
+            textViewNextReminderLabel.visibility = View.GONE
+            return
+        }
+
+        val currentTime = Calendar.getInstance()
+        val sdf = SimpleDateFormat("hh:mm a", Locale.getDefault())
+
+        var nextReminderTime: String? = null
+        for (time in reminderTimes) {
+            val reminderCalendar = Calendar.getInstance()
+            val parsedDate = sdf.parse(time)
+            if(parsedDate != null) {
+                val parsedCalendar = Calendar.getInstance()
+                parsedCalendar.time = parsedDate
+
+                reminderCalendar.set(Calendar.HOUR_OF_DAY, parsedCalendar.get(Calendar.HOUR_OF_DAY))
+                reminderCalendar.set(Calendar.MINUTE, parsedCalendar.get(Calendar.MINUTE))
+                reminderCalendar.set(Calendar.SECOND, 0)
+
+                if (reminderCalendar.after(currentTime)) {
+                    nextReminderTime = time
+                    break
+                }
+            }
+        }
+
+        if (nextReminderTime != null) {
+            textViewNextReminderLabel.text = "Next reminder at: $nextReminderTime"
+            textViewNextReminderLabel.visibility = View.VISIBLE
+        } else {
+            // If all reminders for today have passed, show the first reminder for tomorrow
+            textViewNextReminderLabel.text = "Next reminder at: ${reminderTimes.first()} (tomorrow)"
+            textViewNextReminderLabel.visibility = View.VISIBLE
         }
     }
 

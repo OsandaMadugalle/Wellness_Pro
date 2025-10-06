@@ -134,6 +134,18 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/textViewNextReminderLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:textColor="@color/textColorSecondary"
+                android:textSize="16sp"
+                app:layout_constraintTop_toBottomOf="@id/logButtonsLayout"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:text="Next reminder at: 10:00 AM" />
+
+            <TextView
                 android:id="@+id/textViewNoGoalSetHydration"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -143,7 +155,7 @@
                 android:textSize="16sp"
                 android:gravity="center_horizontal"
                 android:visibility="gone"
-                app:layout_constraintTop_toBottomOf="@id/logButtonsLayout"
+                app:layout_constraintTop_toBottomOf="@id/textViewNextReminderLabel"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 

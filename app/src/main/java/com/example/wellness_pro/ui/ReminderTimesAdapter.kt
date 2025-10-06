@@ -36,7 +36,10 @@ class ReminderTimesAdapter(
         val time = reminderTimes[position]
         holder.textViewReminderTime.text = time
         holder.buttonRemoveTime.setOnClickListener {
-            onRemoveClicked(holder.adapterPosition)
+            val adapterPosition = holder.adapterPosition
+            if (adapterPosition != RecyclerView.NO_POSITION) {
+                onRemoveClicked(adapterPosition)
+            }
         }
     }
 
