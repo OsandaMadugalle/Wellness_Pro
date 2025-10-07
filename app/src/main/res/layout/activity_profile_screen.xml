@@ -35,19 +35,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_avatar" />
 
-    <Button
-        android:id="@+id/buttonLogout"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:minHeight="40dp"
-        android:text="@string/log_out"
-        android:textColor="@color/textColorPrimary"
-        app:backgroundTint="@color/colorAccentRed"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintTop_toTopOf="@id/imageViewAvatar"
-        app:layout_constraintBottom_toBottomOf="@id/imageViewAvatar" />
-
     <ImageButton
         android:id="@+id/buttonSettings"
         android:layout_width="44dp"
@@ -58,9 +45,9 @@
         android:padding="8dp"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_settings"
-        app:layout_constraintEnd_toStartOf="@id/buttonLogout"
-        app:layout_constraintTop_toTopOf="@id/buttonLogout"
-        app:layout_constraintBottom_toBottomOf="@id/buttonLogout" />
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintTop_toTopOf="@id/imageViewAvatar"
+        app:layout_constraintBottom_toBottomOf="@id/imageViewAvatar" />
 
     <LinearLayout
         android:id="@+id/headerLayout"
@@ -84,16 +71,6 @@
             android:textColor="@color/textColorPrimary"
             android:textSize="18sp"
             android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/textViewScreenSubtitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="@string/mail"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="13sp" />
     </LinearLayout>
 
     <!-- Progress Section -->
@@ -199,6 +176,7 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_habits"
+                        android:tint="@color/iconTint"
                         android:contentDescription="Habits icon" />
 
                     <TextView
@@ -227,6 +205,7 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_hydration"
+                        android:tint="@color/iconTint"
                         android:contentDescription="Hydration icon" />
 
                     <TextView

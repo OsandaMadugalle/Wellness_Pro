@@ -58,8 +58,6 @@ class ProfileScreen : BaseBottomNavActivity() {
             val intent = Intent(this, SettingsActivity::class.java)
             startActivity(intent)
         }
-        val logoutButton = findViewById<View>(R.id.buttonLogout)
-        logoutButton?.visibility = View.GONE
 
         // New: Edit Profile and Share Progress actions
         findViewById<View?>(R.id.buttonEditProfile)?.setOnClickListener {

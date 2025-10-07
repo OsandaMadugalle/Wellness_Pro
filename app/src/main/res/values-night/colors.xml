@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!-- Primary Palette (Night) -->
+	<color name="colorPrimary">#FF0A1F2E</color>
+	<color name="colorPrimaryDark">#FF061521</color>
+	<color name="colorOnPrimary">#FFE8F4F8</color>
+
+	<!-- Accent Palette (Night) -->
+	<color name="colorAccentGreen">#FF43A047</color>
+	<color name="colorAccentBlue">#FF1976D2</color>
+	<color name="colorAccentRed">#FFE53935</color>
+
+	<!-- Text Palette (Night) -->
+	<color name="textColorPrimary">#FFE8F4F8</color>
+	<color name="textColorSecondary">#FFB0BEC5</color>
+	<color name="textColorHint">#FF90A4AE</color>
+	<color name="text_white">#FFFFFFFF</color>
+
+	<!-- UI Components (Night) -->
+	<color name="backgroundColor">#FF061521</color>
+	<color name="cardBackgroundColor">#FF0D2A40</color>
+	<color name="dividerColor">#33E8F4F8</color>
+	<color name="iconTint">#FFE8F4F8</color>
+	<color name="iconTintMuted">#FF90A4AE</color>
+
+	<!-- Standard Colors -->
+	<color name="white">#FFFFFFFF</color>
+	<color name="black">#FF000000</color>
+
+	<color name="box_slate_blue">#FF0D2A40</color>
+
+	<!-- Dialog & Picker Colors (Night) -->
+	<color name="dialog_background_color">@color/cardBackgroundColor</color>
+	<color name="dialog_title_text_color">@color/textColorPrimary</color>
+	<color name="dialog_message_text_color">@color/textColorPrimary</color>
+	<color name="dialog_button_text_color">@color/colorAccentGreen</color>
+	<color name="dialog_button_ripple_color">#3343A047</color>
+	<color name="timepicker_header_color">@color/colorPrimary</color>
+	<color name="timepicker_header_text_color">@color/colorOnPrimary</color>
+	<color name="timepicker_clock_text_color">@color/textColorPrimary</color>
+	<color name="timepicker_accent_color">@color/colorAccentGreen</color>
+	<color name="icon_grey_light">#607D8B</color>
+
+	<!-- Button Colors (Night) -->
+	<color name="button_blue">#1565C0</color>
+
+	<!-- Chart Colors (Night) -->
+	<color name="chart_grid_line">#455A64</color>
+	<color name="chart_line_blue">#4FC3F7</color>
+	<color name="chart_circle_color">#81D4FA</color>
+	<color name="chart_fill_color">#4FC3F7</color>
+</resources>
