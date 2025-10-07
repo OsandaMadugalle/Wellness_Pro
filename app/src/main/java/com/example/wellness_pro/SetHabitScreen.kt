@@ -324,9 +324,18 @@ class SetHabitScreen : BaseActivity() {
 
     private fun updateScheduleButtonStates(clickedButton: Button) {
         Log.d(DEBUG_TAG, "updateScheduleButtonStates called for: ${clickedButton.text}")
-        selectedSchedule = clickedButton.text.toString() 
+        selectedSchedule = clickedButton.text.toString()
         scheduleButtons.forEach { button ->
-            button.isSelected = (button == clickedButton)
+            val isSelected = (button == clickedButton)
+            button.isSelected = isSelected
+            val bgColor = if (isSelected) R.color.colorAccentGreen else R.color.cardBackgroundColor
+            val textColor = if (isSelected) R.color.white else R.color.textColorPrimary
+            try {
+                button.backgroundTintList = ContextCompat.getColorStateList(this, bgColor)
+            } catch (_: Exception) {
+                // Ignore if backgroundTintList not supported here
+            }
+            button.setTextColor(ContextCompat.getColor(this, textColor))
         }
     }
     
