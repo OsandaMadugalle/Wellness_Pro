@@ -27,6 +27,9 @@ import com.github.mikephil.charting.data.LineData // For Chart
 import com.github.mikephil.charting.data.LineDataSet // For Chart
 import com.github.mikephil.charting.formatter.ValueFormatter // For Chart
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.chip.ChipGroup
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 // Gson and TypeToken no longer needed for RecyclerView
 import kotlinx.coroutines.flow.collectLatest // Changed to collectLatest for RecyclerView updates
 import kotlinx.coroutines.launch // For Chart ViewModel
@@ -55,6 +58,9 @@ class MoodHistoryActivity : BaseBottomNavActivity() {
     // Chart related
     private lateinit var moodChartHistory: LineChart
     private lateinit var textViewNoMoodsChartHistory: TextView // For Chart
+
+    private lateinit var chipGroupFilters: ChipGroup
+    private val daysWindowState = MutableStateFlow<Int?>(7) // default 7 days; null means all
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,6 +96,19 @@ class MoodHistoryActivity : BaseBottomNavActivity() {
             shareMoodSummary()
         }
 
+        chipGroupFilters = findViewById(R.id.chipGroupFilters)
+        chipGroupFilters.setOnCheckedChangeListener { _, checkedId ->
+            val days = when (checkedId) {
+                R.id.chipDaily -> 1
+                R.id.chipLast7 -> 7
+                R.id.chipLast14 -> 14
+                R.id.chipLast30 -> 30
+                R.id.chipAll -> null
+                else -> 7
+            }
+            daysWindowState.value = days
+        }
+
         // Chart Init
         moodChartHistory = findViewById(R.id.moodChartHistory)
         textViewNoMoodsChartHistory = findViewById(R.id.textViewNoMoodsChartHistory)
@@ -105,16 +124,35 @@ class MoodHistoryActivity : BaseBottomNavActivity() {
 
     private fun observeMoodDataForRecyclerView() {
         lifecycleScope.launch {
-            moodViewModel.allMoodEntriesSorted.collectLatest { entriesFromDb ->
-                moodEntriesAdapter.updateData(entriesFromDb)
-                if (entriesFromDb.isEmpty()) {
+            combine(
+                moodViewModel.allMoodEntriesSorted,
+                daysWindowState
+            ) { entriesFromDb, daysFilter ->
+                val filtered = when (daysFilter) {
+                    null -> entriesFromDb
+                    else -> {
+                        val end = System.currentTimeMillis()
+                        val startCal = java.util.Calendar.getInstance().apply {
+                            timeInMillis = end
+                            add(java.util.Calendar.DAY_OF_YEAR, -(daysFilter))
+                            set(java.util.Calendar.HOUR_OF_DAY, 0)
+                            set(java.util.Calendar.MINUTE, 0)
+                            set(java.util.Calendar.SECOND, 0)
+                            set(java.util.Calendar.MILLISECOND, 0)
+                        }
+                        entriesFromDb.filter { it.timestamp >= startCal.timeInMillis && it.timestamp <= end }
+                    }
+                }
+                filtered
+            }.collectLatest { filteredEntries ->
+                moodEntriesAdapter.updateData(filteredEntries)
+                if (filteredEntries.isEmpty()) {
                     textViewNoMoods.visibility = View.VISIBLE
                     recyclerViewMoodHistory.visibility = View.GONE
                 } else {
                     textViewNoMoods.visibility = View.GONE
                     recyclerViewMoodHistory.visibility = View.VISIBLE
                 }
-                Log.d("MoodHistoryActivity", "Updated RecyclerView with ${entriesFromDb.size} mood entries from DB.")
             }
         }
     }
@@ -176,8 +214,28 @@ class MoodHistoryActivity : BaseBottomNavActivity() {
 
     private fun observeMoodDataForChart() {
         lifecycleScope.launch {
-            moodViewModel.weeklyMoodTrend.collectLatest { moodEntriesFromDb ->
-                updateMoodChartData(moodEntriesFromDb)
+            combine(
+                moodViewModel.allMoodEntriesSorted, // reuse same flow for simplicity
+                daysWindowState
+            ) { entriesFromDb, daysFilter ->
+                val filtered = when (daysFilter) {
+                    null -> entriesFromDb
+                    else -> {
+                        val end = System.currentTimeMillis()
+                        val startCal = java.util.Calendar.getInstance().apply {
+                            timeInMillis = end
+                            add(java.util.Calendar.DAY_OF_YEAR, -(daysFilter))
+                            set(java.util.Calendar.HOUR_OF_DAY, 0)
+                            set(java.util.Calendar.MINUTE, 0)
+                            set(java.util.Calendar.SECOND, 0)
+                            set(java.util.Calendar.MILLISECOND, 0)
+                        }
+                        entriesFromDb.filter { it.timestamp >= startCal.timeInMillis && it.timestamp <= end }
+                    }
+                }
+                filtered
+            }.collectLatest { filteredForChart ->
+                updateMoodChartData(filteredForChart)
             }
         }
     }
