@@ -111,8 +111,10 @@ class ProfileScreen : BaseBottomNavActivity() {
     }
 
     private fun setPlaceholderProfileData() {
-        if (::textViewName.isInitialized) textViewName.text = getString(R.string.name)
-        if (::textViewEmail.isInitialized) textViewEmail.text = getString(R.string.mail)
+        val prefs = getSharedPreferences("AppSettingsPrefs", android.content.Context.MODE_PRIVATE)
+        val displayName = prefs.getString("display_name", null)
+        if (::textViewName.isInitialized) textViewName.text = displayName?.takeIf { it.isNotBlank() } ?: getString(R.string.name)
+        if (::textViewEmail.isInitialized) textViewEmail.visibility = View.GONE
         if (::imageViewAvatar.isInitialized) {
             imageViewAvatar.setImageResource(R.drawable.ic_avatar)
         }
