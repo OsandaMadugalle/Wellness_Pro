@@ -5,16 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/backgroundColor"
+    android:fitsSystemWindows="true"
     tools:context=".ui.SettingsActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_settings"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+        android:background="@color/cardBackgroundColor"
         android:elevation="4dp"
         app:title="@string/settings"
-        app:titleTextColor="@color/white"
+        app:titleTextColor="@color/textColorPrimary"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -50,8 +51,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp">
+                android:padding="12dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/cardBackgroundColor">
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -62,7 +64,9 @@
                     android:id="@+id/buttonChangeName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Edit"/>
+                    android:text="Edit"
+                    android:textColor="@color/white"
+                    app:backgroundTint="@color/colorAccentBlue"/>
             </LinearLayout>
 
             <View
@@ -86,8 +90,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp">
+                android:padding="12dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/cardBackgroundColor">
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -97,7 +102,9 @@
                 <Switch
                     android:id="@+id/switchEnableNotifications"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    app:thumbTint="@color/colorAccentGreen"
+                    app:trackTint="@color/iconTintMuted"/>
             </LinearLayout>
 
             <View
@@ -121,8 +128,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp">
+                android:padding="12dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/cardBackgroundColor">
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -132,7 +140,9 @@
                 <Switch
                     android:id="@+id/switchDarkMode"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    app:thumbTint="@color/colorAccentGreen"
+                    app:trackTint="@color/iconTintMuted"/>
             </LinearLayout>
 
             <View
@@ -156,8 +166,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp">
+                android:padding="12dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/cardBackgroundColor">
                 <TextView
                     android:id="@+id/textViewVersionLabel"
                     android:layout_width="0dp"
@@ -169,6 +180,7 @@
                     android:id="@+id/textViewVersionValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/textColorPrimary"
                     android:text="1.0"/>
             </LinearLayout>
 

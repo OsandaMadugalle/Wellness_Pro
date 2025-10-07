@@ -18,6 +18,9 @@ import android.os.Build
 import android.provider.Settings
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import android.content.pm.PackageManager
 
 class SettingsActivity : BaseActivity() { // CHANGED parent class
@@ -36,6 +39,17 @@ class SettingsActivity : BaseActivity() { // CHANGED parent class
 		// Enable the Up button (back arrow)
 		supportActionBar?.setDisplayHomeAsUpEnabled(true)
 		supportActionBar?.setDisplayShowHomeEnabled(true)
+		toolbar.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
+
+		// Apply top inset so toolbar isn't hidden under status bar
+		ViewCompat.setOnApplyWindowInsetsListener(toolbar) { v, insets ->
+			val statusBars = insets.getInsets(WindowInsetsCompat.Type.statusBars())
+			v.updatePadding(top = statusBars.top)
+			insets
+		}
+		// Keep toolbar above content
+		toolbar.elevation = resources.getDimension(R.dimen.toolbar_elevation_default)
+		toolbar.bringToFront()
 
 		initSettingsUI()
 	}

@@ -3,4 +3,5 @@
     <dimen name="action_icon_size">28dp</dimen>
     <dimen name="action_icon_margin_end">52dp</dimen>
     <dimen name="action_icon_margin_start_delete">16dp</dimen>
+    <dimen name="toolbar_elevation_default">4dp</dimen>
 </resources>
