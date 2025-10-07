@@ -60,6 +60,30 @@ class ProfileScreen : BaseBottomNavActivity() {
         }
         val logoutButton = findViewById<View>(R.id.buttonLogout)
         logoutButton?.visibility = View.GONE
+
+        // New: Edit Profile and Share Progress actions
+        findViewById<View?>(R.id.buttonEditProfile)?.setOnClickListener {
+            try {
+                startActivity(Intent(this, SettingsActivity::class.java))
+            } catch (e: Exception) {
+                Toast.makeText(this, "Unable to open settings.", Toast.LENGTH_SHORT).show()
+            }
+        }
+        findViewById<View?>(R.id.buttonShareProgress)?.setOnClickListener {
+            try {
+                val userProgress = UserProgressUtil.loadUserProgress(applicationContext)
+                val xpToNextDisplay = if (userProgress.xpToNextLevel == Int.MAX_VALUE) "MAX" else userProgress.xpToNextLevel.toString()
+                val summary = "My wellness progress: Level ${userProgress.currentLevel}, XP ${userProgress.currentXp}/${xpToNextDisplay}. Logged with Wellness Pro."
+                val shareIntent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_TEXT, summary)
+                    type = "text/plain"
+                }
+                startActivity(Intent.createChooser(shareIntent, getString(R.string.share_mood_history)))
+            } catch (e: Exception) {
+                Toast.makeText(this, "Unable to share progress.", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     override fun onResume() {

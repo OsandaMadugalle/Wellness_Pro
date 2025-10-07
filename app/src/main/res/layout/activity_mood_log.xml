@@ -52,15 +52,27 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
+            <TextView
+                android:id="@+id/textViewMoodHelper"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Tap an emoji to select your mood"
+                android:textColor="@color/textColorSecondary"
+                android:textSize="12sp"
+                android:layout_marginTop="4dp"
+                app:layout_constraintTop_toBottomOf="@id/textViewMoodSelectionPrompt"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
             <LinearLayout
                 android:id="@+id/moodSelectionLayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="12dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/textViewMoodSelectionPrompt">
+                app:layout_constraintTop_toBottomOf="@id/textViewMoodHelper">
 
                 <!-- Mood 1: Very Sad -->
                 <LinearLayout
@@ -72,9 +84,10 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:background="?attr/selectableItemBackground"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                    android:gravity="center_horizontal">
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:gravity="center_horizontal"
+                    android:contentDescription="Very sad">
 
                     <TextView
                         android:id="@+id/textViewMoodEmoji1"
@@ -104,10 +117,11 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:background="?attr/selectableItemBackground"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
                     android:gravity="center_horizontal"
-                    android:layout_marginStart="4dp">
+                    android:layout_marginStart="4dp"
+                    android:contentDescription="Sad">
 
                     <TextView
                         android:id="@+id/textViewMoodEmoji2"
@@ -137,10 +151,11 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:background="?attr/selectableItemBackground"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
                     android:gravity="center_horizontal"
-                    android:layout_marginStart="4dp">
+                    android:layout_marginStart="4dp"
+                    android:contentDescription="Neutral">
 
                     <TextView
                         android:id="@+id/textViewMoodEmoji3"
@@ -170,10 +185,11 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:background="?attr/selectableItemBackground"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
                     android:gravity="center_horizontal"
-                    android:layout_marginStart="4dp">
+                    android:layout_marginStart="4dp"
+                    android:contentDescription="Okay">
 
                     <TextView
                         android:id="@+id/textViewMoodEmoji4"
@@ -203,10 +219,11 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:background="?attr/selectableItemBackground"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
                     android:gravity="center_horizontal"
-                    android:layout_marginStart="4dp">
+                    android:layout_marginStart="4dp"
+                    android:contentDescription="Happy">
 
                     <TextView
                         android:id="@+id/textViewMoodEmoji5"
@@ -259,17 +276,35 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
-            <Button
-                android:id="@+id/buttonSaveMood"
+            <LinearLayout
+                android:id="@+id/actionsRow"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/log_mood"
+                android:orientation="horizontal"
                 android:layout_marginTop="16dp"
                 app:layout_constraintTop_toBottomOf="@id/editTextMoodNotes"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:backgroundTint="@color/colorAccentGreen"
-                android:textColor="@color/textColorPrimary"/>
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <Button
+                    android:id="@+id/buttonCancelMood"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/cancel"
+                    app:backgroundTint="@color/cardBackgroundColor"
+                    android:textColor="@color/textColorPrimary"/>
+
+                <Button
+                    android:id="@+id/buttonSaveMood"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/log_mood"
+                    android:layout_marginStart="8dp"
+                    app:backgroundTint="@color/colorAccentGreen"
+                    android:textColor="@color/white"/>
+            </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

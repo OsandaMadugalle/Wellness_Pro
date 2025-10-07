@@ -37,6 +37,7 @@ class HydrationActivity : BaseBottomNavActivity() {
     private lateinit var buttonAddOneGlass: Button
     private lateinit var buttonRemoveOneGlass: Button
     private lateinit var buttonGoToSetHydrationSettings: Button
+    private lateinit var textViewWeeklySummary: TextView
 
     private var currentDailyGoal: Int = 0
     private var currentIntakeToday: Int = 0
@@ -65,6 +66,7 @@ class HydrationActivity : BaseBottomNavActivity() {
         buttonAddOneGlass = findViewById(R.id.buttonAddOneGlass)
         buttonRemoveOneGlass = findViewById(R.id.buttonRemoveOneGlass)
         buttonGoToSetHydrationSettings = findViewById(R.id.buttonGoToSetHydrationSettings)
+        textViewWeeklySummary = findViewById(R.id.textViewWeeklySummary)
 
         buttonAddOneGlass.setOnClickListener {
             logOneGlassConsumed()
@@ -90,6 +92,7 @@ class HydrationActivity : BaseBottomNavActivity() {
         loadHydrationStatus()
         updateHydrationProgressDisplay()
         displayNextReminderTime()
+        displayWeeklySummary()
     }
 
     private fun getCurrentHydrationDateString(): String {
@@ -120,6 +123,7 @@ class HydrationActivity : BaseBottomNavActivity() {
 
             if (currentIntakeToday >= currentDailyGoal) {
                 textViewHydrationProgressInfo.append(" - Goal Reached! 🎉")
+                markGoalMetForToday()
             }
 
         } else {
@@ -183,12 +187,14 @@ class HydrationActivity : BaseBottomNavActivity() {
 
         currentIntakeToday++
         editor.putInt(intakeKey, currentIntakeToday)
+        editor.putLong("last_drink_timestamp", System.currentTimeMillis())
         editor.apply()
 
         Log.d(TAG, "Logged one glass. Today's intake for $todayDateString: $currentIntakeToday")
         Toast.makeText(this, "Water intake: $currentIntakeToday/$currentDailyGoal glasses", Toast.LENGTH_SHORT).show()
 
         updateHydrationProgressDisplay()
+        displayWeeklySummary()
     }
 
     private fun removeOneGlassConsumed() {
@@ -205,6 +211,39 @@ class HydrationActivity : BaseBottomNavActivity() {
             Toast.makeText(this, "Water intake: $currentIntakeToday/$currentDailyGoal glasses", Toast.LENGTH_SHORT).show()
 
             updateHydrationProgressDisplay()
+            displayWeeklySummary()
         }
+    }
+
+    private fun markGoalMetForToday() {
+        if (currentDailyGoal <= 0) return
+        val todayDateString = getCurrentHydrationDateString()
+        val goalMetKey = getGoalMetKey(todayDateString)
+        if (!sharedPreferences.getBoolean(goalMetKey, false)) {
+            sharedPreferences.edit().putBoolean(goalMetKey, true).apply()
+            Log.d(TAG, "Marked goal met for $todayDateString")
+        }
+    }
+
+    private fun getGoalMetKey(dateString: String): String {
+        return "goal_met_" + dateString
+    }
+
+    private fun displayWeeklySummary() {
+        val days = 7
+        val count = getGoalMetCountForPastDays(days)
+        textViewWeeklySummary.text = getString(R.string.weekly_goal_summary, count, days)
+        textViewWeeklySummary.visibility = View.VISIBLE
+    }
+
+    private fun getGoalMetCountForPastDays(days: Int): Int {
+        var count = 0
+        val cal = Calendar.getInstance()
+        for (i in 0 until days) {
+            val dateString = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(cal.time)
+            if (sharedPreferences.getBoolean(getGoalMetKey(dateString), false)) count++
+            cal.add(Calendar.DAY_OF_YEAR, -1)
+        }
+        return count
     }
 }

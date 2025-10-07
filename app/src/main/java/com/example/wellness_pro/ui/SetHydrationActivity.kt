@@ -30,6 +30,9 @@ import com.example.wellness_pro.reminders.HydrationReminderManager
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import android.content.Intent
+import android.os.PowerManager
+import android.provider.Settings
 
 class SetHydrationActivity : BaseBottomNavActivity() {
 
@@ -46,6 +49,13 @@ class SetHydrationActivity : BaseBottomNavActivity() {
     private lateinit var editTextSetGlassesGoal: EditText
     private lateinit var textViewSetRemindersInfo: TextView
     private lateinit var headerLayoutSetHydration: LinearLayout
+    private lateinit var switchMasterEnableReminders: android.widget.Switch
+    private lateinit var buttonPauseForDay: Button
+    private lateinit var editTextCustomHydrationMessage: EditText
+    private lateinit var switchReminderSound: android.widget.Switch
+    private lateinit var switchReminderVibration: android.widget.Switch
+    private lateinit var switchEnableSmartReminders: android.widget.Switch
+    private lateinit var editTextNoDrinkThresholdMinutes: EditText
 
     private lateinit var reminderTimesAdapter: ReminderTimesAdapter // Assuming this adapter is available
     private val reminderTimesList = mutableListOf<String>()
@@ -93,15 +103,69 @@ class SetHydrationActivity : BaseBottomNavActivity() {
         textViewSetNoReminders = findViewById(R.id.textViewSetNoReminders)
         buttonSetAddTime = findViewById(R.id.buttonSetAddTime)
         buttonSaveHydrationSettings = findViewById(R.id.buttonSaveHydrationSettings)
+        switchMasterEnableReminders = findViewById(R.id.switchMasterEnableReminders)
+        buttonPauseForDay = findViewById(R.id.buttonPauseForDay)
+        editTextCustomHydrationMessage = findViewById(R.id.editTextCustomHydrationMessage)
+        switchReminderSound = findViewById(R.id.switchReminderSound)
+        switchReminderVibration = findViewById(R.id.switchReminderVibration)
+        switchEnableSmartReminders = findViewById(R.id.switchEnableSmartReminders)
+        editTextNoDrinkThresholdMinutes = findViewById(R.id.editTextNoDrinkThresholdMinutes)
 
         setupRecyclerView()
         setupGlassesGoalListener()
         loadHydrationSettingsToUI()
+        loadMasterAndPauseStateToUI()
+        maybeShowBatteryOptimizationWarning()
+        loadCustomMessageToUI()
+        loadNotificationOptionsToUI()
+        loadSmartRemindersToUI()
         updateRemindersCountInfoText()
         updateEmptyViewVisibility()
 
         buttonSetAddTime.setOnClickListener {
             showTimePickerDialog()
+        }
+
+        switchMasterEnableReminders.setOnCheckedChangeListener { _, isChecked ->
+            sharedPreferences.edit().putBoolean("reminders_master_enabled", isChecked).apply()
+            if (isChecked) {
+                HydrationReminderManager.scheduleOrUpdateAllReminders(this)
+            } else {
+                HydrationReminderManager.cancelAllReminders(this)
+            }
+        }
+
+        switchReminderSound.setOnCheckedChangeListener { _, isChecked ->
+            sharedPreferences.edit().putBoolean("reminder_sound_enabled", isChecked).apply()
+            com.example.wellness_pro.WellnessProApplication.ensureHydrationChannel(this)
+            Toast.makeText(this, getString(R.string.notification_option_applied), Toast.LENGTH_SHORT).show()
+        }
+
+        switchReminderVibration.setOnCheckedChangeListener { _, isChecked ->
+            sharedPreferences.edit().putBoolean("reminder_vibration_enabled", isChecked).apply()
+            com.example.wellness_pro.WellnessProApplication.ensureHydrationChannel(this)
+            Toast.makeText(this, getString(R.string.notification_option_applied), Toast.LENGTH_SHORT).show()
+        }
+
+        switchEnableSmartReminders.setOnCheckedChangeListener { _, isChecked ->
+            sharedPreferences.edit().putBoolean("smart_reminders_enabled", isChecked).apply()
+            HydrationReminderManager.scheduleOrUpdateAllReminders(this)
+        }
+
+        editTextNoDrinkThresholdMinutes.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                val minutes = s?.toString()?.toIntOrNull() ?: 0
+                sharedPreferences.edit().putInt("no_drink_threshold_minutes", minutes).apply()
+            }
+        })
+
+        buttonPauseForDay.setOnClickListener {
+            val pauseUntil = System.currentTimeMillis() + 24L * 60L * 60L * 1000L
+            sharedPreferences.edit().putLong("reminders_pause_until_millis", pauseUntil).apply()
+            Toast.makeText(this, getString(R.string.paused_for_today_until, formatDateTime(pauseUntil)), Toast.LENGTH_SHORT).show()
+            HydrationReminderManager.cancelAllReminders(this)
         }
 
         buttonSaveHydrationSettings.setOnClickListener {
@@ -120,6 +184,7 @@ class SetHydrationActivity : BaseBottomNavActivity() {
             currentSetGlassesGoal = goalToSave 
             val timesToSave = reminderTimesAdapter.getTimes()
             saveHydrationSettingsToPrefs(currentSetGlassesGoal, timesToSave)
+            saveCustomMessageToPrefs()
 
             if (timesToSave.isNotEmpty()) {
                 Toast.makeText(this, "Settings saved! Reminders updating.", Toast.LENGTH_SHORT).show()
@@ -180,6 +245,22 @@ class SetHydrationActivity : BaseBottomNavActivity() {
         if (::reminderTimesAdapter.isInitialized) {
             reminderTimesAdapter.notifyDataSetChanged()
         }
+    }
+
+    private fun loadMasterAndPauseStateToUI() {
+        val masterEnabled = sharedPreferences.getBoolean("reminders_master_enabled", true)
+        val pauseUntil = sharedPreferences.getLong("reminders_pause_until_millis", 0L)
+        switchMasterEnableReminders.isChecked = masterEnabled
+        if (pauseUntil > System.currentTimeMillis()) {
+            buttonPauseForDay.text = getString(R.string.paused_until_label, formatDateTime(pauseUntil))
+        } else {
+            buttonPauseForDay.text = getString(R.string.pause_for_today)
+        }
+    }
+
+    private fun formatDateTime(millis: Long): String {
+        val sdf = SimpleDateFormat("MMM d, yyyy hh:mm a", Locale.getDefault())
+        return sdf.format(java.util.Date(millis))
     }
 
     private fun setupRecyclerView() {
@@ -258,6 +339,62 @@ class SetHydrationActivity : BaseBottomNavActivity() {
         }
         val sdf = SimpleDateFormat("hh:mm a", Locale.getDefault())
         return sdf.format(calendar.time)
+    }
+
+    private fun maybeShowBatteryOptimizationWarning() {
+        try {
+            val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
+            val packageName = packageName
+            val ignoring = pm.isIgnoringBatteryOptimizations(packageName)
+            val dismissed = sharedPreferences.getBoolean("battery_optimization_warning_dismissed", false)
+            if (!ignoring && !dismissed) {
+                androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.battery_optimization_title))
+                    .setMessage(getString(R.string.battery_optimization_message))
+                    .setPositiveButton(getString(R.string.open_settings)) { _, _ ->
+                        try {
+                            val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
+                                data = android.net.Uri.parse("package:" + packageName)
+                            }
+                            startActivity(intent)
+                        } catch (e: Exception) {
+                            Toast.makeText(this, getString(R.string.unable_to_open_settings), Toast.LENGTH_LONG).show()
+                        }
+                    }
+                    .setNegativeButton(getString(R.string.dismiss)) { _, _ ->
+                        sharedPreferences.edit().putBoolean("battery_optimization_warning_dismissed", true).apply()
+                    }
+                    .show()
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "maybeShowBatteryOptimizationWarning: ${e.message}")
+        }
+    }
+
+    private fun saveCustomMessageToPrefs() {
+        val message = editTextCustomHydrationMessage.text?.toString()?.trim() ?: ""
+        sharedPreferences.edit().putString("custom_hydration_message", message).apply()
+    }
+
+    private fun loadCustomMessageToUI() {
+        val message = sharedPreferences.getString("custom_hydration_message", "") ?: ""
+        if (message.isNotEmpty()) {
+            editTextCustomHydrationMessage.setText(message)
+        }
+    }
+
+    private fun loadNotificationOptionsToUI() {
+        val soundEnabled = sharedPreferences.getBoolean("reminder_sound_enabled", true)
+        val vibrationEnabled = sharedPreferences.getBoolean("reminder_vibration_enabled", true)
+        switchReminderSound.isChecked = soundEnabled
+        switchReminderVibration.isChecked = vibrationEnabled
+    }
+
+    private fun loadSmartRemindersToUI() {
+        val enabled = sharedPreferences.getBoolean("smart_reminders_enabled", false)
+        val mins = sharedPreferences.getInt("no_drink_threshold_minutes", 60)
+        switchEnableSmartReminders.isChecked = enabled
+        editTextNoDrinkThresholdMinutes.setText(mins.toString())
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

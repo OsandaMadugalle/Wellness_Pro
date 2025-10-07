@@ -75,6 +75,9 @@ dependencies {
     // MPAndroidChart
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
+    // WorkManager (for reminder fallback)
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
+
     // Glide
     implementation("com.github.bumptech.glide:glide:4.16.0")
     ksp("com.github.bumptech.glide:ksp:4.16.0")

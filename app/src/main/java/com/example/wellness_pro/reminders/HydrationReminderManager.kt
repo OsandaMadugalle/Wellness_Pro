@@ -15,6 +15,10 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import java.util.TreeSet
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import java.util.concurrent.TimeUnit
 
 object HydrationReminderManager {
 
@@ -27,6 +31,8 @@ object HydrationReminderManager {
     // If it's not public, you might need to use the string directly, but it's better to reference it.
     // Assuming HydrationActivity.KEY_REMINDER_TIMES was how it was intended, or directly using the string:
     private const val KEY_REMINDER_TIMES = "reminderTimesSet" // This is the actual string value from HydrationActivity
+    private const val KEY_MASTER_ENABLED = "reminders_master_enabled"
+    private const val KEY_PAUSE_UNTIL_MILLIS = "reminders_pause_until_millis"
 
     // NOTIFICATION_ID from here is not directly used by HydrationAlarmReceiver anymore for posting,
     // but REQUEST_CODE_ALARM is still for this manager's PendingIntent uniqueness.
@@ -36,9 +42,26 @@ object HydrationReminderManager {
     fun scheduleOrUpdateAllReminders(context: Context) {
         Log.d(TAG, "scheduleOrUpdateAllReminders called, using PREFS_NAME: $PREFS_NAME")
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val masterEnabled = prefs.getBoolean(KEY_MASTER_ENABLED, true)
+        val pauseUntil = prefs.getLong(KEY_PAUSE_UNTIL_MILLIS, 0L)
+        val now = System.currentTimeMillis()
+
+        if (!masterEnabled) {
+            Log.i(TAG, "Hydration reminders are disabled by master toggle. Cancelling existing alarms.")
+            cancelExistingAlarms(context, alarmManager)
+            return
+        }
+        if (pauseUntil > now) {
+            Log.i(TAG, "Hydration reminders are paused until ${formatMillisToDateTime(pauseUntil)}. Cancelling existing alarms.")
+            cancelExistingAlarms(context, alarmManager)
+            return
+        }
+
         cancelExistingAlarms(context, alarmManager) // Clear previous alarms first
 
-        val nextAlarmTimeMillis = calculateNextAlarmTimeMillis(context, System.currentTimeMillis())
+        val nextAlarmTimeMillis = calculateNextAlarmTimeMillis(context, now)
 
         if (nextAlarmTimeMillis != null) {
             val intent = Intent(context, HydrationAlarmReceiver::class.java).apply {
@@ -60,18 +83,16 @@ object HydrationReminderManager {
                         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, nextAlarmTimeMillis, pendingIntent)
                         Log.i(TAG, "Next hydration alarm scheduled for: ${formatMillisToDateTime(nextAlarmTimeMillis)}")
                     } else {
-                        Log.w(TAG, "Cannot schedule exact alarms. Hydration reminders might be inaccurate. User needs to grant 'Alarms & reminders' permission manually.")
+                        Log.w(TAG, "Cannot schedule exact alarms. Falling back to WorkManager.")
+                        enqueueWorkManagerFallback(context, nextAlarmTimeMillis - System.currentTimeMillis())
                     }
                 } else {
                     alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, nextAlarmTimeMillis, pendingIntent)
                     Log.i(TAG, "Next hydration alarm scheduled for: ${formatMillisToDateTime(nextAlarmTimeMillis)}")
                 }
             } catch (se: SecurityException) {
-                Log.e(TAG, "SecurityException while scheduling exact alarm. Check SCHEDULE_EXACT_ALARM permission.", se)
-                val appContext = context.applicationContext
-                Handler(Looper.getMainLooper()).post {
-                    Toast.makeText(appContext, "Could not schedule reminders due to permission issues. Check logs.", Toast.LENGTH_LONG).show()
-                }
+                Log.e(TAG, "SecurityException while scheduling exact alarm. Falling back to WorkManager.", se)
+                enqueueWorkManagerFallback(context, (nextAlarmTimeMillis - System.currentTimeMillis()).coerceAtLeast(0))
             }
 
         } else {
@@ -80,9 +101,33 @@ object HydrationReminderManager {
     }
 
     private fun calculateNextAlarmTimeMillis(context: Context, currentTimeMillis: Long): Long? {
-        // This will now use the corrected PREFS_NAME ("HydrationPrefs")
         val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        // KEY_REMINDER_TIMES is "reminderTimesSet"
+        val masterEnabled = sharedPreferences.getBoolean(KEY_MASTER_ENABLED, true)
+        val pauseUntil = sharedPreferences.getLong(KEY_PAUSE_UNTIL_MILLIS, 0L)
+        if (!masterEnabled) {
+            Log.d(TAG, "calculateNextAlarmTimeMillis: master disabled -> null")
+            return null
+        }
+        if (pauseUntil > currentTimeMillis) {
+            Log.d(TAG, "calculateNextAlarmTimeMillis: paused until ${formatMillisToDateTime(pauseUntil)} -> null")
+            return null
+        }
+
+        // Smart reminders: time since last drink
+        val smartEnabled = sharedPreferences.getBoolean("smart_reminders_enabled", false)
+        if (smartEnabled) {
+            val lastDrinkTs = sharedPreferences.getLong("last_drink_timestamp", 0L)
+            val thresholdMinutes = sharedPreferences.getInt("no_drink_threshold_minutes", 60)
+            if (lastDrinkTs > 0 && thresholdMinutes > 0) {
+                val elapsed = currentTimeMillis - lastDrinkTs
+                val thresholdMs = thresholdMinutes * 60L * 1000L
+                if (elapsed >= thresholdMs) {
+                    Log.d(TAG, "Smart reminder: threshold exceeded (elapsed=${elapsed}ms, threshold=${thresholdMs}ms). Scheduling ASAP.")
+                    return currentTimeMillis + 15_000L // 15 seconds from now
+                }
+            }
+        }
+
         val reminderTimesStringSet = sharedPreferences.getStringSet(KEY_REMINDER_TIMES, emptySet()) ?: emptySet()
 
         if (reminderTimesStringSet.isEmpty()) {
@@ -157,6 +202,23 @@ object HydrationReminderManager {
             Log.d(TAG, "Cancelled existing hydration alarms with matching intent.")
         } else {
             Log.d(TAG, "No existing hydration alarm PendingIntent found to cancel with this specific intent structure.")
+        }
+    }
+
+    private fun enqueueWorkManagerFallback(context: Context, delayMillis: Long) {
+        try {
+            val delay = delayMillis.coerceAtLeast(0)
+            val request = OneTimeWorkRequestBuilder<HydrationReminderWorker>()
+                .setInitialDelay(delay, TimeUnit.MILLISECONDS)
+                .build()
+            WorkManager.getInstance(context).enqueueUniqueWork(
+                "HydrationReminderWork",
+                ExistingWorkPolicy.REPLACE,
+                request
+            )
+            Log.i(TAG, "WorkManager fallback enqueued with delay ${delay}ms")
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to enqueue WorkManager fallback", e)
         }
     }
 

@@ -160,7 +160,117 @@
             android:layout_height="wrap_content"
             android:paddingStart="12dp"
             android:paddingEnd="12dp"
-            android:paddingBottom="12dp"/>
+            android:paddingBottom="12dp">
+
+            <TextView
+                android:id="@+id/textViewOverviewTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Overview"
+                android:textColor="@color/textColorPrimary"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <LinearLayout
+                android:id="@+id/statsRow"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@id/textViewOverviewTitle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <LinearLayout
+                    android:id="@+id/tileHabits"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:padding="12dp"
+                    android:background="@color/cardBackgroundColor"
+                    android:contentDescription="Habits summary">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_habits"
+                        android:contentDescription="Habits icon" />
+
+                    <TextView
+                        android:id="@+id/textViewHabitsSummary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:textColor="@color/textColorPrimary"
+                        android:textSize="14sp"
+                        tools:text="Habits done: 3/5" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/tileHydration"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:padding="12dp"
+                    android:background="@color/cardBackgroundColor"
+                    android:contentDescription="Hydration summary">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_hydration"
+                        android:contentDescription="Hydration icon" />
+
+                    <TextView
+                        android:id="@+id/textViewHydrationSummary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:textColor="@color/textColorPrimary"
+                        android:textSize="14sp"
+                        tools:text="Hydration: 6/8" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/actionsRowProfile"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp"
+                app:layout_constraintTop_toBottomOf="@id/statsRow"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <Button
+                    android:id="@+id/buttonEditProfile"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Edit Profile"
+                    app:backgroundTint="@color/cardBackgroundColor"
+                    android:textColor="@color/textColorPrimary" />
+
+                <Button
+                    android:id="@+id/buttonShareProgress"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:text="Share Progress"
+                    app:backgroundTint="@color/colorAccentBlue"
+                    android:textColor="@color/white" />
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
     <!-- Navigation Bar -->

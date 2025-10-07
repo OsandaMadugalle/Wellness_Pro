@@ -31,31 +31,66 @@ class HydrationAlarmReceiver : BroadcastReceiver() {
         // const val CHANNEL_ID = "hydration_reminder_channel" // This will use WellnessProApplication.HYDRATION_CHANNEL_ID
 
         const val ACTION_TRIGGER_HYDRATION_REMINDER = "com.example.wellness_pro.ACTION_TRIGGER_HYDRATION_REMINDER"
+        const val ACTION_SNOOZE_HYDRATION_REMINDER = "com.example.wellness_pro.ACTION_SNOOZE_HYDRATION_REMINDER"
+        const val ACTION_MARK_HYDRATION_DRANK = "com.example.wellness_pro.ACTION_MARK_HYDRATION_DRANK"
 
         // EXTRA_REMINDER_TIME can be used to pass the specific time for which this reminder is firing
         // This can be useful for logging or for making notification IDs unique if needed.
         const val EXTRA_REMINDER_TIME = "extra_reminder_time"
+        const val EXTRA_SNOOZE_MINUTES = "extra_snooze_minutes"
         private const val GENERIC_HYDRATION_ID = "GENERAL_HYDRATION_REMINDER" // ADDED
+        private const val SNOOZE_MINUTES_DEFAULT = 15
     }
 
     override fun onReceive(context: Context, intent: Intent) {
         Log.d(TAG, "onReceive - Alarm received! Timestamp: ${System.currentTimeMillis()}")
         Log.d(TAG, "onReceive - Intent Action: ${intent.action}")
 
-        if (intent.action == ACTION_TRIGGER_HYDRATION_REMINDER) {
-            val reminderTimeInfo = intent.getStringExtra(EXTRA_REMINDER_TIME) ?: "Unknown time"
-            Log.i(TAG, "onReceive - Matched ACTION_TRIGGER_HYDRATION_REMINDER for time: $reminderTimeInfo")
-
-            // For general hydration, we might not have a specific habitId from the intent.
-            // We'll use a generic one for DB logging.
-            showNotification(context, reminderTimeInfo, GENERIC_HYDRATION_ID)
-
-            // CRUCIAL: Reschedule the next alarm
-            Log.d(TAG, "onReceive - Rescheduling next reminder after current one fired.")
-            HydrationReminderManager.scheduleOrUpdateAllReminders(context) // ADDED THIS LINE
-
-        } else {
-            Log.w(TAG, "onReceive - Received intent with unexpected action: ${intent.action}")
+        when (intent.action) {
+            ACTION_TRIGGER_HYDRATION_REMINDER -> {
+                val reminderTimeInfo = intent.getStringExtra(EXTRA_REMINDER_TIME) ?: "Unknown time"
+                Log.i(TAG, "onReceive - Matched ACTION_TRIGGER_HYDRATION_REMINDER for time: $reminderTimeInfo")
+                showNotification(context, reminderTimeInfo, GENERIC_HYDRATION_ID)
+                Log.d(TAG, "onReceive - Rescheduling next reminder after current one fired.")
+                HydrationReminderManager.scheduleOrUpdateAllReminders(context)
+            }
+            ACTION_SNOOZE_HYDRATION_REMINDER -> {
+                val snoozeMinutes = intent.getIntExtra(EXTRA_SNOOZE_MINUTES, SNOOZE_MINUTES_DEFAULT)
+                val snoozeMillis = System.currentTimeMillis() + snoozeMinutes * 60 * 1000
+                Log.i(TAG, "onReceive - SNOOZE pressed. Rescheduling hydration reminder for $snoozeMinutes minutes later.")
+                val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as android.app.AlarmManager
+                val snoozeIntent = Intent(context, HydrationAlarmReceiver::class.java).apply {
+                    action = ACTION_TRIGGER_HYDRATION_REMINDER
+                    putExtra(EXTRA_REMINDER_TIME, "Snoozed")
+                }
+                val pendingIntent = PendingIntent.getBroadcast(
+                    context,
+                    NOTIFICATION_ID_HYDRATION + 1, // Unique code for snooze
+                    snoozeIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
+                alarmManager.setExactAndAllowWhileIdle(android.app.AlarmManager.RTC_WAKEUP, snoozeMillis, pendingIntent)
+                // Optionally, show a Toast
+                android.os.Handler(android.os.Looper.getMainLooper()).post {
+                    android.widget.Toast.makeText(context, context.getString(R.string.snoozed_for_x_minutes, snoozeMinutes), android.widget.Toast.LENGTH_SHORT).show()
+                }
+            }
+            ACTION_MARK_HYDRATION_DRANK -> {
+                Log.i(TAG, "onReceive - MARK AS DRANK pressed. Logging water intake.")
+                val prefsName = com.example.wellness_pro.ui.HydrationActivity.PREFS_NAME
+                val keyPrefix = com.example.wellness_pro.ui.HydrationActivity.KEY_HYDRATION_INTAKE_PREFIX
+                val today = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(java.util.Date())
+                val intakeKey = keyPrefix + today
+                val prefs = context.getSharedPreferences(prefsName, Context.MODE_PRIVATE)
+                val current = prefs.getInt(intakeKey, 0)
+                prefs.edit().putInt(intakeKey, current + 1).putLong("last_drink_timestamp", System.currentTimeMillis()).apply()
+                android.os.Handler(android.os.Looper.getMainLooper()).post {
+                    android.widget.Toast.makeText(context, context.getString(R.string.marked_one_glass), android.widget.Toast.LENGTH_SHORT).show()
+                }
+            }
+            else -> {
+                Log.w(TAG, "onReceive - Received intent with unexpected action: ${intent.action}")
+            }
         }
     }
 
@@ -69,7 +104,7 @@ class HydrationAlarmReceiver : BroadcastReceiver() {
         // However, WellnessProApplication's HYDRATION_CHANNEL_ID should be used.
         // Notification channel creation logic (if needed here) should use WellnessProApplication.HYDRATION_CHANNEL_ID
 
-        val openAppIntent = Intent(context, LaunchScreen::class.java).apply { // CHANGED to LaunchScreen
+        val openAppIntent = Intent(context, com.example.wellness_pro.LaunchScreen::class.java).apply { // CHANGED to LaunchScreen
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
             //putExtra("reminder_fired_at", reminderTimeInfo) // Optional: pass info to the activity
         }
@@ -84,13 +119,51 @@ class HydrationAlarmReceiver : BroadcastReceiver() {
         val pendingIntent: PendingIntent = PendingIntent.getActivity(context, requestCode, openAppIntent, pendingIntentFlags)
         Log.d(TAG, "showNotification - PendingIntent for notification tap created.")
 
-        val notificationIcon = R.drawable.ic_water_drop // IMPORTANT: Ensure you have this drawable
-                                                        // Or change to a generic one like R.mipmap.ic_launcher
+        val notificationIcon = R.drawable.ic_water_drop
+        val prefs = context.getSharedPreferences(com.example.wellness_pro.ui.HydrationActivity.PREFS_NAME, Context.MODE_PRIVATE)
+        val customMessage = prefs.getString("custom_hydration_message", null)?.takeIf { it.isNotBlank() }
+        val notificationTitle = context.getString(R.string.stay_hydrated_title)
+        val baseContent = context.getString(R.string.hydration_reminder_content, reminderTimeInfo)
+        val notificationContent = customMessage ?: baseContent
 
-        val notificationTitle = "Stay Hydrated!"
-        val notificationContent = "Time for a glass of water ($reminderTimeInfo)." // Added time info
+        // Ensure channel exists per current prefs and get its ID
+        com.example.wellness_pro.WellnessProApplication.ensureHydrationChannel(context)
+        val channelId = com.example.wellness_pro.WellnessProApplication.getHydrationChannelId(context)
 
-        val notificationBuilder = NotificationCompat.Builder(context, WellnessProApplication.HYDRATION_CHANNEL_ID) // Use channel from Application class
+        // --- Add Snooze Action ---
+        val snoozeIntent = Intent(context, HydrationAlarmReceiver::class.java).apply {
+            action = ACTION_SNOOZE_HYDRATION_REMINDER
+            putExtra(EXTRA_SNOOZE_MINUTES, SNOOZE_MINUTES_DEFAULT)
+        }
+        val snoozePendingIntent = PendingIntent.getBroadcast(
+            context,
+            NOTIFICATION_ID_HYDRATION + 1,
+            snoozeIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        val snoozeAction = NotificationCompat.Action.Builder(
+            R.drawable.ic_clear_all, // Use an existing icon
+            context.getString(R.string.snooze),
+            snoozePendingIntent
+        ).build()
+
+        // --- Add Mark as Drank Action ---
+        val markIntent = Intent(context, HydrationAlarmReceiver::class.java).apply {
+            action = ACTION_MARK_HYDRATION_DRANK
+        }
+        val markPendingIntent = PendingIntent.getBroadcast(
+            context,
+            NOTIFICATION_ID_HYDRATION + 2,
+            markIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        val markAction = NotificationCompat.Action.Builder(
+            R.drawable.ic_check_circle_outline, // Use an existing icon
+            context.getString(R.string.mark_as_drank),
+            markPendingIntent
+        ).build()
+
+        val notificationBuilder = NotificationCompat.Builder(context, channelId)
             .setSmallIcon(notificationIcon)
             .setContentTitle(notificationTitle)
             .setContentText(notificationContent)
@@ -99,6 +172,8 @@ class HydrationAlarmReceiver : BroadcastReceiver() {
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
             .setOnlyAlertOnce(true)
+            .addAction(snoozeAction)
+            .addAction(markAction)
 
         try {
             // Use NOTIFICATION_ID_HYDRATION. If multiple reminders need to stack, this ID needs to be unique per alarm.

@@ -94,6 +94,144 @@
             app:layout_constraintStart_toEndOf="@id/editTextSetGlassesGoal"
             app:layout_constraintEnd_toEndOf="parent" />
 
+        <TextView
+            android:id="@+id/textViewMasterToggleLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/hydration_reminders"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="18sp"
+            app:layout_constraintTop_toBottomOf="@id/textViewSetRemindersInfo"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Switch
+            android:id="@+id/switchMasterEnableReminders"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="@string/enable_reminders"
+            android:textColor="@color/textColorPrimary"
+            app:layout_constraintBaseline_toBaselineOf="@id/textViewMasterToggleLabel"
+            app:layout_constraintStart_toEndOf="@id/textViewMasterToggleLabel" />
+
+        <Button
+            android:id="@+id/buttonPauseForDay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/pause_for_today"
+            android:backgroundTint="@color/colorAccentGreen"
+            android:textColor="@color/white"
+            app:layout_constraintTop_toBottomOf="@id/textViewMasterToggleLabel"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/textViewCustomMessageLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/custom_hydration_message_label"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@id/buttonPauseForDay"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <EditText
+            android:id="@+id/editTextCustomHydrationMessage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:minHeight="48dp"
+            android:maxLines="2"
+            android:inputType="textCapSentences|textMultiLine"
+            android:hint="@string/custom_hydration_message_hint"
+            android:textColor="@color/textColorPrimary"
+            android:textColorHint="@color/textColorHint"
+            android:backgroundTint="@color/colorAccentBlue"
+            app:layout_constraintTop_toBottomOf="@id/textViewCustomMessageLabel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/textViewNotificationOptionsLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/notification_options"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@id/editTextCustomHydrationMessage"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Switch
+            android:id="@+id/switchReminderSound"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/enable_sound"
+            android:textColor="@color/textColorPrimary"
+            app:layout_constraintTop_toBottomOf="@id/textViewNotificationOptionsLabel"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Switch
+            android:id="@+id/switchReminderVibration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginStart="12dp"
+            android:text="@string/enable_vibration"
+            android:textColor="@color/textColorPrimary"
+            app:layout_constraintTop_toBottomOf="@id/textViewNotificationOptionsLabel"
+            app:layout_constraintStart_toEndOf="@id/switchReminderSound" />
+
+        <TextView
+            android:id="@+id/textViewSmartRemindersLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/smart_reminders"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@id/switchReminderVibration"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Switch
+            android:id="@+id/switchEnableSmartReminders"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/enable_smart_reminders"
+            android:textColor="@color/textColorPrimary"
+            app:layout_constraintTop_toBottomOf="@id/textViewSmartRemindersLabel"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/textViewNoDrinkThresholdLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/no_drink_threshold_label"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@id/switchEnableSmartReminders"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <EditText
+            android:id="@+id/editTextNoDrinkThresholdMinutes"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:minHeight="48dp"
+            android:maxLines="1"
+            android:inputType="number"
+            android:hint="@string/minutes_hint"
+            android:textColor="@color/textColorPrimary"
+            android:textColorHint="@color/textColorHint"
+            android:backgroundTint="@color/colorAccentGreen"
+            app:layout_constraintBaseline_toBaselineOf="@id/textViewNoDrinkThresholdLabel"
+            app:layout_constraintStart_toEndOf="@id/textViewNoDrinkThresholdLabel" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewSetReminderTimes"
             android:layout_width="0dp"
@@ -101,7 +239,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintTop_toBottomOf="@id/editTextSetGlassesGoal"
+            app:layout_constraintTop_toBottomOf="@id/textViewNoDrinkThresholdLabel"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"

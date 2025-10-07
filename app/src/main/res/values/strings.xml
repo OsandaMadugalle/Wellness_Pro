@@ -156,5 +156,31 @@
     <string name="log_your_moods_to_see_your_trend">Log your moods to see your trend!</string>
     <string name="daily_mood_trend_chart_title">Daily Mood Trend</string>
     <string name="invalid_date">Invalid date</string>
+    <string name="snooze">Snooze</string>
+    <string name="mark_as_drank">Mark as Drank</string>
+    <string name="snoozed_for_x_minutes">Snoozed for %1$d minutes</string>
+    <string name="marked_one_glass">Logged 1 glass of water!</string>
+    <string name="stay_hydrated_title">Stay Hydrated!</string>
+    <string name="hydration_reminder_content">Time for a glass of water (%1$s).</string>
+    <string name="enable_reminders">Enable reminders</string>
+    <string name="pause_for_today">Pause for today</string>
+    <string name="paused_for_today_until">Paused for today. Resumes at %1$s</string>
+    <string name="paused_until_label">Paused until: %1$s</string>
+    <string name="battery_optimization_title">Allow reliable reminders</string>
+    <string name="battery_optimization_message">To ensure hydration reminders fire on time, allow the app to ignore battery optimizations. Some devices may delay or block exact alarms otherwise.</string>
+    <string name="open_settings">Open settings</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="unable_to_open_settings">Unable to open battery optimization settings.</string>
+    <string name="custom_hydration_message_label">Custom reminder message</string>
+    <string name="custom_hydration_message_hint">E.g., Time for a sip! 💧</string>
+    <string name="notification_options">Notification options</string>
+    <string name="enable_sound">Enable sound</string>
+    <string name="enable_vibration">Enable vibration</string>
+    <string name="notification_option_applied">Notification option applied</string>
+    <string name="weekly_goal_summary">Goal met: %1$d/%2$d days</string>
+    <string name="smart_reminders">Smart reminders</string>
+    <string name="enable_smart_reminders">Enable smart reminders</string>
+    <string name="no_drink_threshold_label">Remind if no drink for (minutes)</string>
+    <string name="minutes_hint">e.g., 60</string>
 
 </resources>

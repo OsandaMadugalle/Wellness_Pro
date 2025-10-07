@@ -52,6 +52,52 @@
             android:layout_marginStart="8dp"/>
     </LinearLayout>
 
+    <!-- Filter Chips Row -->
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chipGroupFilters"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        app:singleSelection="true"
+        app:layout_constraintTop_toBottomOf="@id/headerLayoutMoodHistory"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipLast7"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="7d"
+            android:checked="true"
+            android:contentDescription="Last 7 days" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipLast14"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="14d"
+            android:contentDescription="Last 14 days" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipLast30"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="30d"
+            android:contentDescription="Last 30 days" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipAll"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="All"
+            android:contentDescription="All entries" />
+    </com.google.android.material.chip.ChipGroup>
+
     <!-- Scrollable Content Area -->
     <ScrollView
         android:id="@+id/contentScrollViewMoodHistory"
@@ -59,7 +105,7 @@
         android:layout_height="0dp"
         android:fillViewport="true"
         android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/headerLayoutMoodHistory"
+        app:layout_constraintTop_toBottomOf="@id/chipGroupFilters"
         app:layout_constraintBottom_toTopOf="@id/navBarContainerBottom"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -86,12 +132,26 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
+            <TextView
+                android:id="@+id/textViewAverageMoodSummary"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/textColorSecondary"
+                android:textSize="14sp"
+                android:gravity="center_horizontal"
+                android:contentDescription="Average mood summary"
+                app:layout_constraintTop_toBottomOf="@id/textViewChartTitleMoodHistory"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:text="Average mood: 🙂 (last 7 days)" />
+
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/moodChartHistory"
                 android:layout_width="0dp"
                 android:layout_height="200dp"
                 android:layout_marginTop="8dp"
-                app:layout_constraintTop_toBottomOf="@id/textViewChartTitleMoodHistory"
+                app:layout_constraintTop_toBottomOf="@id/textViewAverageMoodSummary"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
@@ -108,12 +168,23 @@
                 app:layout_constraintStart_toStartOf="@id/moodChartHistory"
                 app:layout_constraintEnd_toEndOf="@id/moodChartHistory" />
 
+            <View
+                android:id="@+id/dividerAfterChart"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="12dp"
+                android:background="@color/dividerColor"
+                app:layout_constraintTop_toBottomOf="@id/moodChartHistory"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewMoodHistory"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                app:layout_constraintTop_toBottomOf="@id/moodChartHistory"
+                android:contentDescription="Mood entries list"
+                app:layout_constraintTop_toBottomOf="@id/dividerAfterChart"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 tools:listitem="@layout/list_item_mood_entry" />
