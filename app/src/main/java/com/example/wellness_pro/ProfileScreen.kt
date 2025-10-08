@@ -216,7 +216,7 @@ class ProfileScreen : BaseBottomNavActivity() {
     private fun setupProfileChartStyle(chart: LineChart) {
         chart.description.isEnabled = false
         chart.legend.isEnabled = true
-        chart.legend.textColor = ContextCompat.getColor(this, R.color.textColorPrimary)
+        chart.legend.textColor = getColorAttr(android.R.attr.textColorPrimary, R.color.textColorPrimary)
         chart.setTouchEnabled(true)
         chart.setPinchZoom(true)
         try {
@@ -237,23 +237,23 @@ class ProfileScreen : BaseBottomNavActivity() {
         }
         xAxis.granularity = 24 * 60 * 60 * 1000f
         xAxis.labelRotationAngle = -30f
-        xAxis.textColor = ContextCompat.getColor(this, R.color.textColorPrimary)
-        xAxis.axisLineColor = ContextCompat.getColor(this, R.color.textColorSecondary)
-        xAxis.gridColor = ContextCompat.getColor(this, R.color.chart_grid_line)
+    xAxis.textColor = getColorAttr(android.R.attr.textColorPrimary, R.color.textColorPrimary)
+    xAxis.axisLineColor = getColorAttr(android.R.attr.textColorSecondary, R.color.textColorSecondary)
+    xAxis.gridColor = ContextCompat.getColor(this, R.color.chart_grid_line)
 
         val yAxisLeft = chart.axisLeft
-        yAxisLeft.textColor = ContextCompat.getColor(this, R.color.textColorPrimary)
+    yAxisLeft.textColor = getColorAttr(android.R.attr.textColorPrimary, R.color.textColorPrimary)
         yAxisLeft.axisMinimum = 0.5f
         yAxisLeft.axisMaximum = 5.5f
         yAxisLeft.granularity = 1f
         yAxisLeft.setLabelCount(6, true)
-        yAxisLeft.axisLineColor = ContextCompat.getColor(this, R.color.textColorSecondary)
-        yAxisLeft.gridColor = ContextCompat.getColor(this, R.color.chart_grid_line)
+    yAxisLeft.axisLineColor = getColorAttr(android.R.attr.textColorSecondary, R.color.textColorSecondary)
+    yAxisLeft.gridColor = ContextCompat.getColor(this, R.color.chart_grid_line)
 
         chart.axisRight.isEnabled = false
         chart.setBackgroundColor(ContextCompat.getColor(this, android.R.color.transparent))
         chart.setNoDataText(getString(R.string.log_your_moods_to_see_your_trend))
-        chart.setNoDataTextColor(ContextCompat.getColor(this, R.color.textColorSecondary))
+        chart.setNoDataTextColor(getColorAttr(android.R.attr.textColorSecondary, R.color.textColorSecondary))
     }
 
     private fun updateProfileChartData(chart: LineChart, moodEntries: List<DbMoodEntry>) {
@@ -270,9 +270,9 @@ class ProfileScreen : BaseBottomNavActivity() {
         }
 
         val dataSet = LineDataSet(entries, getString(R.string.daily_mood_trend_chart_title))
-        dataSet.color = ContextCompat.getColor(this, R.color.chart_line_blue)
-        dataSet.valueTextColor = ContextCompat.getColor(this, R.color.textColorPrimary)
-        dataSet.setCircleColor(ContextCompat.getColor(this, R.color.chart_circle_color))
+    dataSet.color = ContextCompat.getColor(this, R.color.chart_line_blue)
+    dataSet.valueTextColor = getColorAttr(android.R.attr.textColorPrimary, R.color.textColorPrimary)
+    dataSet.setCircleColor(ContextCompat.getColor(this, R.color.chart_circle_color))
         dataSet.circleRadius = 4f
         dataSet.valueTextSize = 10f
         dataSet.setDrawValues(false)
@@ -297,5 +297,22 @@ class ProfileScreen : BaseBottomNavActivity() {
     private fun loadAndDisplayAppUserProgress() {
         val userProgress = UserProgressUtil.loadUserProgress(applicationContext)
     // No UI updates are performed for progress elements.
+    }
+
+    // Resolve a color from the current theme attribute if available, otherwise fall back to the provided color resource.
+    private fun getColorAttr(attrResId: Int, fallbackColorRes: Int): Int {
+        return try {
+            val typedValue = android.util.TypedValue()
+            val theme = theme
+            val got = theme.resolveAttribute(attrResId, typedValue, true)
+            if (got) {
+                if (typedValue.resourceId != 0) ContextCompat.getColor(this, typedValue.resourceId)
+                else typedValue.data
+            } else {
+                ContextCompat.getColor(this, fallbackColorRes)
+            }
+        } catch (e: Exception) {
+            ContextCompat.getColor(this, fallbackColorRes)
+        }
     }
 }

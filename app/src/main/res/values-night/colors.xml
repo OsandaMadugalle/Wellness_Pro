@@ -50,6 +50,9 @@
 	<color name="chart_circle_color">#FF80CBC4</color>
 	<color name="chart_fill_color">#8026A69A</color>
 
+	<!-- Marker background should be dark in night mode so white marker text is readable -->
+	<color name="marker_background">@color/cardBackgroundColor</color>
+
 	<!-- Backwards-compatible aliases for previously used color tokens (night) -->
 	<color name="colorAccentBlue">#FF26A69A</color>
 	<color name="colorAccentRed">#FFEF9A90</color>
