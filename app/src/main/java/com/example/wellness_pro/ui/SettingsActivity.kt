@@ -18,6 +18,7 @@ import android.os.Build
 import android.provider.Settings
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
+import android.content.res.Configuration
 import android.app.Activity
 import android.util.Log
 import android.os.Process
@@ -96,11 +97,38 @@ class SettingsActivity : BaseActivity() { // CHANGED parent class
 
 		// Dark mode
 		val switchDarkMode = findViewById<Switch?>(R.id.switchDarkMode)
-		switchDarkMode?.isChecked = prefs.getBoolean("dark_mode_enabled", false)
-		applyDarkMode(prefs.getBoolean("dark_mode_enabled", false))
+
+		// New preference key uses a string so we can represent 'system' / 'dark' / 'light'.
+		val CHOICE_KEY = "dark_mode_choice" // values: "system", "dark", "light"
+		val OLD_BOOL_KEY = "dark_mode_enabled"
+
+		// Migration: if old boolean exists but new choice not present, migrate it
+		if (!prefs.contains(CHOICE_KEY) && prefs.contains(OLD_BOOL_KEY)) {
+			val old = prefs.getBoolean(OLD_BOOL_KEY, false)
+			val migrated = if (old) "dark" else "light"
+			prefs.edit().putString(CHOICE_KEY, migrated).remove(OLD_BOOL_KEY).apply()
+		}
+
+		val choice = prefs.getString(CHOICE_KEY, null)
+		if (choice == null || choice == "system") {
+			// Follow system by default
+			val uiMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+			val systemDark = (uiMode == Configuration.UI_MODE_NIGHT_YES)
+			switchDarkMode?.isChecked = systemDark
+			AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+		} else if (choice == "dark") {
+			switchDarkMode?.isChecked = true
+			applyDarkModeExplicit(true)
+		} else { // "light"
+			switchDarkMode?.isChecked = false
+			applyDarkModeExplicit(false)
+		}
+
 		switchDarkMode?.setOnCheckedChangeListener { _, isChecked ->
-			prefs.edit().putBoolean("dark_mode_enabled", isChecked).apply()
-			applyDarkMode(isChecked)
+			// User toggled: set an explicit preference (dark/light)
+			val newChoice = if (isChecked) "dark" else "light"
+			prefs.edit().putString(CHOICE_KEY, newChoice).apply()
+			applyDarkModeExplicit(isChecked)
 		}
 
 		// Shake-to-add-mood settings
@@ -160,6 +188,15 @@ class SettingsActivity : BaseActivity() { // CHANGED parent class
 	}
 
 	private fun applyDarkMode(enabled: Boolean) {
+		// Deprecated wrapper kept for compatibility. Prefer applyDarkModeExplicit
+		applyDarkModeExplicit(enabled)
+	}
+
+	/**
+	 * Apply an explicit dark/light mode choice (user-controlled).
+	 * Use MODE_NIGHT_FOLLOW_SYSTEM elsewhere when user hasn't set a pref.
+	 */
+	private fun applyDarkModeExplicit(enabled: Boolean) {
 		AppCompatDelegate.setDefaultNightMode(
 			if (enabled) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
 		)
