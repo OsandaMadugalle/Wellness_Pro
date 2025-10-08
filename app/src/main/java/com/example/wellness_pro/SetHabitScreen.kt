@@ -44,7 +44,6 @@ class SetHabitScreen : BaseBottomNavActivity() {
         get() = R.layout.activity_set_habitscreen
 
     private lateinit var textViewScreenTitle: TextView
-    private lateinit var buttonBackTop: ImageView
     private lateinit var buttonSetHabit: Button
     private lateinit var itemContainerSpinner: TextInputLayout
     private lateinit var textViewSelectedItem: MaterialAutoCompleteTextView
@@ -55,8 +54,7 @@ class SetHabitScreen : BaseBottomNavActivity() {
     private lateinit var buttonWeekdays: Button
     private lateinit var scheduleButtons: List<Button>
     private var selectedSchedule: String = "Daily" // This holds the UI selected schedule type
-    private lateinit var textViewRemindMePrompt: TextView
-    private lateinit var textViewReminderTime: TextView
+    // remind-me UI removed: prompt/time no longer part of the Habits screen
     private var selectedHour: Int = -1
     private var selectedMinute: Int = -1
 
@@ -155,7 +153,6 @@ class SetHabitScreen : BaseBottomNavActivity() {
         Log.d(LIFECYCLE_TAG, "initializeViews - START")
         try {
             textViewScreenTitle = findViewById(R.id.textViewScreenTitle)
-            buttonBackTop = findViewById(R.id.buttonBackTop)
             buttonSetHabit = findViewById(R.id.buttonSetHabit)
             itemContainerSpinner = findViewById(R.id.itemContainerSpinner)
             textViewSelectedItem = findViewById(R.id.textViewSelectedItem)
@@ -165,8 +162,7 @@ class SetHabitScreen : BaseBottomNavActivity() {
             buttonWeekly = findViewById(R.id.buttonWeekly)
             buttonWeekdays = findViewById(R.id.buttonWeekdays)
             scheduleButtons = listOf(buttonDaily, buttonWeekly, buttonWeekdays)
-            textViewRemindMePrompt = findViewById(R.id.textViewRemindMePrompt)
-            textViewReminderTime = findViewById(R.id.textViewReminderTime)
+            // remind-me views removed from layout; nothing to initialize here
 
             Log.d(LIFECYCLE_TAG, "initializeViews - All findViewById calls attempted.")
             // Setup dropdown adapter for habit types
@@ -238,7 +234,7 @@ class SetHabitScreen : BaseBottomNavActivity() {
 
     private fun setupClickListeners() {
         Log.d(LIFECYCLE_TAG, "setupClickListeners - START")
-        buttonBackTop.setOnClickListener { navigateToHabitsScreen() }
+        // Top back button removed. Navigation still handled after successful save via navigateToHabitsScreen().
         buttonSetHabit.setOnClickListener {
             Log.d(DEBUG_TAG, "buttonSetHabit clicked.")
             Log.d(DEBUG_TAG, "Processing and saving habit data...")
@@ -254,8 +250,7 @@ class SetHabitScreen : BaseBottomNavActivity() {
         buttonDaily.setOnClickListener { updateScheduleButtonStates(it as Button) }
         buttonWeekly.setOnClickListener { updateScheduleButtonStates(it as Button) }
         buttonWeekdays.setOnClickListener { updateScheduleButtonStates(it as Button) }
-        textViewReminderTime.setOnClickListener { showTimePickerDialog() }
-        textViewRemindMePrompt.setOnClickListener { showTimePickerDialog() }
+    // remind-me UI removed - time picker not wired here
         Log.d(LIFECYCLE_TAG, "setupClickListeners - END")
     }
 
@@ -369,7 +364,8 @@ class SetHabitScreen : BaseBottomNavActivity() {
         TimePickerDialog(this, { _, hourOfDay, minuteOfHour ->
             selectedHour = hourOfDay
             selectedMinute = minuteOfHour
-            textViewReminderTime.text = String.format(Locale.getDefault(), "%02d:%02d", selectedHour, selectedMinute)
+            Log.d(DEBUG_TAG, "Reminder time selected: ${String.format(Locale.getDefault(), "%02d:%02d", selectedHour, selectedMinute)}")
+            Toast.makeText(this, "Selected time: ${String.format(Locale.getDefault(), "%02d:%02d", selectedHour, selectedMinute)}", Toast.LENGTH_SHORT).show()
         }, hour, minute, true).show()
     }
 
@@ -412,11 +408,7 @@ class SetHabitScreen : BaseBottomNavActivity() {
 
         selectedHour = habitToEdit.reminderTimeHour ?: -1
         selectedMinute = habitToEdit.reminderTimeMinute ?: -1
-        if (selectedHour != -1 && selectedMinute != -1) {
-            textViewReminderTime.text = String.format(Locale.getDefault(), "%02d:%02d", selectedHour, selectedMinute)
-        } else {
-            textViewReminderTime.text = "Not Set"
-        }
+        // Reminder time fields are kept in the model but not shown in the UI
         Log.d(LIFECYCLE_TAG, "populateFieldsForEdit() - END for habit: ${habitToEdit.type}")
     }
 
@@ -478,6 +470,7 @@ class SetHabitScreen : BaseBottomNavActivity() {
             allHabitsList.add(newOrUpdatedHabit)
         }
         saveHabitsToPrefs()
+        // Habit reminders removed — keep reminder time fields for potential future use but do not schedule
         Log.d(DEBUG_TAG, "Habit data processed and saved to list. isEditMode: $isEditMode, Habit type: ${newOrUpdatedHabit.type}")
         return true
     }
