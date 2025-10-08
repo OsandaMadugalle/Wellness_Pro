@@ -1,33 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Primary Palette -->
-    <color name="colorPrimary">#FF1E3A5A</color>
-    <color name="colorPrimaryDark">#FF0A1F2E</color>
-    <color name="colorOnPrimary">#FFE8F4F8</color>
+    <!-- Wellness Palette (light) -->
+    <!-- Soft teal/green primary for a calming wellness feel -->
+    <color name="colorPrimary">#FF2E8B7A</color> <!-- Teal Green 500 -->
+    <color name="colorPrimaryDark">#FF25675A</color> <!-- Darker teal -->
+    <color name="colorOnPrimary">#FFFFFFFF</color> <!-- Text/icon on primary -->
 
     <!-- Accent Palette -->
-    <color name="colorAccentGreen">#FF4CAF50</color>
-    <color name="colorAccentBlue">#FF2196F3</color>
-    <color name="colorAccentRed">#FFEF5350</color>
+    <color name="colorAccentGreen">#FF4CAF50</color> <!-- retain familiar green for actions -->
+    <color name="colorAccentTeal">#FF00BFA5</color> <!-- bright teal accent -->
+    <color name="colorAccentWarm">#FFFFB74D</color> <!-- warm accent for highlights -->
 
     <!-- Text Palette -->
-    <color name="textColorPrimary">#FFE8F4F8</color>
-    <color name="textColorSecondary">#FFA0A0A0</color>
-    <color name="textColorHint">#FFA0A0A0</color>
+    <color name="textColorPrimary">#FF263238</color> <!-- Dark charcoal for readability -->
+    <color name="textColorSecondary">#FF607D8B</color> <!-- Muted slate for secondary text -->
+    <color name="textColorHint">#FF9E9E9E</color>
     <color name="text_white">#FFFFFFFF</color>
 
-    <!-- UI Components -->
-    <color name="backgroundColor">#FF0A1F2E</color>
-    <color name="cardBackgroundColor">#FF1E3A5A</color>
-    <color name="dividerColor">#33E8F4F8</color>
-    <color name="iconTint">#FFE8F4F8</color>
-    <color name="iconTintMuted">#FF757575</color>
+    <!-- UI Components (light theme) -->
+    <color name="backgroundColor">#FFF6FBF8</color> <!-- very light mint/cream background -->
+    <color name="cardBackgroundColor">#FFFFFFFF</color> <!-- cards are white with shadow -->
+    <color name="dividerColor">#1F263238</color> <!-- subtle divider -->
+    <color name="iconTint">#FF2E8B7A</color> <!-- primary tint for icons -->
+    <color name="iconTintMuted">#FF90A4AE</color>
 
     <!-- Standard Colors -->
     <color name="white">#FFFFFFFF</color>
     <color name="black">#FF000000</color>
 
-    <color name="box_slate_blue">#FF1E3A5A</color>
+    <color name="box_slate_blue">#FF2E8B7A</color>
 
     <!-- Dialog & Picker Colors -->
     <color name="dialog_background_color">@color/cardBackgroundColor</color>
@@ -36,29 +37,36 @@
     <color name="dialog_button_text_color">@color/colorAccentGreen</color>
     <color name="dialog_button_ripple_color">#334CAF50</color>
     <!-- Additional semantic colors added to replace inline literals -->
-    <color name="translucent_background">#800A1F2E</color>
-    <color name="widget_stroke">#FF4CAF50</color>
-    <color name="navbar_bg">#FF1E3A5A</color>
-    <color name="progress_gray">#E0E0E0</color>
-    <color name="progress_green_translucent">#80C34A</color>
+    <color name="translucent_background">#80FFFFFF</color>
+    <color name="widget_stroke">#FFB2DFD3</color>
+    <color name="navbar_bg">#FFFFFFFF</color>
+    <color name="progress_gray">#FFE0E0E0</color>
+    <color name="progress_green_translucent">#804CAF50</color>
     <color name="progress_green">#4CAF50</color>
-    <color name="progress_blue">#2196F3</color>
+    <color name="progress_teal">#00BFA5</color>
     <color name="progress_blue_light">#90CAF9</color>
-    <color name="progress_background_hydration">#FF102A4C</color>
+    <color name="progress_background_hydration">#FFEFFCF9</color>
     <color name="timepicker_header_color">@color/colorPrimary</color>
     <color name="timepicker_header_text_color">@color/colorOnPrimary</color>
     <color name="timepicker_clock_text_color">@color/textColorPrimary</color>
-    <color name="timepicker_accent_color">@color/colorAccentGreen</color>
-    <color name="icon_grey_light">#D3D3D3</color>
+    <color name="timepicker_accent_color">@color/colorAccentTeal</color>
+    <color name="icon_grey_light">#FFBDBDBD</color>
 
     <!-- Button Colors -->
-    <color name="button_blue">#0D47A1</color> <!-- Use your desired hex code -->
+    <color name="button_blue">#1565C0</color> <!-- kept as action blue where used -->
 
     <!-- Add the missing color definition here -->
-    <color name="chart_grid_line">#424242</color>
+    <color name="chart_grid_line">#FFE0E0E0</color>
 
-    <!-- You might also have these from your chart code -->
-    <color name="chart_line_blue">#81D4FA</color>
-    <color name="chart_circle_color">#B3E5FC</color>
-    <color name="chart_fill_color">#81D4FA</color>
+    <!-- Chart colors tuned for wellness palette -->
+    <color name="chart_line_teal">#FF26A69A</color>
+    <color name="chart_circle_color">#FF80CBC4</color>
+    <color name="chart_fill_color">#8026A69A</color>
+
+    <!-- Backwards-compatible aliases for previously used color tokens -->
+    <!-- Many layouts reference colorAccentBlue/colorAccentRed and progress_blue; keep compatible names -->
+    <color name="colorAccentBlue">#FF00BFA5</color> <!-- alias to accent teal -->
+    <color name="colorAccentRed">#FFEF5350</color> <!-- soft red for destructive actions -->
+    <color name="progress_blue">#FF26A69A</color> <!-- map old blue progress to teal tone -->
+    <color name="chart_line_blue">#FF26A69A</color> <!-- chart alias to preserve code references -->
 </resources>
