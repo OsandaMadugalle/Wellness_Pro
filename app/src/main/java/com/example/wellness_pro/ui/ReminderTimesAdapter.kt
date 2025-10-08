@@ -35,6 +35,7 @@ class ReminderTimesAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val time = reminderTimes[position]
+        android.util.Log.d("ReminderTimesAdapter", "Binding reminder time at position $position: $time")
         holder.textViewReminderTime.text = time
         holder.buttonRemoveTime.setOnClickListener {
             val adapterPosition = holder.adapterPosition
@@ -48,8 +49,10 @@ class ReminderTimesAdapter(
 
     fun addTime(time: String) {
         if (!reminderTimes.contains(time)) { // Prevent duplicates
+            android.util.Log.d("ReminderTimesAdapter", "addTime() called with $time")
             reminderTimes.add(time)
             sortTimes()
+            android.util.Log.d("ReminderTimesAdapter", "Times after add+sort: ${reminderTimes.joinToString()}")
             // Using notifyDataSetChanged() is the simplest way to update the UI after a sort.
             notifyDataSetChanged()
         }
@@ -57,7 +60,8 @@ class ReminderTimesAdapter(
 
     fun removeTime(position: Int) {
         if (position >= 0 && position < reminderTimes.size) {
-            reminderTimes.removeAt(position)
+            val removed = reminderTimes.removeAt(position)
+            android.util.Log.d("ReminderTimesAdapter", "removeTime() removed $removed at $position. Times now: ${reminderTimes.joinToString()}")
             notifyItemRemoved(position)
             notifyItemRangeChanged(position, reminderTimes.size)
         }

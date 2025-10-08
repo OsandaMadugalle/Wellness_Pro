@@ -247,9 +247,14 @@ class SetHydrationActivity : BaseBottomNavActivity() {
         reminderTimesList.addAll(savedTimes.sorted())
         Log.d(TAG, "Hydration settings loaded in SetHydrationActivity. Goal: $currentSetGlassesGoal, Times: ${reminderTimesList.joinToString()}")
 
+        // Ensure adapter and UI show the loaded times immediately
         if (::reminderTimesAdapter.isInitialized) {
             reminderTimesAdapter.notifyDataSetChanged()
         }
+
+        // Update counts & empty view so RecyclerView visibility is correct after load
+        updateRemindersCountInfoText()
+        updateEmptyViewVisibility()
     }
 
     private fun loadMasterAndPauseStateToUI() {
@@ -278,6 +283,8 @@ class SetHydrationActivity : BaseBottomNavActivity() {
         }
         recyclerViewSetReminderTimes.adapter = reminderTimesAdapter
         recyclerViewSetReminderTimes.layoutManager = LinearLayoutManager(this)
+        // Disable nested scrolling so parent NestedScrollView handles scroll gestures
+        recyclerViewSetReminderTimes.isNestedScrollingEnabled = false
     }
 
     private fun setupGlassesGoalListener() {
@@ -323,10 +330,30 @@ class SetHydrationActivity : BaseBottomNavActivity() {
             { _, hourOfDay, minute ->
                 val formattedTime = formatTime(hourOfDay, minute)
                 if (!reminderTimesList.contains(formattedTime)) {
+                    android.util.Log.d(TAG, "Adding reminder time: $formattedTime")
                     reminderTimesAdapter.addTime(formattedTime)
+                    // Ensure adapter data is pushed to RecyclerView after add
+                    try {
+                        reminderTimesAdapter.notifyDataSetChanged()
+                    } catch (e: Exception) {
+                        android.util.Log.w(TAG, "notifyDataSetChanged() failed: ${e.message}")
+                    }
+
+                    // Show quick feedback and ensure the new item is visible
+                    android.widget.Toast.makeText(this, getString(R.string.added_reminder_time, formattedTime), android.widget.Toast.LENGTH_SHORT).show()
+
+                    // Scroll to newly added time (it's sorted in adapter), find index and scroll
+                    val index = reminderTimesAdapter.getTimes().indexOf(formattedTime)
+                    android.util.Log.d(TAG, "New time index after add: $index. Adapter items: ${reminderTimesAdapter.getTimes().joinToString()}")
+                    if (index >= 0) {
+                        recyclerViewSetReminderTimes.post {
+                            recyclerViewSetReminderTimes.smoothScrollToPosition(index)
+                        }
+                    }
                     updateEmptyViewVisibility()
                     updateRemindersCountInfoText()
                 } else {
+                    android.util.Log.d(TAG, "Attempted to add duplicate reminder time: $formattedTime")
                     Toast.makeText(this, "This reminder time already exists.", Toast.LENGTH_SHORT).show()
                 }
             },
