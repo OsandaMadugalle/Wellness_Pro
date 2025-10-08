@@ -286,7 +286,7 @@ class SetHabitScreen : BaseBottomNavActivity() {
         }
     }
     
-    private fun updateValueContainer(habitType: String) {
+    private fun updateValueContainer(habitType: String, clearValue: Boolean = true) {
         Log.d(DEBUG_TAG, "updateValueContainer called for type: $habitType")
         when (habitType) {
             
@@ -312,7 +312,10 @@ class SetHabitScreen : BaseBottomNavActivity() {
                 }
             }
         }
-        editTextValueAmount.setText("") 
+        // Only clear the value field when explicitly requested (e.g., when changing type for a new habit).
+        if (clearValue) {
+            editTextValueAmount.setText("")
+        }
     }
 
     private fun showHabitTypePopupMenu(anchorView: View) {
@@ -391,9 +394,11 @@ class SetHabitScreen : BaseBottomNavActivity() {
         }
 
         currentSelectedHabitType = habitToEdit.type
-    textViewSelectedItem.setText(currentSelectedHabitType, false)
+        textViewSelectedItem.setText(currentSelectedHabitType, false)
+        // Update unit/hint without clearing the existing value from the model
+        updateValueContainer(currentSelectedHabitType, clearValue = false)
+        // Now populate the value field with the existing targetValue
         editTextValueAmount.setText(habitToEdit.targetValue.toString())
-        updateValueContainer(currentSelectedHabitType) 
 
         selectedSchedule = habitToEdit.schedule 
         when (selectedSchedule) {
