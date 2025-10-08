@@ -107,6 +107,7 @@ class MoodHistoryActivity : BaseBottomNavActivity() {
                 R.id.chipAll -> null
                 else -> 7
             }
+            Log.d("MoodHistoryActivity", "ChipGroup selection changed: checkedId=$checkedId -> days=$days")
             daysWindowState.value = days
         }
 
@@ -260,6 +261,7 @@ class MoodHistoryActivity : BaseBottomNavActivity() {
                 }
                 filtered
             }.collectLatest { filteredForChart ->
+                Log.d("MoodHistoryActivity", "Chart data combined -> filtered entries=${filteredForChart.size}, daysWindow=${daysWindowState.value}")
                 updateMoodChartData(filteredForChart)
             }
         }
@@ -270,6 +272,8 @@ class MoodHistoryActivity : BaseBottomNavActivity() {
             Log.w("MoodHistoryActivity", "Chart views not initialized, cannot update chart.")
             return
         }
+
+        Log.d("MoodHistoryActivity", "updateMoodChartData called with ${moodEntries.size} entries")
 
         if (moodEntries.isEmpty()) {
             moodChartHistory.visibility = View.GONE
