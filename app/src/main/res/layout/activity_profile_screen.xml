@@ -73,52 +73,7 @@
             android:textStyle="bold" />
     </LinearLayout>
 
-    <!-- Progress Section -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/progressLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintTop_toBottomOf="@id/imageViewAvatar">
-
-        <TextView
-            android:id="@+id/textViewLevel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/level"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="13sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/textViewXP"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/xp"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="13sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/textViewLevel" />
-
-        <ProgressBar
-            android:id="@+id/progressBarLevel"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="0dp"
-            android:layout_height="8dp"
-            android:layout_marginTop="8dp"
-            android:max="100"
-            android:progress="50"
-            android:progressBackgroundTint="@color/cardBackgroundColor"
-            android:progressTint="@color/colorAccentGreen"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textViewLevel" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- Progress Section removed per request -->
 
     <!-- Scrollable Content Section -->
     <androidx.core.widget.NestedScrollView
@@ -130,7 +85,7 @@
         app:layout_constraintBottom_toTopOf="@id/navBarContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/progressLayout">
+        app:layout_constraintTop_toBottomOf="@id/headerLayout">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -176,7 +131,7 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_habits"
-                        android:tint="@color/iconTint"
+                        app:tint="@color/iconTint"
                         android:contentDescription="@string/habits" />
 
                     <TextView
@@ -205,7 +160,7 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_hydration"
-                        android:tint="@color/iconTint"
+                        app:tint="@color/iconTint"
                         android:contentDescription="@string/hydration" />
 
                     <TextView

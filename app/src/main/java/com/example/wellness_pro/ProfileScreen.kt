@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
-import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.ViewCompat
@@ -27,9 +26,8 @@ class ProfileScreen : BaseBottomNavActivity() {
     private lateinit var textViewName: TextView
     private lateinit var textViewEmail: TextView
 
-    private lateinit var textViewLevel: TextView
-    private lateinit var textViewXP: TextView
-    private lateinit var progressBarLevel: ProgressBar
+    // Progress-related views were removed from the layout. Profile progress display
+    // is handled elsewhere or intentionally omitted now.
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,9 +37,7 @@ class ProfileScreen : BaseBottomNavActivity() {
             textViewName = findViewById(R.id.textViewScreenTitle)
             textViewEmail = findViewById(R.id.textViewScreenSubtitle)
 
-            textViewLevel = findViewById(R.id.textViewLevel)
-            textViewXP = findViewById(R.id.textViewXP)
-            progressBarLevel = findViewById(R.id.progressBarLevel)
+            // Progress views removed from layout; skip binding them.
 
         } catch (e: NullPointerException) {
             Log.e("ProfileScreen", "Error finding UI elements. Check IDs in XML.", e)
@@ -120,22 +116,8 @@ class ProfileScreen : BaseBottomNavActivity() {
 
     private fun loadAndDisplayAppUserProgress() {
         val userProgress = UserProgressUtil.loadUserProgress(applicationContext)
-
-        if (::textViewLevel.isInitialized) {
-            textViewLevel.text = getString(R.string.level_format, userProgress.currentLevel)
-        }
-        if (::textViewXP.isInitialized) {
-            val xpToNextDisplay = if (userProgress.xpToNextLevel == Int.MAX_VALUE) "MAX" else userProgress.xpToNextLevel.toString()
-            textViewXP.text = getString(R.string.xp_format, userProgress.currentXp, xpToNextDisplay)
-        }
-        if (::progressBarLevel.isInitialized) {
-            if (userProgress.xpToNextLevel > 0 && userProgress.xpToNextLevel != Int.MAX_VALUE) {
-                progressBarLevel.max = userProgress.xpToNextLevel
-                progressBarLevel.progress = userProgress.currentXp.coerceIn(0, userProgress.xpToNextLevel)
-            } else {
-                progressBarLevel.max = 1
-                progressBarLevel.progress = if (userProgress.currentLevel >= UserProgressUtil.MAX_LEVEL) 1 else 0
-            }
-        }
+        // Progress UI was removed from the profile layout. Keep the data loading here
+        // in case other components need it in the future.
+        // No UI updates are performed for progress elements.
     }
 }
