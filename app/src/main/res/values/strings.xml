@@ -212,4 +212,7 @@
     <string name="mood_filter_30d">30d</string>
     <string name="mood_filter_all">All</string>
 
+    <!-- Accessibility strings for hydration screen -->
+    <string name="reminder_times_list">Reminder times list</string>
+
 </resources>
