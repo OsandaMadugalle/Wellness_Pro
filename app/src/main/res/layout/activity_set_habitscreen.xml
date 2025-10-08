@@ -8,14 +8,12 @@
     android:background="@color/backgroundColor"
     tools:context=".SetHabitScreen">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/headerLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/backgroundColor"
         android:elevation="4dp"
-        android:gravity="center"
-        android:orientation="vertical"
         android:paddingLeft="16dp"
         android:paddingTop="16dp"
         android:paddingRight="16dp"
@@ -24,46 +22,25 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/textViewScreenTitle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:text="@string/set_a_habit"
+            android:textColor="@color/textColorPrimary"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            app:autoSizeMaxTextSize="28sp"
+            app:autoSizeMinTextSize="18sp"
+            app:autoSizeStepGranularity="2sp"
+            app:autoSizeTextType="uniform"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
-            <!-- back button removed per user request -->
-
-            <Space
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-            <TextView
-                android:id="@+id/textViewScreenTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/set_a_habit"
-                android:textColor="@color/textColorPrimary"
-                android:textSize="28sp"
-                android:textStyle="bold"
-                app:autoSizeMaxTextSize="28sp"
-                app:autoSizeMinTextSize="18sp"
-                app:autoSizeStepGranularity="2sp"
-                app:autoSizeTextType="uniform" />
-
-            <Space
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-            <View
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:layout_marginEnd="4dp"
-                android:visibility="invisible"/>
-
-        </LinearLayout>
-
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/scrollView"
@@ -91,16 +68,6 @@
                 android:background="@color/cardBackgroundColor"
                 android:padding="16dp">
 
-                <TextView
-                    android:id="@+id/textViewHabitTypePrompt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/habit_type"
-                    android:textColor="@color/textColorPrimary"
-                    android:textSize="17sp"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
-
                 <!-- Replaced custom spinner with Material exposed dropdown -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/itemContainerSpinner"
@@ -114,7 +81,7 @@
                     android:paddingEnd="8dp"
                     android:paddingBottom="6dp"
                     app:endIconMode="dropdown_menu"
-                    app:layout_constraintTop_toBottomOf="@+id/textViewHabitTypePrompt"
+                    app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent">
 
@@ -125,7 +92,7 @@
                         android:focusable="true"
                         android:clickable="true"
                         android:inputType="none"
-                        android:text="@string/hydration_txt_em"
+                        android:hint="@string/habit_type"
                         android:textColor="@color/textColorPrimary"
                         android:textSize="16sp"
                         android:padding="8dp"
@@ -153,7 +120,7 @@
                         android:id="@+id/textViewValueUnit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/glasses_day"
+                        android:text="@string/unit_e_g_glasses_km_minutes"
                         android:textColor="@color/textColorPrimary"
                         android:textSize="16sp"
                         app:layout_constraintStart_toStartOf="parent"
