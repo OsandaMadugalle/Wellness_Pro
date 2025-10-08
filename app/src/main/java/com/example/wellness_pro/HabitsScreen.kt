@@ -53,7 +53,6 @@ class HabitsScreen : BaseBottomNavActivity() {
     private var habitsList: MutableList<Habit> = mutableListOf()
     private var selectedHabit: Habit? = null
 
-    // Removed "Hydration" from this list
     private val countableHabitTypes = listOf("Steps", "Reading", "Workout")
 
     private val stepsUpdatedReceiver = object : BroadcastReceiver() {
@@ -277,7 +276,7 @@ class HabitsScreen : BaseBottomNavActivity() {
                         if (isHabitCompletedToday(updatedHabit)) {
                             if (updatedHabit.currentValue < updatedHabit.targetValue) updatedHabit.currentValue = updatedHabit.targetValue
                         } else {
-                            // Removed special handling for "Steps" here as it's now handled by updateStepsHabitFromDashboardData or general logic
+                            
                         }
                     }
                     updatedHabit
@@ -695,7 +694,7 @@ class HabitsScreen : BaseBottomNavActivity() {
             }
             // Note: This save process does NOT remove Hydration from the master list in SharedPreferences,
             // it only stops saving updates for it from this screen if it's filtered out of habitsList.
-            // Archived Hydration habits also remain in masterHabitList unless explicitly removed elsewhere.
+            
             prefs.edit().putString("habits_list_json", Gson().toJson(masterHabitList)).apply()
             Log.d("HabitsScreen", "Habits (master) list saved. Count: ${masterHabitList.size}")
 

@@ -8,7 +8,7 @@
     android:background="@color/backgroundColor"
     tools:context=".ProfileScreen">
 
-    <!-- paddingTop is removed from root and applied to content where needed to avoid window inset conflicts -->
+    
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineStart"
@@ -102,7 +102,7 @@
 
     </LinearLayout>
 
-    <!-- Progress Section removed per request -->
+    
 
     <!-- Scrollable Content Section -->
     <androidx.core.widget.NestedScrollView
@@ -213,8 +213,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
-                <!-- Removed Share Progress button per request. Keep Edit Profile only if you still want it here. -->
-                <!-- The Edit Profile button has been relocated into the header for prominence. -->
+                
 
             </LinearLayout>
 

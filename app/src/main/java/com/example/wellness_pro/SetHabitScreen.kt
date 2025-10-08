@@ -54,16 +54,13 @@ class SetHabitScreen : BaseBottomNavActivity() {
     private lateinit var buttonWeekdays: Button
     private lateinit var scheduleButtons: List<Button>
     private var selectedSchedule: String = "Daily" // This holds the UI selected schedule type
-    // remind-me UI removed: prompt/time no longer part of the Habits screen
+    
     private var selectedHour: Int = -1
     private var selectedMinute: Int = -1
 
-    // REMOVED Hydration reminder specific UI variables
-    // private lateinit var hydrationReminderSettingsContainer: ConstraintLayout
-    // private lateinit var switchHydrationReminder: SwitchMaterial
-    // private lateinit var editTextReminderIntervalMinutes: EditText
+    
 
-    // Removed "Hydration" from this list
+    
     private val habitTypes = listOf("Steps", "Meditation", "Workout", "Reading")
     private var currentSelectedHabitType: String = if (habitTypes.isNotEmpty()) habitTypes[0] else ""
 
@@ -162,7 +159,7 @@ class SetHabitScreen : BaseBottomNavActivity() {
             buttonWeekly = findViewById(R.id.buttonWeekly)
             buttonWeekdays = findViewById(R.id.buttonWeekdays)
             scheduleButtons = listOf(buttonDaily, buttonWeekly, buttonWeekdays)
-            // remind-me views removed from layout; nothing to initialize here
+            
 
             Log.d(LIFECYCLE_TAG, "initializeViews - All findViewById calls attempted.")
             // Setup dropdown adapter for habit types
@@ -234,7 +231,7 @@ class SetHabitScreen : BaseBottomNavActivity() {
 
     private fun setupClickListeners() {
         Log.d(LIFECYCLE_TAG, "setupClickListeners - START")
-        // Top back button removed. Navigation still handled after successful save via navigateToHabitsScreen().
+    // Back navigation handled after successful save via navigateToHabitsScreen().
         buttonSetHabit.setOnClickListener {
             Log.d(DEBUG_TAG, "buttonSetHabit clicked.")
             Log.d(DEBUG_TAG, "Processing and saving habit data...")
@@ -250,7 +247,7 @@ class SetHabitScreen : BaseBottomNavActivity() {
         buttonDaily.setOnClickListener { updateScheduleButtonStates(it as Button) }
         buttonWeekly.setOnClickListener { updateScheduleButtonStates(it as Button) }
         buttonWeekdays.setOnClickListener { updateScheduleButtonStates(it as Button) }
-    // remind-me UI removed - time picker not wired here
+    
         Log.d(LIFECYCLE_TAG, "setupClickListeners - END")
     }
 
@@ -292,7 +289,7 @@ class SetHabitScreen : BaseBottomNavActivity() {
     private fun updateValueContainer(habitType: String) {
         Log.d(DEBUG_TAG, "updateValueContainer called for type: $habitType")
         when (habitType) {
-            // "Hydration" case removed
+            
             "Steps" -> {
                 textViewValueUnit.text = "steps"
                 editTextValueAmount.hint = "e.g., 10000"
@@ -470,7 +467,7 @@ class SetHabitScreen : BaseBottomNavActivity() {
             allHabitsList.add(newOrUpdatedHabit)
         }
         saveHabitsToPrefs()
-        // Habit reminders removed — keep reminder time fields for potential future use but do not schedule
+    // Reminder time fields are kept but scheduling is not performed here.
         Log.d(DEBUG_TAG, "Habit data processed and saved to list. isEditMode: $isEditMode, Habit type: ${newOrUpdatedHabit.type}")
         return true
     }

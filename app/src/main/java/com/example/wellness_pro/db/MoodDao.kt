@@ -19,7 +19,7 @@ interface MoodDao {
     @Query("SELECT * FROM mood_entries ORDER BY timestamp DESC")
     fun getAllMoodEntries(): Flow<List<MoodEntry>>
 
-    // ADDED: Get the most recent mood entry
+    // Get the most recent mood entry
     @Query("SELECT * FROM mood_entries ORDER BY timestamp DESC LIMIT 1")
     fun getLatestMoodEntry(): Flow<MoodEntry?> // Returns nullable MoodEntry
 }

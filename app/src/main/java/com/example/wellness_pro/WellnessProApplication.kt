@@ -13,7 +13,7 @@ class WellnessProApplication : Application() {
 
     companion object {
         private const val TAG = "WellnessProApplication"
-        // ADDED: Notification Channel Constants
+    // Notification Channel Constants
         const val HYDRATION_CHANNEL_ID = "hydration_reminder_channel"
         const val HYDRATION_CHANNEL_NAME = "Hydration Reminders"
         const val HYDRATION_CHANNEL_DESC = "Channel for daily hydration reminders"
@@ -68,11 +68,11 @@ class WellnessProApplication : Application() {
         }
         Log.d(TAG, "onCreate: Database initialization complete.")
 
-        createNotificationChannels() // ADDED: Call to create channels
+    createNotificationChannels()
         ensureHydrationChannel(this)
     }
 
-    // ADDED: Function to create notification channels
+    // Function to create notification channels
     private fun createNotificationChannels() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // Hydration Reminder Channel

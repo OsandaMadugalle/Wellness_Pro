@@ -1,11 +1,10 @@
 package com.example.wellness_pro.ui
 
 import android.os.Bundle
-import android.view.MenuItem // ADDED for onOptionsItemSelected
-import androidx.appcompat.widget.Toolbar // ADDED for Toolbar
+import android.view.MenuItem
+import androidx.appcompat.widget.Toolbar
 import com.example.wellness_pro.R
-// import com.example.wellness_pro.navbar.BaseBottomNavActivity // REMOVED
-import com.example.wellness_pro.navbar.BaseActivity // CHANGED to BaseActivity
+import com.example.wellness_pro.navbar.BaseActivity
 import android.widget.TextView
 import android.widget.Button
 import android.widget.Switch
@@ -33,7 +32,7 @@ import java.io.File
 import com.example.wellness_pro.reminders.HydrationReminderManager
 import com.example.wellness_pro.reminders.HabitReminderManager
 
-class SettingsActivity : BaseActivity() { // CHANGED parent class
+class SettingsActivity : BaseActivity() {
 
 	override val layoutId: Int
 		get() = R.layout.activity_settings
@@ -221,7 +220,7 @@ class SettingsActivity : BaseActivity() { // CHANGED parent class
 			.show()
 	}
 
-	// ADDED: Handle Up button press
+	// Handle Up button press
 	override fun onOptionsItemSelected(item: MenuItem): Boolean {
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long

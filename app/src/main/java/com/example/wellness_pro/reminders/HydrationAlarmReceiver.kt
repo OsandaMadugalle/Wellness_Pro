@@ -10,9 +10,9 @@ import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat // Use Compat version
-import com.example.wellness_pro.LaunchScreen // CHANGED: To open LaunchScreen
+import com.example.wellness_pro.LaunchScreen
 import com.example.wellness_pro.R
-import com.example.wellness_pro.WellnessProApplication // ADDED: To use its channel ID constant
+import com.example.wellness_pro.WellnessProApplication
 import com.example.wellness_pro.db.AppDatabase
 import com.example.wellness_pro.db.AppNotification
 import kotlinx.coroutines.CoroutineScope
@@ -38,7 +38,7 @@ class HydrationAlarmReceiver : BroadcastReceiver() {
         // This can be useful for logging or for making notification IDs unique if needed.
         const val EXTRA_REMINDER_TIME = "extra_reminder_time"
         const val EXTRA_SNOOZE_MINUTES = "extra_snooze_minutes"
-        private const val GENERIC_HYDRATION_ID = "GENERAL_HYDRATION_REMINDER" // ADDED
+        private const val GENERIC_HYDRATION_ID = "GENERAL_HYDRATION_REMINDER"
         private const val SNOOZE_MINUTES_DEFAULT = 15
     }
 
@@ -194,7 +194,7 @@ class HydrationAlarmReceiver : BroadcastReceiver() {
         CoroutineScope(Dispatchers.IO).launch {
             Log.d(TAG, "saveNotificationToDatabase - Coroutine started on Dispatchers.IO")
             try {
-                val notificationDao = AppDatabase.getInstance().appNotificationDao() // CORRECTED: Removed context argument
+                val notificationDao = AppDatabase.getInstance().appNotificationDao()
                 val appNotification = AppNotification(
                     id = UUID.randomUUID().toString(),
                     title = title,

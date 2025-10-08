@@ -1,6 +1,6 @@
 package com.example.wellness_pro
 
-import android.content.Intent // Added import
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -14,7 +14,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import com.example.wellness_pro.navbar.BaseBottomNavActivity
-import com.example.wellness_pro.ui.SettingsActivity // Added import
+import com.example.wellness_pro.ui.SettingsActivity
 import com.example.wellness_pro.util.UserProgressUtil
 import com.example.wellness_pro.ui.HydrationActivity
 
@@ -36,8 +36,7 @@ class ProfileScreen : BaseBottomNavActivity() {
     private lateinit var textViewHabitsSummary: TextView
     private lateinit var textViewHydrationSummary: TextView
 
-    // Progress-related views were removed from the layout. Profile progress display
-    // is handled elsewhere or intentionally omitted now.
+    // Progress views are not present in the current layout.
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,7 +52,7 @@ class ProfileScreen : BaseBottomNavActivity() {
             textViewHabitsSummary = findViewById(R.id.textViewHabitsSummary)
             textViewHydrationSummary = findViewById(R.id.textViewHydrationSummary)
 
-            // Progress views removed from layout; skip binding them.
+            // Skip binding progress views (not present in layout).
 
         } catch (e: NullPointerException) {
             Log.e("ProfileScreen", "Error finding UI elements. Check IDs in XML.", e)
@@ -68,7 +67,7 @@ class ProfileScreen : BaseBottomNavActivity() {
 
 
 
-        // New: Edit Profile and Share Progress actions
+    // Edit Profile action
         findViewById<View?>(R.id.buttonEditProfile)?.setOnClickListener {
             try {
                 startActivity(Intent(this, SettingsActivity::class.java))
@@ -172,8 +171,6 @@ class ProfileScreen : BaseBottomNavActivity() {
 
     private fun loadAndDisplayAppUserProgress() {
         val userProgress = UserProgressUtil.loadUserProgress(applicationContext)
-        // Progress UI was removed from the profile layout. Keep the data loading here
-        // in case other components need it in the future.
-        // No UI updates are performed for progress elements.
+    // No UI updates are performed for progress elements.
     }
 }

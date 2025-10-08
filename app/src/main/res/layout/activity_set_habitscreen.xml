@@ -226,11 +226,11 @@
                     android:textColor="@color/textColorPrimary"
                     app:backgroundTint="@color/cardBackgroundColor"/>
 
-                <!-- remind-me prompt and time removed -->
+                
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- Hydration reminder settings container removed per user request -->
+            
 
 
             <androidx.constraintlayout.widget.ConstraintLayout

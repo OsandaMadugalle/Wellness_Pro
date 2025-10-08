@@ -26,7 +26,7 @@ class LaunchScreen : AppCompatActivity() {
 
     companion object {
         const val PREFS_NAME = "PlayPalPrefs" // Your app's preference file name
-        // const val KEY_ONBOARDING_COMPLETE = "onboarding_complete" // Removed as Login/Onboarding are deleted
+    // const val KEY_ONBOARDING_COMPLETE = "onboarding_complete"
         const val LIFECYCLE_TAG = "LaunchScreen_Lifecycle" // Define a common tag
     }
 
@@ -105,7 +105,7 @@ class LaunchScreen : AppCompatActivity() {
         }
     }
 
-    // Removed isOnboardingComplete() method as it's no longer needed
+    
 
     private fun loadAndDecideNavigation() {
         showLoading(true)

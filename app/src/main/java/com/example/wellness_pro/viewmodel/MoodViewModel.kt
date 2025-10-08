@@ -36,7 +36,7 @@ class MoodViewModel(private val moodDao: MoodDao) : ViewModel() {
         initialValue = emptyList() 
     )
 
-    // ADDED: Flow for the most recent mood entry - for the Dashboard
+    // Flow for the most recent mood entry - for the Dashboard
     val latestMoodEntry: StateFlow<MoodEntry?> = refreshTrigger.flatMapLatest { 
         moodDao.getLatestMoodEntry() // This calls the new DAO method
     }.stateIn(
