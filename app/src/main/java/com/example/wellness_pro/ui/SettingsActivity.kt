@@ -173,6 +173,33 @@ class SettingsActivity : BaseActivity() {
 			showChangeNameDialog()
 		}
 
+		// Test Shake button - use BaseActivity's helper so behavior and logs are consistent
+		findViewById<Button?>(R.id.buttonTestShake)?.setOnClickListener {
+			try {
+				testVibrate(150L)
+				Toast.makeText(this, "Vibration test triggered", Toast.LENGTH_SHORT).show()
+				Log.i("SettingsActivity", "Vibration test triggered via BaseActivity.testVibrate()")
+			} catch (e: Exception) {
+				Toast.makeText(this, "Vibration test failed: ${e.message}", Toast.LENGTH_LONG).show()
+				Log.w("SettingsActivity", "Vibration test failed calling testVibrate: ${e.message}")
+			}
+		}
+
+		// Show vibrator availability status
+		try {
+			val vibratorPresent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+				val vm = getSystemService(android.content.Context.VIBRATOR_MANAGER_SERVICE) as? android.os.VibratorManager
+				vm?.defaultVibrator?.hasVibrator() ?: false
+			} else {
+				@Suppress("DEPRECATION")
+				(getSystemService(Context.VIBRATOR_SERVICE) as? android.os.Vibrator)?.hasVibrator() ?: false
+			}
+			findViewById<TextView?>(R.id.textViewVibratorStatus)?.text = "Vibrator: ${if (vibratorPresent) "Yes" else "No"}"
+		} catch (e: Exception) {
+			findViewById<TextView?>(R.id.textViewVibratorStatus)?.text = "Vibrator: unknown"
+			Log.w("SettingsActivity", "Failed to determine vibrator presence: ${e.message}")
+		}
+
 		// Reset app - destructive action
 		findViewById<Button?>(R.id.buttonResetApp)?.setOnClickListener {
 			AlertDialog.Builder(this)

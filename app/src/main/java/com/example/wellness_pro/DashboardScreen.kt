@@ -596,6 +596,8 @@ class DashboardScreen : BaseBottomNavActivity(), SensorEventListener {
 
     private fun triggerQuickMoodLog() {
         try {
+            // provide haptic feedback when quick mood triggered
+            try { testVibrate(150L) } catch (_: Exception) {}
             val intent = Intent(this, com.example.wellness_pro.ui.MoodLogActivity::class.java)
             intent.putExtra(com.example.wellness_pro.ui.MoodLogActivity.EXTRA_QUICK_MOOD, true)
             // Start as a new task/bring to front similar to other nav behavior

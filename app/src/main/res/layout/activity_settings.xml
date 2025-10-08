@@ -133,6 +133,22 @@
                     android:text="Current: 2.7g"
                     android:textColor="@color/textColorPrimary"
                     android:layout_marginTop="6dp"/>
+                <Button
+                    android:id="@+id/buttonTestShake"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Test Shake"
+                    android:layout_marginTop="8dp"
+                    android:layout_gravity="end"
+                    android:textColor="@color/white"
+                    app:backgroundTint="@color/colorAccentBlue"/>
+                <TextView
+                    android:id="@+id/textViewVibratorStatus"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Vibrator: unknown"
+                    android:textColor="@color/textColorPrimary"
+                    android:layout_marginTop="8dp"/>
             </LinearLayout>
 
             <!-- Notifications Section -->
