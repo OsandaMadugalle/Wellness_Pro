@@ -22,9 +22,10 @@ class ProfileScreen : BaseBottomNavActivity() {
     override val layoutId: Int
         get() = R.layout.activity_profile_screen
 
-    private lateinit var imageViewAvatar: ImageView
+    // avatar removed from layout
     private lateinit var textViewName: TextView
-    private lateinit var textViewEmail: TextView
+    // subtitle removed from layout; keep only title
+    // private lateinit var textViewEmail: TextView
 
     // Progress-related views were removed from the layout. Profile progress display
     // is handled elsewhere or intentionally omitted now.
@@ -33,9 +34,7 @@ class ProfileScreen : BaseBottomNavActivity() {
         super.onCreate(savedInstanceState)
 
         try {
-            imageViewAvatar = findViewById(R.id.imageViewAvatar)
             textViewName = findViewById(R.id.textViewScreenTitle)
-            textViewEmail = findViewById(R.id.textViewScreenSubtitle)
 
             // Progress views removed from layout; skip binding them.
 
@@ -49,11 +48,7 @@ class ProfileScreen : BaseBottomNavActivity() {
         loadAndDisplayAppUserProgress()
         setupWindowInsets()
 
-        val settingsButton = findViewById<View>(R.id.buttonSettings)
-        settingsButton?.setOnClickListener {
-            val intent = Intent(this, SettingsActivity::class.java)
-            startActivity(intent)
-        }
+
 
         // New: Edit Profile and Share Progress actions
         findViewById<View?>(R.id.buttonEditProfile)?.setOnClickListener {
@@ -119,10 +114,6 @@ class ProfileScreen : BaseBottomNavActivity() {
         val prefs = getSharedPreferences("AppSettingsPrefs", android.content.Context.MODE_PRIVATE)
         val displayName = prefs.getString("display_name", null)
         if (::textViewName.isInitialized) textViewName.text = displayName?.takeIf { it.isNotBlank() } ?: getString(R.string.name)
-        if (::textViewEmail.isInitialized) textViewEmail.visibility = View.GONE
-        if (::imageViewAvatar.isInitialized) {
-            imageViewAvatar.setImageResource(R.drawable.ic_avatar)
-        }
     }
 
     private fun loadAndDisplayAppUserProgress() {
