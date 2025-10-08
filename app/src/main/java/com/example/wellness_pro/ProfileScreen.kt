@@ -26,10 +26,9 @@ class ProfileScreen : BaseBottomNavActivity() {
     override val layoutId: Int
         get() = R.layout.activity_profile_screen
 
-    // avatar removed from layout
+    // Header views
+    private lateinit var imageViewAvatar: ImageView
     private lateinit var textViewName: TextView
-    // subtitle removed from layout; keep only title
-    // private lateinit var textViewEmail: TextView
 
     // Stats row views
     private lateinit var tileHabits: View
@@ -44,6 +43,8 @@ class ProfileScreen : BaseBottomNavActivity() {
         super.onCreate(savedInstanceState)
 
         try {
+
+            imageViewAvatar = findViewById(R.id.imageViewAvatar)
             textViewName = findViewById(R.id.textViewScreenTitle)
 
             // Bind stats-related views
@@ -181,6 +182,7 @@ class ProfileScreen : BaseBottomNavActivity() {
         val prefs = getSharedPreferences("AppSettingsPrefs", android.content.Context.MODE_PRIVATE)
         val displayName = prefs.getString("display_name", null)
         if (::textViewName.isInitialized) textViewName.text = displayName?.takeIf { it.isNotBlank() } ?: getString(R.string.name)
+        // Optionally, we could generate initials and overlay them on the avatar. Keep default drawable for now.
     }
 
     private fun loadAndDisplayAppUserProgress() {
