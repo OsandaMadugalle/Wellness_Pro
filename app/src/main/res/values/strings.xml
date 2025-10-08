@@ -135,6 +135,7 @@
     <string name="set_hydration_subtitle">Set your daily target and reminder schedule</string>
     <string name="daily_glasses_goal">Daily Glasses Goal:</string>
     <string name="e_g_8">e.g. 8</string>
+    <string name="daily_goal_helper">Tip: Set a realistic daily goal — start small and increase gradually.</string>
     <string name="set_reminders_below">Set reminders below.</string>
     <string name="no_reminders_set_yet_add_times_below">No reminders set yet. Add times below.</string>
     <string name="add_reminder_time">Add Reminder Time</string>
