@@ -1,3 +1,24 @@
+# Gradle
+/.gradle
+/build
+/app/build
+
+# Android Studio
+.idea/
+*.iml
+
+# Local properties (SDK paths, etc.)
+/local.properties
+
+# Generated files
+*.apk
+*.aab
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Optional: Exclude Firebase local config from repo. Add the real local file here if you prefer not to commit local configuration.
 *.iml
 .gradle
 /local.properties

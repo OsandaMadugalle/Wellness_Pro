@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    // id("com.google.gms.google-services") // REMOVED Firebase plugin
+    // Firebase plugin removed
     id("org.jetbrains.kotlin.plugin.compose") version "2.0.0"
     id("com.google.devtools.ksp") version "2.0.0-1.0.21"
     id("kotlin-parcelize")
@@ -82,10 +82,7 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.16.0")
     ksp("com.github.bumptech.glide:ksp:4.16.0")
 
-    // Firebase - REMOVED
-    // implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
-    // implementation("com.google.firebase:firebase-auth-ktx")
-    // implementation("com.google.firebase:firebase-storage-ktx")
+    // Firebase dependencies removed
 
     // AndroidX Core & UI
     implementation(libs.androidx.core.ktx)
