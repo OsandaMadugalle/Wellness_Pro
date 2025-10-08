@@ -221,5 +221,12 @@
     <string name="mood_emoji_neutral">😐</string>
     <string name="mood_emoji_okay">🙂</string>
     <string name="mood_emoji_happy">😄</string>
+    
+    <!-- Mood history content descriptions -->
+    <string name="average_mood_summary">Average mood summary</string>
+    <string name="mood_entries_list">Mood entries list</string>
+    
+    <!-- Generic labels -->
+    <string name="day_status">Day status</string>
 
 </resources>

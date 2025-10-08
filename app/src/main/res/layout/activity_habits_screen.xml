@@ -208,7 +208,8 @@
                 android:layout_height="28dp"
                 android:layout_marginTop="4dp"
                 app:srcCompat="@drawable/empty_circle"
-                app:tint="@color/iconTint"/>
+                app:tint="@color/iconTint"
+                android:contentDescription="@string/day_status"/>
         </LinearLayout>
 
         <!-- Monday -->
@@ -232,7 +233,8 @@
                 android:layout_height="28dp"
                 android:layout_marginTop="4dp"
                 app:srcCompat="@drawable/empty_circle"
-                app:tint="@color/iconTint"/>
+                app:tint="@color/iconTint"
+                android:contentDescription="@string/day_status"/>
         </LinearLayout>
 
         <!-- Tuesday -->
@@ -256,7 +258,8 @@
                 android:layout_height="28dp"
                 android:layout_marginTop="4dp"
                 app:srcCompat="@drawable/empty_circle"
-                app:tint="@color/iconTint"/>
+                app:tint="@color/iconTint"
+                android:contentDescription="@string/day_status"/>
         </LinearLayout>
 
         <!-- Wednesday -->
@@ -280,7 +283,8 @@
                 android:layout_height="28dp"
                 android:layout_marginTop="4dp"
                 app:srcCompat="@drawable/empty_circle"
-                app:tint="@color/iconTint"/>
+                app:tint="@color/iconTint"
+                android:contentDescription="@string/day_status"/>
         </LinearLayout>
 
         <!-- Thursday -->
@@ -304,7 +308,8 @@
                 android:layout_height="28dp"
                 android:layout_marginTop="4dp"
                 app:srcCompat="@drawable/empty_circle"
-                app:tint="@color/iconTint"/>
+                app:tint="@color/iconTint"
+                android:contentDescription="@string/day_status"/>
         </LinearLayout>
 
         <!-- Friday -->
@@ -328,7 +333,8 @@
                 android:layout_height="28dp"
                 android:layout_marginTop="4dp"
                 app:srcCompat="@drawable/empty_circle"
-                app:tint="@color/iconTint"/>
+                app:tint="@color/iconTint"
+                android:contentDescription="@string/day_status"/>
         </LinearLayout>
 
         <!-- Saturday -->
@@ -352,7 +358,8 @@
                 android:layout_height="28dp"
                 android:layout_marginTop="4dp"
                 app:srcCompat="@drawable/empty_circle"
-                app:tint="@color/iconTint"/>
+                app:tint="@color/iconTint"
+                android:contentDescription="@string/day_status"/>
         </LinearLayout>
 
         <androidx.constraintlayout.helper.widget.Flow
