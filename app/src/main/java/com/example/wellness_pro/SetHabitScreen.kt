@@ -16,6 +16,9 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.PopupMenu
+import android.widget.ArrayAdapter
+import com.google.android.material.textfield.MaterialAutoCompleteTextView
+import com.google.android.material.textfield.TextInputLayout
 // import android.widget.Switch // No longer using this specific import
 import android.widget.TextView
 import android.widget.Toast
@@ -26,7 +29,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
-import com.example.wellness_pro.navbar.BaseActivity
+import com.example.wellness_pro.navbar.BaseBottomNavActivity
 // import com.example.wellness_pro.reminders.HydrationReminderManager // No longer needed if removing this feature
 // import com.google.android.material.switchmaterial.SwitchMaterial // No longer needed
 import com.google.gson.Gson
@@ -35,7 +38,7 @@ import java.util.Calendar
 import java.util.Locale
 import java.util.UUID
 
-class SetHabitScreen : BaseActivity() {
+class SetHabitScreen : BaseBottomNavActivity() {
 
     override val layoutId: Int
         get() = R.layout.activity_set_habitscreen
@@ -43,8 +46,8 @@ class SetHabitScreen : BaseActivity() {
     private lateinit var textViewScreenTitle: TextView
     private lateinit var buttonBackTop: ImageView
     private lateinit var buttonSetHabit: Button
-    private lateinit var itemContainerSpinner: ConstraintLayout
-    private lateinit var textViewSelectedItem: TextView
+    private lateinit var itemContainerSpinner: TextInputLayout
+    private lateinit var textViewSelectedItem: MaterialAutoCompleteTextView
     private lateinit var textViewValueUnit: TextView
     private lateinit var editTextValueAmount: EditText
     private lateinit var buttonDaily: Button
@@ -76,6 +79,10 @@ class SetHabitScreen : BaseActivity() {
         const val LIFECYCLE_TAG = "SetHabitScreen_Lifecycle"
         const val DEBUG_TAG = "SetHabitScreen_Debug"
     }
+
+    // Provide the nav bar id so BaseBottomNavActivity can wire and highlight the proper tab
+    override val currentNavControllerItemId: Int
+        get() = R.id.navButtonHabits
 
     private val requestNotificationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
@@ -131,11 +138,11 @@ class SetHabitScreen : BaseActivity() {
             buttonSetHabit.text = getString(R.string.set_habit_button)
             if (habitTypes.isNotEmpty()) {
                 currentSelectedHabitType = habitTypes[0]
-                textViewSelectedItem.text = currentSelectedHabitType
+                textViewSelectedItem.setText(currentSelectedHabitType, false)
                 updateValueContainer(currentSelectedHabitType)
             } else {
                 Log.e(LIFECYCLE_TAG, "Habit types list is empty! Cannot set default type.")
-                textViewSelectedItem.text = "No types available"
+                textViewSelectedItem.setText("No types available", false)
                 // Consider disabling parts of the UI or showing an error
             }
             updateScheduleButtonStates(buttonDaily) // Default to Daily
@@ -162,6 +169,19 @@ class SetHabitScreen : BaseActivity() {
             textViewReminderTime = findViewById(R.id.textViewReminderTime)
 
             Log.d(LIFECYCLE_TAG, "initializeViews - All findViewById calls attempted.")
+            // Setup dropdown adapter for habit types
+            try {
+                val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, habitTypes)
+                textViewSelectedItem.setAdapter(adapter)
+                textViewSelectedItem.setOnItemClickListener { parent, view, position, id ->
+                    val selected = parent.getItemAtPosition(position).toString()
+                    currentSelectedHabitType = selected
+                    textViewSelectedItem.setText(selected, false)
+                    updateValueContainer(selected)
+                }
+            } catch (e: Exception) {
+                Log.w(LIFECYCLE_TAG, "initializeViews - could not setup dropdown adapter: ${e.message}")
+            }
         } catch (e: Exception) {
             Log.e(LIFECYCLE_TAG, "initializeViews - ERROR finding views: ${e.message}", e)
             Toast.makeText(this, "Error initializing screen components. Layout might be incorrect.", Toast.LENGTH_LONG).show()
@@ -229,7 +249,8 @@ class SetHabitScreen : BaseActivity() {
                 Log.w(DEBUG_TAG, "processAndSaveHabitData FAILED.")
             }
         }
-        itemContainerSpinner.setOnClickListener { anchorView -> showHabitTypePopupMenu(anchorView) }
+    // Use the MaterialAutoCompleteTextView's dropdown; still allow tapping container to open it
+    itemContainerSpinner.setOnClickListener { _ -> textViewSelectedItem.showDropDown() }
         buttonDaily.setOnClickListener { updateScheduleButtonStates(it as Button) }
         buttonWeekly.setOnClickListener { updateScheduleButtonStates(it as Button) }
         buttonWeekdays.setOnClickListener { updateScheduleButtonStates(it as Button) }
@@ -314,8 +335,8 @@ class SetHabitScreen : BaseActivity() {
         }
         popupMenu.setOnMenuItemClickListener { menuItem ->
             if (habitTypes.isEmpty() || !menuItem.isEnabled) return@setOnMenuItemClickListener false
-            currentSelectedHabitType = menuItem.title.toString()
-            textViewSelectedItem.text = currentSelectedHabitType
+                currentSelectedHabitType = menuItem.title.toString()
+                textViewSelectedItem.setText(currentSelectedHabitType, false)
             updateValueContainer(currentSelectedHabitType)
             true
         }
@@ -377,7 +398,7 @@ class SetHabitScreen : BaseActivity() {
         }
 
         currentSelectedHabitType = habitToEdit.type
-        textViewSelectedItem.text = currentSelectedHabitType
+    textViewSelectedItem.setText(currentSelectedHabitType, false)
         editTextValueAmount.setText(habitToEdit.targetValue.toString())
         updateValueContainer(currentSelectedHabitType) 
 

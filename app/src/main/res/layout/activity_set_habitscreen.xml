@@ -101,48 +101,37 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <!-- Replaced custom spinner with Material exposed dropdown -->
+                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/itemContainerSpinner"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:background="@color/cardBackgroundColor"
                     android:minHeight="48dp"
-                    android:paddingStart="16dp"
-                    android:paddingTop="10dp"
-                    android:paddingEnd="12dp"
-                    android:paddingBottom="10dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:foreground="?attr/selectableItemBackground"
+                    android:paddingStart="8dp"
+                    android:paddingTop="6dp"
+                    android:paddingEnd="8dp"
+                    android:paddingBottom="6dp"
+                    app:endIconMode="dropdown_menu"
                     app:layout_constraintTop_toBottomOf="@+id/textViewHabitTypePrompt"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent">
 
-                    <TextView
+                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
                         android:id="@+id/textViewSelectedItem"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:focusable="true"
+                        android:clickable="true"
+                        android:inputType="none"
                         android:text="@string/hydration_txt_em"
                         android:textColor="@color/textColorPrimary"
                         android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/imageViewDropdownArrow"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        android:layout_marginEnd="8dp"/>
+                        android:padding="8dp"
+                        android:background="@android:color/transparent" />
 
-                    <ImageView
-                        android:id="@+id/imageViewDropdownArrow"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        app:srcCompat="@drawable/ic_dropdown_arrow"
-                        app:tint="@color/iconTint"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/valueContainer"
@@ -403,7 +392,7 @@
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:background="@color/backgroundColor"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/navBarContainerBottom"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -421,4 +410,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
+    
+    <!-- Reusable bottom navigation bar container (matches pattern used elsewhere) -->
+    <FrameLayout
+        android:id="@+id/navBarContainerBottom"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+        <include layout="@layout/layout_reusable_nav_bar" />
+    </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
