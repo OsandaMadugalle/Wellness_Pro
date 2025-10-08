@@ -16,7 +16,8 @@ class ReminderTimesAdapter(
     private val onRemoveClicked: (position: Int) -> Unit
 ) : RecyclerView.Adapter<ReminderTimesAdapter.ViewHolder>() {
 
-    private val timeFormatter = DateTimeFormatter.ofPattern("h:mm a", Locale.US)
+    // Use device default locale so parsing/formatting matches the rest of the app
+    private val timeFormatter = DateTimeFormatter.ofPattern("h:mm a", Locale.getDefault())
 
     init {
         sortTimes()

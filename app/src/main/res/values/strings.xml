@@ -85,6 +85,7 @@
     <!-- Strings for Notification Screen -->
     <string name="notification">Notification</string>
     <string name="check_your_day">Check Your Day</string>
+    <string name="notifications_list">Notifications list</string>
     <string name="no_notifications_yet">No notifications yet</string>
 
     <!-- General App Strings -->

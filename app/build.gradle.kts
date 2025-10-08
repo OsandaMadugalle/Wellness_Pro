@@ -97,6 +97,9 @@ dependencies {
     implementation(libs.androidx.gridlayout)
     implementation(libs.androidx.fragment)
 
+    // SwipeRefreshLayout for pull-to-refresh support used by Notification screen
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+
     // Jetpack Compose
     val composeBom = platform("androidx.compose:compose-bom:2024.06.00")
     implementation(composeBom)
