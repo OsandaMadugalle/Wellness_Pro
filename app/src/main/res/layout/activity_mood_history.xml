@@ -69,41 +69,41 @@
             style="@style/Widget.MaterialComponents.Chip.Choice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="1d"
-            android:contentDescription="Last 1 day" />
+            android:text="@string/mood_filter_1d"
+            android:contentDescription="@string/mood_filter_1d" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/chipLast7"
             style="@style/Widget.MaterialComponents.Chip.Choice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="7d"
+            android:text="@string/mood_filter_7d"
             android:checked="true"
-            android:contentDescription="Last 7 days" />
+            android:contentDescription="@string/mood_filter_7d" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/chipLast14"
             style="@style/Widget.MaterialComponents.Chip.Choice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="14d"
-            android:contentDescription="Last 14 days" />
+            android:text="@string/mood_filter_14d"
+            android:contentDescription="@string/mood_filter_14d" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/chipLast30"
             style="@style/Widget.MaterialComponents.Chip.Choice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="30d"
-            android:contentDescription="Last 30 days" />
+            android:text="@string/mood_filter_30d"
+            android:contentDescription="@string/mood_filter_30d" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/chipAll"
             style="@style/Widget.MaterialComponents.Chip.Choice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="All"
-            android:contentDescription="All entries" />
+            android:text="@string/mood_filter_all"
+            android:contentDescription="@string/mood_filter_all" />
     </com.google.android.material.chip.ChipGroup>
 
     <!-- Scrollable Content Area -->

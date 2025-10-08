@@ -12,14 +12,14 @@
     <item android:gravity="center_horizontal" android:top="16dp">
         <shape android:shape="rectangle"> <!-- Placeholder for text area -->
              <size android:width="100dp" android:height="20dp"/>
-             <solid android:color="#00000000" /> <!-- Transparent, actual text not rendered here -->
+             <solid android:color="@android:color/transparent" /> <!-- Transparent, actual text not rendered here -->
         </shape>
     </item>
     <!-- Text for Percentage -->
      <item android:gravity="center" android:top="10dp">
         <shape android:shape="rectangle"> <!-- Placeholder for text area -->
              <size android:width="60dp" android:height="28dp"/>
-             <solid android:color="#00000000" />
+             <solid android:color="@android:color/transparent" />
         </shape>
     </item>
     <!-- ProgressBar shape -->

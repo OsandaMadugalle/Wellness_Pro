@@ -376,7 +376,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         tools:text="0/8 glasses"
-                        android:text="0/8 glasses"
+                        android:text="@string/hydration_progress_placeholder"
                         android:textColor="@color/textColorPrimary"
                         android:textSize="13sp"
                         app:layout_constraintEnd_toEndOf="@+id/progressBarHydration"

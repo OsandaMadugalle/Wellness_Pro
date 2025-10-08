@@ -41,7 +41,7 @@
                 android:id="@+id/textViewAccountHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Account"
+                android:text="@string/settings_account"
                 android:textStyle="bold"
                 android:textSize="16sp"
                 android:textColor="@color/textColorPrimary"/>
@@ -58,13 +58,13 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Change display name"
+                    android:text="@string/settings_change_display_name"
                     android:textColor="@color/textColorPrimary"/>
                 <Button
                     android:id="@+id/buttonChangeName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Edit"
+                    android:text="@string/settings_edit"
                     android:textColor="@color/white"
                     app:backgroundTint="@color/colorAccentBlue"/>
             </LinearLayout>
@@ -80,7 +80,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Notifications"
+                android:text="@string/settings_notifications"
                 android:textStyle="bold"
                 android:textSize="16sp"
                 android:textColor="@color/textColorPrimary"/>
@@ -97,7 +97,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Enable app notifications"
+                    android:text="@string/settings_enable_app_notifications"
                     android:textColor="@color/textColorPrimary"/>
                 <Switch
                     android:id="@+id/switchEnableNotifications"
@@ -118,7 +118,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Appearance"
+                android:text="@string/settings_appearance"
                 android:textStyle="bold"
                 android:textSize="16sp"
                 android:textColor="@color/textColorPrimary"/>
@@ -135,7 +135,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Dark mode"
+                    android:text="@string/settings_dark_mode"
                     android:textColor="@color/textColorPrimary"/>
                 <Switch
                     android:id="@+id/switchDarkMode"
@@ -156,7 +156,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="About"
+                android:text="@string/settings_about"
                 android:textStyle="bold"
                 android:textSize="16sp"
                 android:textColor="@color/textColorPrimary"/>
@@ -174,14 +174,14 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Version"
+                    android:text="@string/settings_version_label"
                     android:textColor="@color/textColorPrimary"/>
                 <TextView
                     android:id="@+id/textViewVersionValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/textColorPrimary"
-                    android:text="1.0"/>
+                    android:text="@string/settings_version_value"/>
             </LinearLayout>
 
         </LinearLayout>

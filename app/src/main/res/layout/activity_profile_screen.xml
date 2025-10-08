@@ -143,7 +143,7 @@
                 android:id="@+id/textViewOverviewTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Overview"
+                android:text="@string/profile_overview"
                 android:textColor="@color/textColorPrimary"
                 android:textStyle="bold"
                 android:textSize="18sp"
@@ -170,14 +170,14 @@
                     android:gravity="center_horizontal"
                     android:padding="12dp"
                     android:background="@color/cardBackgroundColor"
-                    android:contentDescription="Habits summary">
+                    android:contentDescription="@string/profile_overview">
 
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_habits"
                         android:tint="@color/iconTint"
-                        android:contentDescription="Habits icon" />
+                        android:contentDescription="@string/habits" />
 
                     <TextView
                         android:id="@+id/textViewHabitsSummary"
@@ -199,14 +199,14 @@
                     android:gravity="center_horizontal"
                     android:padding="12dp"
                     android:background="@color/cardBackgroundColor"
-                    android:contentDescription="Hydration summary">
+                    android:contentDescription="@string/today_s_hydration">
 
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_hydration"
                         android:tint="@color/iconTint"
-                        android:contentDescription="Hydration icon" />
+                        android:contentDescription="@string/hydration" />
 
                     <TextView
                         android:id="@+id/textViewHydrationSummary"
@@ -234,7 +234,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Edit Profile"
+                    android:text="@string/profile_edit_profile"
                     app:backgroundTint="@color/cardBackgroundColor"
                     android:textColor="@color/textColorPrimary" />
 
@@ -244,7 +244,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginStart="8dp"
-                    android:text="Share Progress"
+                    android:text="@string/profile_share_progress"
                     app:backgroundTint="@color/colorAccentBlue"
                     android:textColor="@color/white" />
             </LinearLayout>
