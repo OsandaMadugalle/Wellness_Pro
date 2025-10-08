@@ -93,7 +93,7 @@
                         android:id="@+id/textViewMoodEmoji1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="😭"
+                        android:text="@string/mood_emoji_very_sad"
                         android:textSize="28sp"
                         android:textColor="@color/textColorPrimary"/>
 
@@ -127,7 +127,7 @@
                         android:id="@+id/textViewMoodEmoji2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="🙁"
+                        android:text="@string/mood_emoji_sad"
                         android:textSize="28sp"
                         android:textColor="@color/textColorPrimary"/>
 
@@ -161,7 +161,7 @@
                         android:id="@+id/textViewMoodEmoji3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="😐"
+                        android:text="@string/mood_emoji_neutral"
                         android:textSize="28sp"
                         android:textColor="@color/textColorPrimary"/>
 
@@ -195,7 +195,7 @@
                         android:id="@+id/textViewMoodEmoji4"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="🙂"
+                        android:text="@string/mood_emoji_okay"
                         android:textSize="28sp"
                         android:textColor="@color/textColorPrimary"/>
 
@@ -229,7 +229,7 @@
                         android:id="@+id/textViewMoodEmoji5"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="😄"
+                        android:text="@string/mood_emoji_happy"
                         android:textSize="28sp"
                         android:textColor="@color/textColorPrimary"/>
 

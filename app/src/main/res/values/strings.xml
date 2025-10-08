@@ -214,5 +214,12 @@
 
     <!-- Accessibility strings for hydration screen -->
     <string name="reminder_times_list">Reminder times list</string>
+    
+    <!-- Mood emojis as strings for layout usage -->
+    <string name="mood_emoji_very_sad">😭</string>
+    <string name="mood_emoji_sad">🙁</string>
+    <string name="mood_emoji_neutral">😐</string>
+    <string name="mood_emoji_okay">🙂</string>
+    <string name="mood_emoji_happy">😄</string>
 
 </resources>
