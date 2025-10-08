@@ -11,8 +11,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat // For loading colors
 import androidx.core.view.updatePadding
-import androidx.lifecycle.ViewModelProvider // For Chart ViewModel
-import androidx.lifecycle.lifecycleScope // For Chart ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.wellness_pro.R
@@ -21,19 +21,15 @@ import com.example.wellness_pro.db.MoodEntry as DbMoodEntry // Alias for clarity
 import com.example.wellness_pro.navbar.BaseBottomNavActivity
 import com.example.wellness_pro.viewmodel.MoodViewModel // For Chart ViewModel
 import com.example.wellness_pro.viewmodel.MoodViewModelFactory // For Chart ViewModel
-import com.github.mikephil.charting.charts.LineChart // For Chart
-import com.github.mikephil.charting.components.XAxis // For Chart
-import com.github.mikephil.charting.data.Entry // For Chart
-import com.github.mikephil.charting.data.LineData // For Chart
-import com.github.mikephil.charting.data.LineDataSet // For Chart
-import com.github.mikephil.charting.formatter.ValueFormatter // For Chart
+import android.widget.CalendarView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.chip.ChipGroup
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 // Gson and TypeToken no longer needed for RecyclerView
 import kotlinx.coroutines.flow.collectLatest // Changed to collectLatest for RecyclerView updates
-import kotlinx.coroutines.launch // For Chart ViewModel
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat // For Chart and RecyclerView
 import java.util.Date // For Chart and RecyclerView
 import java.util.Locale // For Chart and RecyclerView
@@ -49,6 +45,7 @@ class MoodHistoryActivity : BaseBottomNavActivity() {
     // RecyclerView related (now uses Room db.MoodEntry via ViewModel)
     private lateinit var recyclerViewMoodHistory: RecyclerView
     private lateinit var textViewNoMoods: TextView // For RecyclerView empty state
+    private lateinit var textViewAverageMoodSummary: TextView
     private lateinit var moodEntriesAdapter: MoodEntriesAdapter
     private lateinit var fabLogNewMood: FloatingActionButton
     private lateinit var buttonShareMoodHistory: ImageButton
@@ -56,12 +53,16 @@ class MoodHistoryActivity : BaseBottomNavActivity() {
     // Common ViewModel for both Chart and RecyclerView
     private lateinit var moodViewModel: MoodViewModel
 
-    // Chart related
-    private lateinit var moodChartHistory: LineChart
-    private lateinit var textViewNoMoodsChartHistory: TextView // For Chart
+    // Calendar related (embedded)
+    private var calendarViewMoodHistory: CalendarView? = null
+    private lateinit var toggleGroupCalendarFilter: com.google.android.material.button.MaterialButtonToggleGroup
+    private lateinit var buttonFilter1d: com.google.android.material.button.MaterialButton
+    private lateinit var buttonFilter7d: com.google.android.material.button.MaterialButton
+    private lateinit var buttonFilter30d: com.google.android.material.button.MaterialButton
+    private lateinit var buttonFilterAll: com.google.android.material.button.MaterialButton
 
-    private lateinit var chipGroupFilters: ChipGroup
-    private val daysWindowState = MutableStateFlow<Int?>(7) // default 7 days; null means all
+    // chip filters removed — default to showing all entries
+    private val daysWindowState = MutableStateFlow<Int?>(null) // null means all
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,13 +82,75 @@ class MoodHistoryActivity : BaseBottomNavActivity() {
         }
 
         // RecyclerView Init
-        recyclerViewMoodHistory = findViewById(R.id.recyclerViewMoodHistory)
-        textViewNoMoods = findViewById(R.id.textViewNoMoods)
+    recyclerViewMoodHistory = findViewById(R.id.recyclerViewMoodHistory)
+    textViewNoMoods = findViewById(R.id.textViewNoMoods)
+    textViewAverageMoodSummary = findViewById(R.id.textViewAverageMoodSummary)
         fabLogNewMood = findViewById(R.id.fabLogNewMood)
         buttonShareMoodHistory = findViewById(R.id.buttonShareMoodHistory)
+        // Embedded calendar view (toggle with header button)
+        calendarViewMoodHistory = findViewById(R.id.calendarViewMoodHistory)
+    toggleGroupCalendarFilter = findViewById(R.id.toggleGroupCalendarFilter)
+    buttonFilter1d = findViewById(R.id.buttonFilter1d)
+    buttonFilter7d = findViewById(R.id.buttonFilter7d)
+    buttonFilter30d = findViewById(R.id.buttonFilter30d)
+    buttonFilterAll = findViewById(R.id.buttonFilterAll)
+        val buttonCalendarOpen: ImageButton? = findViewById(R.id.buttonCalendarOpen)
+        buttonCalendarOpen?.setOnClickListener {
+            // Toggle calendar visibility since it's now embedded in this layout
+            try {
+                calendarViewMoodHistory?.let { cal ->
+                    cal.visibility = if (cal.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+                    // scroll to top when showing
+                    if (cal.visibility == View.VISIBLE) recyclerViewMoodHistory.scrollToPosition(0)
+                }
+            } catch (e: Exception) {
+                Log.e("MoodHistoryActivity", "Failed to toggle embedded calendar", e)
+            }
+        }
 
         setupRecyclerView()
         observeMoodDataForRecyclerView()
+
+    setupFilterToggleGroup()
+
+        // Calendar selection -> filter RecyclerView to that day
+        calendarViewMoodHistory?.setOnDateChangeListener { _, year, month, dayOfMonth ->
+            lifecycleScope.launch {
+                try {
+                    val startCal = java.util.Calendar.getInstance().apply {
+                        set(java.util.Calendar.YEAR, year)
+                        set(java.util.Calendar.MONTH, month)
+                        set(java.util.Calendar.DAY_OF_MONTH, dayOfMonth)
+                        set(java.util.Calendar.HOUR_OF_DAY, 0)
+                        set(java.util.Calendar.MINUTE, 0)
+                        set(java.util.Calendar.SECOND, 0)
+                        set(java.util.Calendar.MILLISECOND, 0)
+                    }
+                    val endCal = java.util.Calendar.getInstance().apply {
+                        timeInMillis = startCal.timeInMillis
+                        set(java.util.Calendar.HOUR_OF_DAY, 23)
+                        set(java.util.Calendar.MINUTE, 59)
+                        set(java.util.Calendar.SECOND, 59)
+                        set(java.util.Calendar.MILLISECOND, 999)
+                    }
+
+                    val allEntries = moodViewModel.allMoodEntriesSorted.first()
+                    val filtered = allEntries.filter { it.timestamp in startCal.timeInMillis..endCal.timeInMillis }
+                    moodEntriesAdapter.updateData(filtered)
+                    // Update average summary for selected day
+                    updateAverageSummary(filtered, getString(R.string.mood_filter_1d))
+                    if (filtered.isEmpty()) {
+                        textViewNoMoods.visibility = View.VISIBLE
+                        recyclerViewMoodHistory.visibility = View.GONE
+                    } else {
+                        textViewNoMoods.visibility = View.GONE
+                        recyclerViewMoodHistory.visibility = View.VISIBLE
+                    }
+                } catch (e: Exception) {
+                    Log.e("MoodHistoryActivity", "Error filtering by selected date", e)
+                }
+            }
+        }
 
         fabLogNewMood.setOnClickListener {
             startActivity(Intent(this, MoodLogActivity::class.java))
@@ -97,25 +160,8 @@ class MoodHistoryActivity : BaseBottomNavActivity() {
             shareMoodSummary()
         }
 
-        chipGroupFilters = findViewById(R.id.chipGroupFilters)
-        chipGroupFilters.setOnCheckedChangeListener { _, checkedId ->
-            val days = when (checkedId) {
-                R.id.chipDaily -> 1
-                R.id.chipLast7 -> 7
-                R.id.chipLast14 -> 14
-                R.id.chipLast30 -> 30
-                R.id.chipAll -> null
-                else -> 7
-            }
-            Log.d("MoodHistoryActivity", "ChipGroup selection changed: checkedId=$checkedId -> days=$days")
-            daysWindowState.value = days
-        }
+        // chipGroupFilters removed: we use 'daysWindowState' set to null to show all entries by default
 
-        // Chart Init
-        moodChartHistory = findViewById(R.id.moodChartHistory)
-        textViewNoMoodsChartHistory = findViewById(R.id.textViewNoMoodsChartHistory)
-        setupMoodChartStyle()
-        observeMoodDataForChart()
         // Ensure consistent insets handling for header and main
         setupWindowInsets()
     }
@@ -172,6 +218,17 @@ class MoodHistoryActivity : BaseBottomNavActivity() {
                 filtered
             }.collectLatest { filteredEntries ->
                 moodEntriesAdapter.updateData(filteredEntries)
+                // update average summary for current filter window
+                val windowLabel = when (daysWindowState.value) {
+                    null -> getString(R.string.mood_filter_all)
+                    1 -> getString(R.string.mood_filter_1d)
+                    7 -> getString(R.string.mood_filter_7d)
+                    14 -> getString(R.string.mood_filter_14d)
+                    30 -> getString(R.string.mood_filter_30d)
+                    else -> getString(R.string.mood_filter_7d)
+                }
+                updateAverageSummary(filteredEntries, windowLabel)
+
                 if (filteredEntries.isEmpty()) {
                     textViewNoMoods.visibility = View.VISIBLE
                     recyclerViewMoodHistory.visibility = View.GONE
@@ -180,6 +237,67 @@ class MoodHistoryActivity : BaseBottomNavActivity() {
                     recyclerViewMoodHistory.visibility = View.VISIBLE
                 }
             }
+        }
+    }
+
+    private fun updateAverageSummary(entries: List<DbMoodEntry>, label: String) {
+        try {
+            if (entries.isEmpty()) {
+                textViewAverageMoodSummary.visibility = View.GONE
+                return
+            }
+            val avg = entries.map { it.moodLevel }.average()
+            val rounded = avg.toInt().coerceIn(1, 5)
+            val emoji = moodEntriesAdapter.getEmojiForMoodLevel(rounded)
+            val summary = getString(R.string.average_mood_summary_format, emoji, label)
+            textViewAverageMoodSummary.text = summary
+            textViewAverageMoodSummary.visibility = View.VISIBLE
+        } catch (e: Exception) {
+            Log.e("MoodHistoryActivity", "Error updating average summary", e)
+            textViewAverageMoodSummary.visibility = View.GONE
+        }
+    }
+
+    private fun setupFilterToggleGroup() {
+        try {
+            // Load persisted filter choice
+            val prefs = getSharedPreferences("mood_prefs", MODE_PRIVATE)
+            val saved = prefs.getString("calendar_filter_choice", "All") ?: "All"
+            // Map saved to button id selection
+            val idToCheck = when (saved) {
+                "1d" -> R.id.buttonFilter1d
+                "7d" -> R.id.buttonFilter7d
+                "30d" -> R.id.buttonFilter30d
+                else -> R.id.buttonFilterAll
+            }
+            toggleGroupCalendarFilter.check(idToCheck)
+
+            toggleGroupCalendarFilter.addOnButtonCheckedListener { group, checkedId, isChecked ->
+                if (!isChecked) return@addOnButtonCheckedListener
+                val choice = when (checkedId) {
+                    R.id.buttonFilter1d -> { daysWindowState.value = 1; "1d" }
+                    R.id.buttonFilter7d -> { daysWindowState.value = 7; "7d" }
+                    R.id.buttonFilter30d -> { daysWindowState.value = 30; "30d" }
+                    else -> { daysWindowState.value = null; "All" }
+                }
+                // persist
+                prefs.edit().putString("calendar_filter_choice", choice).apply()
+            }
+        } catch (e: Exception) {
+            Log.e("MoodHistoryActivity", "Failed to setup filter toggle group", e)
+        }
+    }
+
+    private fun showCalendar(visible: Boolean) {
+        try {
+            val cal = calendarViewMoodHistory ?: return
+            if (visible) {
+                cal.animate().alpha(1f).setDuration(200).withStartAction { cal.visibility = View.VISIBLE }
+            } else {
+                cal.animate().alpha(0f).setDuration(200).withEndAction { cal.visibility = View.GONE }
+            }
+        } catch (e: Exception) {
+            Log.e("MoodHistoryActivity", "Error toggling calendar visibility", e)
         }
     }
 
@@ -203,125 +321,7 @@ class MoodHistoryActivity : BaseBottomNavActivity() {
         startActivity(Intent.createChooser(shareIntent, getString(R.string.share_your_mood_summary)))
     }
 
-    private fun setupMoodChartStyle() {
-        moodChartHistory.description.isEnabled = false
-        moodChartHistory.legend.isEnabled = true
-        moodChartHistory.legend.textColor = ContextCompat.getColor(this, R.color.textColorPrimary)
-        moodChartHistory.setTouchEnabled(true)
-        moodChartHistory.setPinchZoom(true)
-        // Attach a marker view for point details
-        try {
-            val marker = MoodChartMarkerView(this)
-            marker.chartView = moodChartHistory
-            moodChartHistory.marker = marker
-        } catch (e: Exception) {
-            Log.w("MoodHistoryActivity", "Failed to attach marker to chart", e)
-        }
-
-        val xAxis = moodChartHistory.xAxis
-        xAxis.position = XAxis.XAxisPosition.BOTTOM
-        xAxis.valueFormatter = object : ValueFormatter() {
-            private val dateFormat = SimpleDateFormat("MMM d", Locale.getDefault())
-            override fun getFormattedValue(value: Float): String {
-                return dateFormat.format(Date(value.toLong()))
-            }
-        }
-        xAxis.granularity = 1f
-    // Prefer daily granularity when working with timestamps (use millis/day approx)
-    xAxis.granularity = 24 * 60 * 60 * 1000f
-    xAxis.labelRotationAngle = -30f
-        xAxis.textColor = ContextCompat.getColor(this, R.color.textColorPrimary)
-        xAxis.axisLineColor = ContextCompat.getColor(this, R.color.textColorSecondary)
-        xAxis.gridColor = ContextCompat.getColor(this, R.color.chart_grid_line)
-
-        val yAxisLeft = moodChartHistory.axisLeft
-        yAxisLeft.textColor = ContextCompat.getColor(this, R.color.textColorPrimary)
-        yAxisLeft.axisMinimum = 0.5f
-        yAxisLeft.axisMaximum = 5.5f
-        yAxisLeft.granularity = 1f
-        yAxisLeft.setLabelCount(6, true)
-        yAxisLeft.axisLineColor = ContextCompat.getColor(this, R.color.textColorSecondary)
-        yAxisLeft.gridColor = ContextCompat.getColor(this, R.color.chart_grid_line)
-
-        moodChartHistory.axisRight.isEnabled = false
-        moodChartHistory.setBackgroundColor(ContextCompat.getColor(this, android.R.color.transparent))
-        moodChartHistory.setNoDataText(getString(R.string.log_your_moods_to_see_your_trend))
-        moodChartHistory.setNoDataTextColor(ContextCompat.getColor(this, R.color.textColorSecondary))
-    }
-
-    private fun observeMoodDataForChart() {
-        lifecycleScope.launch {
-            combine(
-                moodViewModel.allMoodEntriesSorted, // reuse same flow for simplicity
-                daysWindowState
-            ) { entriesFromDb, daysFilter ->
-                val filtered = when (daysFilter) {
-                    null -> entriesFromDb
-                    else -> {
-                        val end = System.currentTimeMillis()
-                        val startCal = java.util.Calendar.getInstance().apply {
-                            timeInMillis = end
-                            add(java.util.Calendar.DAY_OF_YEAR, -(daysFilter))
-                            set(java.util.Calendar.HOUR_OF_DAY, 0)
-                            set(java.util.Calendar.MINUTE, 0)
-                            set(java.util.Calendar.SECOND, 0)
-                            set(java.util.Calendar.MILLISECOND, 0)
-                        }
-                        entriesFromDb.filter { it.timestamp >= startCal.timeInMillis && it.timestamp <= end }
-                    }
-                }
-                filtered
-            }.collectLatest { filteredForChart ->
-                Log.d("MoodHistoryActivity", "Chart data combined -> filtered entries=${filteredForChart.size}, daysWindow=${daysWindowState.value}")
-                updateMoodChartData(filteredForChart)
-            }
-        }
-    }
-
-    private fun updateMoodChartData(moodEntries: List<DbMoodEntry>) {
-        if (!::moodChartHistory.isInitialized || !::textViewNoMoodsChartHistory.isInitialized) {
-            Log.w("MoodHistoryActivity", "Chart views not initialized, cannot update chart.")
-            return
-        }
-
-        Log.d("MoodHistoryActivity", "updateMoodChartData called with ${moodEntries.size} entries")
-
-        if (moodEntries.isEmpty()) {
-            moodChartHistory.visibility = View.GONE
-            textViewNoMoodsChartHistory.visibility = View.VISIBLE
-            textViewNoMoodsChartHistory.text = getString(R.string.not_enough_mood_entries_for_a_trend_yet)
-            moodChartHistory.clear()
-            moodChartHistory.invalidate()
-            return
-        }
-
-        moodChartHistory.visibility = View.VISIBLE
-        textViewNoMoodsChartHistory.visibility = View.GONE
-
-        val entries = ArrayList<Entry>()
-        val sortedMoodEntries = moodEntries.sortedBy { it.timestamp }
-        sortedMoodEntries.forEach { moodEntry ->
-            entries.add(Entry(moodEntry.timestamp.toFloat(), moodEntry.moodLevel.toFloat()))
-        }
-
-        val dataSet = LineDataSet(entries, getString(R.string.daily_mood_trend_chart_title))
-        dataSet.color = ContextCompat.getColor(this, R.color.chart_line_blue)
-        dataSet.valueTextColor = ContextCompat.getColor(this, R.color.textColorPrimary)
-        dataSet.setCircleColor(ContextCompat.getColor(this, R.color.chart_circle_color))
-        dataSet.circleRadius = 4f
-    // Hide per-point numeric labels to reduce clutter; use marker for details
-    dataSet.valueTextSize = 10f
-    dataSet.setDrawValues(false)
-        dataSet.lineWidth = 2f
-        dataSet.mode = LineDataSet.Mode.CUBIC_BEZIER
-        dataSet.setDrawFilled(true)
-        dataSet.fillColor = ContextCompat.getColor(this, R.color.chart_fill_color)
-        dataSet.fillAlpha = 85
-
-        val lineData = LineData(dataSet)
-        moodChartHistory.data = lineData
-        moodChartHistory.invalidate()
-    }
+    // Chart-related code removed; chart now lives in Profile screen
 }
 
 class MoodEntriesAdapter(private var moodEntries: List<DbMoodEntry>) :

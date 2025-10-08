@@ -45,9 +45,9 @@
             </intent-filter>
         </activity>
 
-        <!-- Mood Activities -->
-        <activity android:name=".ui.MoodLogActivity" android:exported="false" />
-        <activity android:name=".ui.MoodHistoryActivity" android:exported="false" />
+    <!-- Mood Activities -->
+    <activity android:name=".ui.MoodLogActivity" android:exported="false" />
+    <activity android:name=".ui.MoodHistoryActivity" android:exported="false" />
         <activity android:name=".ui.SettingsActivity" android:exported="false" />
         <activity android:name=".ui.HydrationActivity" android:exported="false" />
         <activity android:name=".ui.SetHydrationActivity" android:exported="false" />

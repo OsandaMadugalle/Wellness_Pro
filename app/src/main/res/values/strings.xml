@@ -239,6 +239,15 @@
     
     <!-- Mood history content descriptions -->
     <string name="average_mood_summary">Average mood summary</string>
+    <string name="average_mood_summary_format">Average mood: %1$s (%2$s)</string>
+    <string-array name="calendar_filter_options">
+        <item>Selected day</item>
+        <item>1d</item>
+        <item>7d</item>
+        <item>14d</item>
+        <item>30d</item>
+        <item>All</item>
+    </string-array>
     <string name="mood_entries_list">Mood entries list</string>
     
     <!-- Generic labels -->

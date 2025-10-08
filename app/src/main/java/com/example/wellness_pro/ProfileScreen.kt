@@ -17,6 +17,23 @@ import com.example.wellness_pro.navbar.BaseBottomNavActivity
 import com.example.wellness_pro.ui.SettingsActivity
 import com.example.wellness_pro.util.UserProgressUtil
 import com.example.wellness_pro.ui.HydrationActivity
+import com.example.wellness_pro.db.AppDatabase
+import com.example.wellness_pro.db.MoodEntry as DbMoodEntry
+import com.example.wellness_pro.viewmodel.MoodViewModel
+import com.example.wellness_pro.viewmodel.MoodViewModelFactory
+import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.ValueFormatter
+import androidx.core.content.ContextCompat
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import androidx.lifecycle.lifecycleScope
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class ProfileScreen : BaseBottomNavActivity() {
 
@@ -38,6 +55,10 @@ class ProfileScreen : BaseBottomNavActivity() {
 
     // Progress views are not present in the current layout.
 
+    // Mood chart
+    private var moodChartProfile: LineChart? = null
+    private lateinit var moodViewModel: MoodViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -53,6 +74,35 @@ class ProfileScreen : BaseBottomNavActivity() {
             textViewHydrationSummary = findViewById(R.id.textViewHydrationSummary)
 
             // Skip binding progress views (not present in layout).
+
+            // Initialize MoodViewModel for chart
+            try {
+                val moodDao = AppDatabase.getInstance().moodDao()
+                val factory = MoodViewModelFactory(moodDao)
+                moodViewModel = androidx.lifecycle.ViewModelProvider(this, factory)[MoodViewModel::class.java]
+            } catch (e: Exception) {
+                Log.w("ProfileScreen", "Unable to initialize MoodViewModel for profile chart: ${e.message}")
+            }
+
+            // Bind chart view if present
+            moodChartProfile = findViewById(com.example.wellness_pro.R.id.moodChartProfile)
+            moodChartProfile?.let { chart ->
+                setupProfileChartStyle(chart)
+                // Observe mood entries and populate chart
+                if (::moodViewModel.isInitialized) {
+                    lifecycleScope.launch {
+                        try {
+                            moodViewModel.allMoodEntriesSorted.collectLatest { entries ->
+                                updateProfileChartData(chart, entries)
+                            }
+                        } catch (e: Exception) {
+                            Log.w("ProfileScreen", "Error collecting mood entries for profile chart: ${e.message}")
+                        }
+                    }
+                } else {
+                    Log.w("ProfileScreen", "MoodViewModel not initialized; skipping profile chart population")
+                }
+            }
 
         } catch (e: NullPointerException) {
             Log.e("ProfileScreen", "Error finding UI elements. Check IDs in XML.", e)
@@ -160,6 +210,81 @@ class ProfileScreen : BaseBottomNavActivity() {
         } else {
             Log.e("ProfileScreen", "View with ID R.id.main not found. Insets will not be applied.")
         }
+    }
+
+    // Chart helpers
+    private fun setupProfileChartStyle(chart: LineChart) {
+        chart.description.isEnabled = false
+        chart.legend.isEnabled = true
+        chart.legend.textColor = ContextCompat.getColor(this, R.color.textColorPrimary)
+        chart.setTouchEnabled(true)
+        chart.setPinchZoom(true)
+        try {
+            val marker = com.example.wellness_pro.ui.MoodChartMarkerView(this)
+            marker.chartView = chart
+            chart.marker = marker
+        } catch (e: Exception) {
+            Log.w("ProfileScreen", "Failed to attach marker to profile chart", e)
+        }
+
+        val xAxis = chart.xAxis
+        xAxis.position = XAxis.XAxisPosition.BOTTOM
+        xAxis.valueFormatter = object : ValueFormatter() {
+            private val dateFormat = SimpleDateFormat("MMM d", Locale.getDefault())
+            override fun getFormattedValue(value: Float): String {
+                return dateFormat.format(Date(value.toLong()))
+            }
+        }
+        xAxis.granularity = 24 * 60 * 60 * 1000f
+        xAxis.labelRotationAngle = -30f
+        xAxis.textColor = ContextCompat.getColor(this, R.color.textColorPrimary)
+        xAxis.axisLineColor = ContextCompat.getColor(this, R.color.textColorSecondary)
+        xAxis.gridColor = ContextCompat.getColor(this, R.color.chart_grid_line)
+
+        val yAxisLeft = chart.axisLeft
+        yAxisLeft.textColor = ContextCompat.getColor(this, R.color.textColorPrimary)
+        yAxisLeft.axisMinimum = 0.5f
+        yAxisLeft.axisMaximum = 5.5f
+        yAxisLeft.granularity = 1f
+        yAxisLeft.setLabelCount(6, true)
+        yAxisLeft.axisLineColor = ContextCompat.getColor(this, R.color.textColorSecondary)
+        yAxisLeft.gridColor = ContextCompat.getColor(this, R.color.chart_grid_line)
+
+        chart.axisRight.isEnabled = false
+        chart.setBackgroundColor(ContextCompat.getColor(this, android.R.color.transparent))
+        chart.setNoDataText(getString(R.string.log_your_moods_to_see_your_trend))
+        chart.setNoDataTextColor(ContextCompat.getColor(this, R.color.textColorSecondary))
+    }
+
+    private fun updateProfileChartData(chart: LineChart, moodEntries: List<DbMoodEntry>) {
+        if (moodEntries.isEmpty()) {
+            chart.clear()
+            chart.invalidate()
+            return
+        }
+
+        val entries = ArrayList<Entry>()
+        val sortedMoodEntries = moodEntries.sortedBy { it.timestamp }
+        sortedMoodEntries.forEach { moodEntry ->
+            entries.add(Entry(moodEntry.timestamp.toFloat(), moodEntry.moodLevel.toFloat()))
+        }
+
+        val dataSet = LineDataSet(entries, getString(R.string.daily_mood_trend_chart_title))
+        dataSet.color = ContextCompat.getColor(this, R.color.chart_line_blue)
+        dataSet.valueTextColor = ContextCompat.getColor(this, R.color.textColorPrimary)
+        dataSet.setCircleColor(ContextCompat.getColor(this, R.color.chart_circle_color))
+        dataSet.circleRadius = 4f
+        dataSet.valueTextSize = 10f
+        dataSet.setDrawValues(false)
+        dataSet.lineWidth = 2f
+        dataSet.mode = LineDataSet.Mode.CUBIC_BEZIER
+        dataSet.setDrawFilled(true)
+        dataSet.fillColor = ContextCompat.getColor(this, R.color.chart_fill_color)
+        dataSet.fillAlpha = 85
+
+        val lineData = LineData(dataSet)
+        chart.data = lineData
+        chart.invalidate()
     }
 
     private fun setPlaceholderProfileData() {
