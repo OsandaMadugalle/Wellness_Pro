@@ -277,7 +277,7 @@
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:paddingBottom="16dp"
-        app:layout_constraintBottom_toTopOf="@id/navBarContainerBottomSetHydration"
+    app:layout_constraintBottom_toTopOf="@id/navBarContainerBottom"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -301,7 +301,7 @@
 
 
     <FrameLayout
-        android:id="@+id/navBarContainerBottomSetHydration"
+        android:id="@+id/navBarContainerBottom"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"

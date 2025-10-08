@@ -42,9 +42,13 @@ class NotificationScreen : AppCompatActivity() {
         buttonBack = findViewById(R.id.buttonBackTop2)
         recyclerViewNotifications = findViewById(R.id.recyclerViewNotifications)
         textViewNoNotifications = findViewById(R.id.textViewNoNotifications)
-        
-        // TODO: Make sure you have a Button or ImageButton with this ID in your XML layout
+
+        // Make sure you have a Button or ImageButton with this ID in your XML layout
         buttonClearAll = findViewById(R.id.buttonClearAll) // Example ID, replace with your actual ID
+
+        // Initialize RecyclerView and ViewModel first so observers are ready before UI interactions
+        setupRecyclerView()
+        setupViewModel() // This will now connect to your ViewModel and observe data
 
         buttonBack.setOnClickListener {
             val intent = Intent(this, DashboardScreen::class.java)
@@ -52,12 +56,10 @@ class NotificationScreen : AppCompatActivity() {
             // finish() // Optional: if you want to remove this screen from backstack
         }
 
+        // Safe click - ViewModel is initialized above
         buttonClearAll.setOnClickListener {
             showClearAllConfirmationDialog()
         }
-
-        setupRecyclerView()
-        setupViewModel() // This will now connect to your ViewModel and observe data
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -84,6 +86,10 @@ class NotificationScreen : AppCompatActivity() {
         notificationViewModel.allNotifications.observe(this, Observer { notifications ->
             notifications?.let {
                 Log.d(TAG, "Observed notifications list. Count: ${it.size}")
+
+                // Enable or disable the Clear All button depending on whether there are notifications
+                buttonClearAll.isEnabled = it.isNotEmpty()
+
                 if (it.isEmpty()) {
                     recyclerViewNotifications.isVisible = false
                     textViewNoNotifications.isVisible = true
@@ -95,6 +101,8 @@ class NotificationScreen : AppCompatActivity() {
                     Log.d(TAG, "Updating adapter with ${it.size} notifications.")
                 }
             } ?: run {
+                // If null, treat as empty list
+                buttonClearAll.isEnabled = false
                 recyclerViewNotifications.isVisible = false
                 textViewNoNotifications.isVisible = true
                 Log.d(TAG, "Observed null notifications list. Showing 'No notifications' text.")
@@ -104,18 +112,47 @@ class NotificationScreen : AppCompatActivity() {
     }
 
     private fun showClearAllConfirmationDialog() {
-        AlertDialog.Builder(this)
+        val builder = AlertDialog.Builder(this)
             .setTitle("Clear All Notifications")
             .setMessage("Are you sure you want to delete all notifications? This action cannot be undone.")
-            .setPositiveButton("Clear All") { dialog, _ ->
-                notificationViewModel.clearAllNotifications()
-                Log.i(TAG, "Clear All confirmed by user.")
-                dialog.dismiss()
-            }
+            .setPositiveButton("Clear All", null) // We'll override later to control dismissal
             .setNegativeButton("Cancel") { dialog, _ ->
                 Log.d(TAG, "Clear All cancelled by user.")
-                dialog.dismiss()
+                try {
+                    if (!isFinishing && !isDestroyed) dialog.dismiss()
+                } catch (e: Exception) {
+                    Log.w(TAG, "Error dismissing cancel dialog", e)
+                }
             }
-            .show()
+
+        val dialog = builder.create()
+        dialog.setOnShowListener {
+            val positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            positive.setOnClickListener {
+                // Prevent double clicks
+                positive.isEnabled = false
+                buttonClearAll.isEnabled = false
+
+                try {
+                    notificationViewModel.clearAllNotifications()
+                    Log.i(TAG, "Clear All confirmed by user.")
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error while requesting clearAll on ViewModel", e)
+                }
+
+                // Safely dismiss the dialog if the activity is still valid
+                try {
+                    if (!isFinishing && !isDestroyed) dialog.dismiss()
+                } catch (e: Exception) {
+                    Log.w(TAG, "Error dismissing clearAll dialog", e)
+                }
+            }
+        }
+
+        try {
+            if (!isFinishing && !isDestroyed) dialog.show()
+        } catch (e: Exception) {
+            Log.w(TAG, "Could not show Clear All dialog", e)
+        }
     }
 }
