@@ -243,5 +243,11 @@
     
     <!-- Generic labels -->
     <string name="day_status">Day status</string>
+    <string name="mood_very_bad">Very Sad</string>
+    <string name="mood_bad">Sad</string>
+    <string name="mood_neutral">Neutral</string>
+    <string name="mood_good">Good</string>
+    <string name="mood_very_good">Very Good</string>
+    <string name="unknown">Unknown</string>
 
 </resources>

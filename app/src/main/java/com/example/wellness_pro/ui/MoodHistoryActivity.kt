@@ -209,6 +209,14 @@ class MoodHistoryActivity : BaseBottomNavActivity() {
         moodChartHistory.legend.textColor = ContextCompat.getColor(this, R.color.textColorPrimary)
         moodChartHistory.setTouchEnabled(true)
         moodChartHistory.setPinchZoom(true)
+        // Attach a marker view for point details
+        try {
+            val marker = MoodChartMarkerView(this)
+            marker.chartView = moodChartHistory
+            moodChartHistory.marker = marker
+        } catch (e: Exception) {
+            Log.w("MoodHistoryActivity", "Failed to attach marker to chart", e)
+        }
 
         val xAxis = moodChartHistory.xAxis
         xAxis.position = XAxis.XAxisPosition.BOTTOM
@@ -219,6 +227,9 @@ class MoodHistoryActivity : BaseBottomNavActivity() {
             }
         }
         xAxis.granularity = 1f
+    // Prefer daily granularity when working with timestamps (use millis/day approx)
+    xAxis.granularity = 24 * 60 * 60 * 1000f
+    xAxis.labelRotationAngle = -30f
         xAxis.textColor = ContextCompat.getColor(this, R.color.textColorPrimary)
         xAxis.axisLineColor = ContextCompat.getColor(this, R.color.textColorSecondary)
         xAxis.gridColor = ContextCompat.getColor(this, R.color.chart_grid_line)
@@ -298,8 +309,9 @@ class MoodHistoryActivity : BaseBottomNavActivity() {
         dataSet.valueTextColor = ContextCompat.getColor(this, R.color.textColorPrimary)
         dataSet.setCircleColor(ContextCompat.getColor(this, R.color.chart_circle_color))
         dataSet.circleRadius = 4f
-        dataSet.valueTextSize = 10f
-        dataSet.setDrawValues(true)
+    // Hide per-point numeric labels to reduce clutter; use marker for details
+    dataSet.valueTextSize = 10f
+    dataSet.setDrawValues(false)
         dataSet.lineWidth = 2f
         dataSet.mode = LineDataSet.Mode.CUBIC_BEZIER
         dataSet.setDrawFilled(true)

@@ -69,4 +69,5 @@
     <color name="colorAccentRed">#FFEF5350</color> <!-- soft red for destructive actions -->
     <color name="progress_blue">#FF26A69A</color> <!-- map old blue progress to teal tone -->
     <color name="chart_line_blue">#FF26A69A</color> <!-- chart alias to preserve code references -->
+    <color name="marker_background">#FFFAFAFA</color>
 </resources>
