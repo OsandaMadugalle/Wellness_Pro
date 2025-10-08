@@ -209,6 +209,9 @@
     <string name="profile_overview">Overview</string>
     <string name="profile_edit_profile">Edit Profile</string>
     <string name="profile_share_progress">Share Progress</string>
+    <string name="profile_habits_summary">%1$d habits active</string>
+    <string name="profile_hydration_summary">%1$s glasses</string>
+    <string name="no_goal_set_short">No goal</string>
     <string name="mood_tap_emoji_hint">Tap an emoji to select your mood</string>
     <string name="mood_filter_1d">1d</string>
     <string name="mood_filter_7d">7d</string>
