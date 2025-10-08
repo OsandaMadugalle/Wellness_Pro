@@ -80,7 +80,7 @@ abstract class BaseActivity : AppCompatActivity() {
                 try { android.widget.Toast.makeText(this, "No vibrator available.", android.widget.Toast.LENGTH_SHORT).show() } catch (_: Exception) {}
                 return
             }
-            Log.d("BaseActivity_Shake", "testVibrate: triggering vibration for ${durationMs}ms")
+            Log.i("BaseActivity_Shake", "testVibrate called")
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 vibrator.vibrate(VibrationEffect.createOneShot(durationMs, VibrationEffect.DEFAULT_AMPLITUDE))
             } else {
@@ -121,7 +121,7 @@ abstract class BaseActivity : AppCompatActivity() {
                 // Map stored sensitivity (float) to threshold: lower sensitivity => higher threshold
                 val storedSens = getSharedPreferences("AppSettingsPrefs", Context.MODE_PRIVATE).getFloat(PREF_SHAKE_SENSITIVITY, 2.7f)
                 shakeThreshold = storedSens.coerceIn(0.5f, 5.5f)
-                Log.d("BaseActivity_Shake", "Registering shake listener. accelSensor=${accelSensor!=null}, threshold=$shakeThreshold, enabled=$enabled")
+                // Registering shake listener
                 sensorManager?.registerListener(accelListener, accelSensor, SensorManager.SENSOR_DELAY_GAME)
             }
         } catch (e: Exception) {
@@ -210,17 +210,13 @@ abstract class BaseActivity : AppCompatActivity() {
                 }
                 spikeCount += 1
                 lastShakeTimestamp = now
-                Log.d("BaseActivity_Shake", "Spike detected (delta=$delta), spikeCount=$spikeCount")
-                try {
-                    android.widget.Toast.makeText(this@BaseActivity, "Shake spike detected ($spikeCount)", android.widget.Toast.LENGTH_SHORT).show()
-                } catch (_: Exception) {}
+                // Spike detected; incremented spikeCount
 
                 // If we have enough spikes within window, trigger action
                 if (spikeCount >= requiredSpikes && now - lastShakeTimestamp <= spikeWindowMs) {
                     // reset count to avoid immediate retrigger
                     spikeCount = 0
-                    Log.d("BaseActivity_Shake", "Detected required spikes ($requiredSpikes). Opening MoodLogActivity.")
-                    // vibrate briefly
+                    // Detected required spikes; proceed to vibrate and open mood activity
                     try {
                         // On API 31+ prefer VibratorManager to get default vibrator
                         val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -246,7 +242,7 @@ abstract class BaseActivity : AppCompatActivity() {
                                 // ignore
                             }
 
-                            Log.d("BaseActivity_Shake", "Triggering short vibration (150ms)")
+                            // Trigger short vibration
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                 vibrator.vibrate(VibrationEffect.createOneShot(150, VibrationEffect.DEFAULT_AMPLITUDE))
                             } else {
