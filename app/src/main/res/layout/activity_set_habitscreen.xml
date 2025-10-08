@@ -157,7 +157,7 @@
                 android:id="@+id/scheduleContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="@dimen/margin_standard"
                 android:background="@color/cardBackgroundColor"
                 android:padding="@dimen/screen_padding">
 
@@ -238,7 +238,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="@dimen/margin_standard"
                 android:background="@color/cardBackgroundColor"
                 android:paddingStart="@dimen/screen_padding"
                 android:paddingEnd="@dimen/screen_padding"

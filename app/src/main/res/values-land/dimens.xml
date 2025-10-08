@@ -7,4 +7,5 @@
     <dimen name="header_padding_top">12dp</dimen>
     <dimen name="header_padding_bottom">16dp</dimen>
     <dimen name="button_height">52dp</dimen>
+    <dimen name="margin_standard">12dp</dimen>
 </resources>

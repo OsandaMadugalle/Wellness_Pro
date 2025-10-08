@@ -68,9 +68,9 @@
     android:paddingTop="8dp"
     android:paddingEnd="@dimen/screen_padding"
     android:paddingBottom="8dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginStart="@dimen/margin_standard"
+        android:layout_marginEnd="@dimen/margin_standard"
+        android:layout_marginBottom="@dimen/margin_standard"
         app:layout_constraintBottom_toTopOf="@+id/navBarContainer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -105,9 +105,9 @@
         android:layout_height="wrap_content"
     android:background="@color/cardBackgroundColor"
     android:padding="@dimen/screen_padding"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
+    android:layout_marginStart="@dimen/margin_standard"
+    android:layout_marginEnd="@dimen/margin_standard"
+    android:layout_marginBottom="@dimen/margin_standard"
         app:layout_constraintBottom_toTopOf="@+id/setHabitLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -178,9 +178,9 @@
         android:id="@+id/daysOfWeekLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginEnd="12dp"
-        android:layout_marginBottom="16dp"
+    android:layout_marginStart="12dp"
+    android:layout_marginEnd="12dp"
+    android:layout_marginBottom="@dimen/margin_standard"
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/habitStatusLayout"
@@ -395,10 +395,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingStart="@dimen/screen_padding"
-            android:paddingEnd="@dimen/screen_padding"
-            android:paddingTop="16dp"
-            android:paddingBottom="16dp">
+                android:paddingStart="@dimen/screen_padding"
+                android:paddingEnd="@dimen/screen_padding"
+                android:paddingTop="@dimen/screen_padding"
+                android:paddingBottom="@dimen/screen_padding">
             <!-- Habit items will be added here dynamically -->
         </LinearLayout>
     </ScrollView>
