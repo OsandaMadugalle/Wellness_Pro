@@ -6,9 +6,7 @@ import android.app.NotificationManager // ADDED
 import android.os.Build // ADDED
 import android.util.Log
 import com.example.wellness_pro.db.AppDatabase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import android.content.Context
 
 class WellnessProApplication : Application() {
@@ -63,12 +61,12 @@ class WellnessProApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        Log.d(TAG, "onCreate: Initializing database...")
-        // Initialize the database off the main thread
-        CoroutineScope(Dispatchers.IO).launch {
+        Log.d(TAG, "onCreate: Initializing database (blocking)...")
+        // Initialize the database synchronously so other components don't access it before ready
+        runBlocking {
             AppDatabase.initialize(applicationContext)
-            Log.d(TAG, "onCreate: Database initialization launched.")
         }
+        Log.d(TAG, "onCreate: Database initialization complete.")
 
         createNotificationChannels() // ADDED: Call to create channels
         ensureHydrationChannel(this)

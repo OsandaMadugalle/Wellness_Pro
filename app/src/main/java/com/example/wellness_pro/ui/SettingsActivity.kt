@@ -18,10 +18,19 @@ import android.os.Build
 import android.provider.Settings
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
+import android.app.Activity
+import android.util.Log
+import android.os.Process
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import android.content.pm.PackageManager
+import androidx.work.WorkManager
+import androidx.core.app.NotificationManagerCompat
+import android.appwidget.AppWidgetManager
+import java.io.File
+import com.example.wellness_pro.reminders.HydrationReminderManager
+import com.example.wellness_pro.reminders.HabitReminderManager
 
 class SettingsActivity : BaseActivity() { // CHANGED parent class
 
@@ -136,6 +145,18 @@ class SettingsActivity : BaseActivity() { // CHANGED parent class
 		findViewById<Button?>(R.id.buttonChangeName)?.setOnClickListener {
 			showChangeNameDialog()
 		}
+
+		// Reset app - destructive action
+		findViewById<Button?>(R.id.buttonResetApp)?.setOnClickListener {
+			AlertDialog.Builder(this)
+				.setTitle(getString(R.string.settings_reset_confirm_title))
+				.setMessage(getString(R.string.settings_reset_confirm_message))
+				.setPositiveButton(getString(R.string.settings_reset_confirm_positive)) { _, _ ->
+					performAppReset()
+				}
+				.setNegativeButton(getString(R.string.settings_reset_confirm_negative), null)
+				.show()
+		}
 	}
 
 	private fun applyDarkMode(enabled: Boolean) {
@@ -173,5 +194,163 @@ class SettingsActivity : BaseActivity() { // CHANGED parent class
 			return true
 		}
 		return super.onOptionsItemSelected(item)
+	}
+
+	/**
+	 * Clear app preferences and restart launcher activity.
+	 */
+	private fun performAppReset() {
+		// Clear known SharedPreferences files used by the app
+		Toast.makeText(this, "Resetting app...", Toast.LENGTH_SHORT).show()
+		Log.i("SettingsActivity", "performAppReset: starting reset")
+
+		// Clear known SharedPreferences files used by the app
+		try {
+			val appPrefs = getSharedPreferences(prefsName, Context.MODE_PRIVATE)
+			appPrefs.edit().clear().apply()
+			val habitsPrefs = getSharedPreferences("PlayPalHabits", Context.MODE_PRIVATE)
+			habitsPrefs.edit().clear().apply()
+		} catch (e: Exception) {
+			Log.w("SettingsActivity", "performAppReset: failed clearing named prefs", e)
+		}
+
+		// Also clear default/shared preference file (if used by PreferenceFragmentCompat)
+		try {
+			val defaultPrefsName = "${'$'}{packageName}_preferences"
+			val defaultPrefs = getSharedPreferences(defaultPrefsName, Context.MODE_PRIVATE)
+			defaultPrefs.edit().clear().apply()
+		} catch (e: Exception) {
+			Log.w("SettingsActivity", "performAppReset: failed clearing default prefs", e)
+		}
+
+		// Cancel alarms and WorkManager scheduled work (best-effort)
+		try {
+			Log.i("SettingsActivity", "performAppReset: cancelling hydration alarms")
+			HydrationReminderManager.cancelAllReminders(this)
+		} catch (e: Exception) {
+			Log.w("SettingsActivity", "performAppReset: failed cancelling alarms", e)
+		}
+
+		try {
+			Log.i("SettingsActivity", "performAppReset: cancelling WorkManager work")
+			val wm = WorkManager.getInstance(applicationContext)
+			// Cancel known unique work names used by the app
+			try { wm.cancelUniqueWork("HydrationReminderWork") } catch (_: Exception) {}
+			try { wm.cancelAllWork() } catch (_: Exception) {}
+		} catch (e: Exception) {
+			Log.w("SettingsActivity", "performAppReset: failed cancelling WorkManager work", e)
+		}
+
+		// Clear notifications
+		try {
+			Log.i("SettingsActivity", "performAppReset: clearing notifications")
+			NotificationManagerCompat.from(this).cancelAll()
+		} catch (e: Exception) {
+			Log.w("SettingsActivity", "performAppReset: failed clearing notifications", e)
+		}
+
+		// Remove app widgets data if present (they read from SharedPreferences which we clear above)
+		try {
+			Log.i("SettingsActivity", "performAppReset: notifying app widgets to update")
+			val appWidgetManager = AppWidgetManager.getInstance(this)
+			val ids = appWidgetManager.getAppWidgetIds(componentName)
+			if (ids != null && ids.isNotEmpty()) {
+				appWidgetManager.notifyAppWidgetViewDataChanged(ids, android.R.id.list)
+			}
+		} catch (e: Exception) {
+			Log.w("SettingsActivity", "performAppReset: failed updating widgets", e)
+		}
+
+		// Remove cache and files
+		try {
+			cacheDir.deleteRecursively()
+			filesDir.deleteRecursively()
+			// External storage areas (best-effort)
+			try { externalCacheDir?.deleteRecursively() } catch (_: Exception) {}
+			try { getExternalFilesDir(null)?.deleteRecursively() } catch (_: Exception) {}
+		} catch (e: Exception) {
+			Log.w("SettingsActivity", "performAppReset: failed deleting cache/files", e)
+		}
+
+		// Delete app databases if any
+		try {
+			// Also attempt to delete the Room DB by name used in AppDatabase
+			val roomDbName = "wellness_pro_database"
+			Log.i("SettingsActivity", "Attempting to delete Room DB: $roomDbName")
+			// Cancel WorkManager first to avoid jobs touching DB while we delete it
+			try { WorkManager.getInstance(applicationContext).cancelAllWork() } catch (_: Exception) {}
+			deleteDatabase(roomDbName)
+
+			for (dbName in databaseList()) {
+				Log.i("SettingsActivity", "Deleting database: $dbName")
+				deleteDatabase(dbName)
+			}
+		} catch (e: Exception) {
+			Log.w("SettingsActivity", "performAppReset: failed deleting databases", e)
+		}
+
+		// Try to remove the shared_prefs XML files directly (best-effort)
+		try {
+			val dataDir = applicationInfo.dataDir
+			val prefsDir = File(dataDir, "shared_prefs")
+			if (prefsDir.exists() && prefsDir.isDirectory) {
+				prefsDir.listFiles()?.forEach { f ->
+					try {
+						Log.i("SettingsActivity", "Deleting prefs file: ${f.name}")
+						f.delete()
+					} catch (e: Exception) {
+						Log.w("SettingsActivity", "Could not delete prefs file: ${f.name}", e)
+					}
+				}
+			}
+		} catch (e: Exception) {
+			Log.w("SettingsActivity", "performAppReset: failed deleting shared_prefs files", e)
+		}
+
+		// Also attempt to cancel habit reminders (if any)
+		try {
+			Log.i("SettingsActivity", "performAppReset: cancelling habit reminders (best-effort)")
+			// We don't have a list of habit IDs here; canceling will be best-effort via shared prefs clearing
+			// If app stores habit IDs, consider iterating and calling HabitReminderManager.cancelHabitReminder(context, id)
+		} catch (e: Exception) {
+			Log.w("SettingsActivity", "performAppReset: failed cancelling habit reminders", e)
+		}
+
+		// Restart app by launching the launcher activity and clearing task
+		val launchIntent = packageManager.getLaunchIntentForPackage(packageName)
+		if (launchIntent != null) {
+			// Ensure all activities are finished
+			try {
+				if (this is Activity) {
+					finishAffinity()
+				}
+			} catch (e: Exception) {
+				// ignore
+			}
+
+			launchIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+			startActivity(launchIntent)
+			Log.i("SettingsActivity", "performAppReset: restart intent started")
+
+			// Ensure a fresh process so Room/SQLite will recreate schema correctly
+			try {
+				Thread.sleep(300)
+			} catch (e: InterruptedException) {
+				// ignore
+			}
+			try {
+				Process.killProcess(Process.myPid())
+			} catch (e: Exception) {
+				Log.w("SettingsActivity", "performAppReset: failed to kill process", e)
+			}
+			try {
+				System.exit(0)
+			} catch (e: Exception) {
+				// best-effort
+			}
+		} else {
+			Log.w("SettingsActivity", "performAppReset: no launch intent available")
+			Toast.makeText(this, "App reset complete. Please restart the app.", Toast.LENGTH_LONG).show()
+		}
 	}
 }

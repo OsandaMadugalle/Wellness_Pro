@@ -3,6 +3,7 @@ package com.example.wellness_pro
 import kotlinx.coroutines.launch 
 import androidx.lifecycle.lifecycleScope 
 import kotlinx.coroutines.flow.collectLatest 
+import kotlinx.coroutines.flow.first
 import android.view.View
 import android.Manifest
 import android.content.Context
@@ -159,13 +160,21 @@ class DashboardScreen : BaseBottomNavActivity(), SensorEventListener {
 
         loadInitialDataToCache() // Load all data into cache
 
-        try {
-            val moodDao = AppDatabase.getInstance().moodDao() 
-            val moodViewModelFactory = MoodViewModelFactory(moodDao)
-            moodViewModel = ViewModelProvider(this, moodViewModelFactory)[MoodViewModel::class.java]
-        } catch (e: Exception) {
-            Log.e("DashboardScreen", "Error initializing MoodViewModel: ${e.message}", e)
-            currentMoodCardView.visibility = View.GONE 
+        // Initialize MoodViewModel only after the database has been initialized to avoid "no such table" errors
+        lifecycleScope.launch {
+            try {
+                // suspend until AppDatabase reports initialized
+                AppDatabase.isInitialized.first { it }
+                val moodDao = AppDatabase.getInstance().moodDao()
+                val moodViewModelFactory = MoodViewModelFactory(moodDao)
+                moodViewModel = ViewModelProvider(this@DashboardScreen, moodViewModelFactory)[MoodViewModel::class.java]
+                if (::moodViewModel.isInitialized) {
+                    observeLatestMood()
+                }
+            } catch (e: Exception) {
+                Log.e("DashboardScreen", "Error initializing MoodViewModel: ${e.message}", e)
+                currentMoodCardView.visibility = View.GONE
+            }
         }
 
         setupInsets()
@@ -204,9 +213,7 @@ class DashboardScreen : BaseBottomNavActivity(), SensorEventListener {
             }
         }
         
-        if (::moodViewModel.isInitialized) { 
-            observeLatestMood()
-        }
+        // mood observation will be started from the coroutine above once DB is ready
     }
 
     private fun loadInitialDataToCache() {

@@ -245,6 +245,35 @@
                     android:text="@string/settings_version_value"/>
             </LinearLayout>
 
+            <!-- Reset App (destructive) -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="8dp"
+                android:background="@android:color/transparent"/>
+
+            <LinearLayout
+                android:id="@+id/rowResetApp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="12dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/cardBackgroundColor">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/settings_reset_app_label"
+                    android:textColor="@color/textColorPrimary"/>
+                <Button
+                    android:id="@+id/buttonResetApp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_reset_app_button"
+                    android:textColor="@color/white"
+                    app:backgroundTint="@color/colorAccentRed"/>
+            </LinearLayout>
+
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
