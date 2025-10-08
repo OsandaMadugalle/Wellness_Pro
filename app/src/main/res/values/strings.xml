@@ -110,6 +110,7 @@
     <string name="notification_title_placeholder">Notification Title</string>
     <string name="date_placeholder">Date</string>
     <string name="hydration_tracking">Hydration Tracking</string>
+    <string name="hydration_subtitle">Keep track of your daily water intake</string>
     <string name="today_s_progress">Today\'s Progress:</string>
     <string name="remove_1_glass">-1 Glass</string>
     <string name="add_1_glass">+1 Glass</string>
@@ -130,6 +131,7 @@
     <string name="no_mood_entries_yet">No mood entries yet.</string>
     <string name="log_new_mood">Log New Mood</string>
     <string name="set_hydration_goal_amp_reminders"><![CDATA[Set Hydration Goal & Reminders]]></string>
+    <string name="set_hydration_subtitle">Set your daily target and reminder schedule</string>
     <string name="daily_glasses_goal">Daily Glasses Goal:</string>
     <string name="e_g_8">e.g. 8</string>
     <string name="set_reminders_below">Set reminders below.</string>
@@ -154,6 +156,7 @@
     <string name="error_loading_mood_data_components">Error loading mood data components.</string>
     <string name="no_moods_to_share_yet">No moods to share yet!</string>
     <string name="share_your_mood_summary">Share your mood summary</string>
+    <string name="share">Share</string>
     <string name="log_your_moods_to_see_your_trend">Log your moods to see your trend!</string>
     <string name="daily_mood_trend_chart_title">Daily Mood Trend</string>
     <string name="invalid_date">Invalid date</string>

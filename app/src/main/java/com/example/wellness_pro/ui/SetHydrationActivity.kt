@@ -91,9 +91,14 @@ class SetHydrationActivity : BaseBottomNavActivity() {
         sharedPreferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
         headerLayoutSetHydration = findViewById(R.id.headerLayoutSetHydration)
+        // Preserve original top padding and add system bars inset (matches HabitsScreen behavior)
+        if (headerLayoutSetHydration.getTag(R.id.tag_padding_top) == null) {
+            headerLayoutSetHydration.setTag(R.id.tag_padding_top, headerLayoutSetHydration.paddingTop)
+        }
         ViewCompat.setOnApplyWindowInsetsListener(headerLayoutSetHydration) { view, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-            view.updatePadding(top = insets.top)
+            val originalTopPadding = (view.getTag(R.id.tag_padding_top) as? Int) ?: view.paddingTop
+            view.updatePadding(top = insets.top + originalTopPadding)
             WindowInsetsCompat.CONSUMED
         }
 

@@ -396,14 +396,20 @@ class DashboardScreen : BaseBottomNavActivity(), SensorEventListener {
     }
 
     private fun setupInsets() {
-        findViewById<LinearLayout?>(R.id.headerLayout)?.let { header ->
+        // Preserve original header top padding and add status bar inset on top of it
+        findViewById<View?>(R.id.headerLayout)?.let { header ->
+            if (header.getTag(R.id.tag_padding_top) == null) header.setTag(R.id.tag_padding_top, header.paddingTop)
             ViewCompat.setOnApplyWindowInsetsListener(header) { v, insets ->
                 val statusBarInsets = insets.getInsets(WindowInsetsCompat.Type.statusBars())
-                v.updatePadding(top = statusBarInsets.top)
+                val originalTop = v.getTag(R.id.tag_padding_top) as? Int ?: v.paddingTop
+                v.updatePadding(top = originalTop + statusBarInsets.top)
                 insets
             }
         }
+
+        // Apply left/right insets to main content and preserve bottom where needed
         findViewById<ConstraintLayout?>(R.id.main)?.let { main ->
+            if (main.getTag(R.id.tag_padding_top) == null) main.setTag(R.id.tag_padding_top, main.paddingTop)
             ViewCompat.setOnApplyWindowInsetsListener(main) { v, insets ->
                 val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
                 v.updatePadding(left = systemBars.left, right = systemBars.right)

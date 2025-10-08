@@ -10,6 +10,7 @@ import android.widget.EditText
 import android.widget.TextView 
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.view.updatePadding
 import androidx.lifecycle.ViewModelProvider
 import com.example.wellness_pro.R
 import com.example.wellness_pro.db.AppDatabase
@@ -89,6 +90,31 @@ class MoodLogActivity : BaseBottomNavActivity() {
 
         buttonSaveMood.setOnClickListener {
             saveMoodEntryViaViewModel()
+        }
+
+        // Ensure consistent window inset handling for the header and main content
+        setupWindowInsets()
+    }
+
+    private fun setupWindowInsets() {
+        // Preserve header top padding and add status bar inset
+        findViewById<View?>(R.id.headerLayout)?.let { header ->
+            if (header.getTag(R.id.tag_padding_top) == null) header.setTag(R.id.tag_padding_top, header.paddingTop)
+            androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(header) { v, insets ->
+                val statusBarInsets = insets.getInsets(androidx.core.view.WindowInsetsCompat.Type.statusBars())
+                val originalTop = v.getTag(R.id.tag_padding_top) as? Int ?: v.paddingTop
+                v.updatePadding(top = originalTop + statusBarInsets.top)
+                insets
+            }
+        }
+
+        // Apply left/right/bottom insets to main content without touching its top
+        findViewById<View?>(R.id.main)?.let { main ->
+            androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(main) { v, insets ->
+                val systemBars = insets.getInsets(androidx.core.view.WindowInsetsCompat.Type.systemBars())
+                v.updatePadding(left = systemBars.left, right = systemBars.right, bottom = systemBars.bottom)
+                insets
+            }
         }
     }
 

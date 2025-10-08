@@ -87,13 +87,24 @@ class ProfileScreen : BaseBottomNavActivity() {
     }
 
     private fun setupWindowInsets() {
+        // Preserve original header top padding and add status bar inset on top of it
+        findViewById<View?>(R.id.headerLayout)?.let { header ->
+            if (header.getTag(R.id.tag_padding_top) == null) header.setTag(R.id.tag_padding_top, header.paddingTop)
+            ViewCompat.setOnApplyWindowInsetsListener(header) { v, insets ->
+                val statusBarInsets = insets.getInsets(WindowInsetsCompat.Type.statusBars())
+                val originalTop = v.getTag(R.id.tag_padding_top) as? Int ?: v.paddingTop
+                v.updatePadding(top = originalTop + statusBarInsets.top)
+                insets
+            }
+        }
+
+        // Apply left/right/bottom insets to main content but don't override its top padding
         val mainContent = findViewById<View>(R.id.main)
         if (mainContent != null) {
             ViewCompat.setOnApplyWindowInsetsListener(mainContent) { view, windowInsets ->
                 val systemBars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
                 view.updatePadding(
                     left = systemBars.left,
-                    top = systemBars.top,
                     right = systemBars.right,
                     bottom = systemBars.bottom
                 )
