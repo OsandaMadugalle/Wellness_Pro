@@ -74,6 +74,67 @@
                 android:layout_height="1dp"
                 android:background="@color/dividerColor"/>
 
+            <!-- Shake Quick Mood Section -->
+            <TextView
+                android:id="@+id/textViewShakeHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Quick Mood (Shake)"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="@color/textColorPrimary"/>
+
+            <LinearLayout
+                android:id="@+id/rowShakeEnable"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="12dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/cardBackgroundColor">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Enable shake-to-add-mood"
+                    android:textColor="@color/textColorPrimary"/>
+                <Switch
+                    android:id="@+id/switchShakeQuickMood"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:thumbTint="@color/colorAccentGreen"
+                    app:trackTint="@color/iconTintMuted"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/rowShakeSensitivity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="12dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/cardBackgroundColor">
+                <TextView
+                    android:id="@+id/textViewShakeSensitivityLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Sensitivity"
+                    android:textColor="@color/textColorPrimary"/>
+                <SeekBar
+                    android:id="@+id/seekBarShakeSensitivity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="50" />
+                <TextView
+                    android:id="@+id/textViewShakeSensitivityValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Current: 2.7g"
+                    android:textColor="@color/textColorPrimary"
+                    android:layout_marginTop="6dp"/>
+            </LinearLayout>
+
             <!-- Notifications Section -->
             <TextView
                 android:id="@+id/textViewNotificationsHeader"

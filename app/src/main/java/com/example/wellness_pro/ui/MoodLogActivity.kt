@@ -19,6 +19,10 @@ import com.example.wellness_pro.viewmodel.MoodViewModelFactory
 
 class MoodLogActivity : BaseBottomNavActivity() {
 
+    companion object {
+        const val EXTRA_QUICK_MOOD = "extra_quick_mood"
+    }
+
     override val currentNavControllerItemId: Int
         get() = R.id.navButtonMoodJournal
 
@@ -68,7 +72,20 @@ class MoodLogActivity : BaseBottomNavActivity() {
         }
 
         setupMoodInputListeners()
-        updateMoodSelectionVisuals(0) 
+        updateMoodSelectionVisuals(0)
+
+        // Handle quick-mood intent (e.g., triggered by shake)
+        try {
+            val quick = intent?.getBooleanExtra(EXTRA_QUICK_MOOD, false) ?: false
+            if (quick) {
+                // Pre-select a neutral mood by default for quick entries
+                selectedMoodLevel = 3
+                updateMoodSelectionVisuals(selectedMoodLevel)
+                editTextMoodNotes.hint = "Quick entry"
+            }
+        } catch (e: Exception) {
+            // Ignore if intent extras missing or malformed
+        }
 
         buttonSaveMood.setOnClickListener {
             saveMoodEntryViaViewModel()

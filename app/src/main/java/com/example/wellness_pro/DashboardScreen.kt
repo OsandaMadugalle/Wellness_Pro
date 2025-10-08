@@ -70,6 +70,12 @@ class DashboardScreen : BaseBottomNavActivity(), SensorEventListener {
     private lateinit var sensorManager: SensorManager
     private var stepCounterSensor: Sensor? = null
     private var currentHardwareStepValue = 0f // Current value from sensor event
+    // Accelerometer (shake detection)
+    private var accelerometer: Sensor? = null
+    private var lastShakeTimestamp: Long = 0L
+    // Typical shake detectors use ~2.5-3.5g; 14 was too high so lower to be responsive on most devices
+    private var shakeThreshold = 2.7f // adjust as needed
+    private val shakeDebounceMs = 1200L // don't trigger multiple times within 1.2s
 
     private lateinit var textViewStepCounterValue: TextView
     private lateinit var textViewDate: TextView
@@ -165,8 +171,28 @@ class DashboardScreen : BaseBottomNavActivity(), SensorEventListener {
         setupInsets()
         setupNavigationButtons()
 
-        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        checkAndRequestActivityRecognitionPermission() // This will call setupStepCounterSensor if permission granted
+    sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+    checkAndRequestActivityRecognitionPermission() // This will call setupStepCounterSensor if permission granted
+
+    // Prepare accelerometer for shake detection (quick mood)
+    accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+
+        // Load shake preferences (default enabled=true, sensitivity default 2.7g)
+        try {
+            val appPrefs = getSharedPreferences("AppSettingsPrefs", Context.MODE_PRIVATE)
+            val enabled = appPrefs.getBoolean("shake_quick_mood_enabled", true)
+            val sensitivity = appPrefs.getFloat("shake_sensitivity", 2.7f)
+            shakeThreshold = sensitivity
+            if (!enabled) {
+                // If disabled, null out accelerometer so it won't be registered
+                accelerometer = null
+            }
+        } catch (e: Exception) {
+            Log.w("DashboardScreen", "Failed to load shake prefs: ${e.message}")
+        }
+
+    // Prepare accelerometer for shake detection (quick mood)
+    accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
 
         screenTimeUpdateRunnable = Runnable {
             if (this@DashboardScreen.lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) &&
@@ -408,6 +434,26 @@ class DashboardScreen : BaseBottomNavActivity(), SensorEventListener {
             sensorManager.registerListener(this, stepCounterSensor, SensorManager.SENSOR_DELAY_UI)
             Log.d("DashboardScreen", "Sensor listener re-registered in onResume.")
         }
+
+        // Reload shake preferences so changes in SettingsActivity apply immediately
+        try {
+            val appPrefs = getSharedPreferences("AppSettingsPrefs", Context.MODE_PRIVATE)
+            val enabled = appPrefs.getBoolean("shake_quick_mood_enabled", true)
+            val sensitivity = appPrefs.getFloat("shake_sensitivity", 2.7f)
+            shakeThreshold = sensitivity
+            if (enabled) {
+                accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+                accelerometer?.let {
+                    sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_GAME)
+                    Log.d("DashboardScreen", "Accelerometer registered for shake detection (GAME delay).")
+                }
+            } else {
+                accelerometer = null
+                Log.d("DashboardScreen", "Shake-to-add-mood disabled by settings.")
+            }
+        } catch (e: Exception) {
+            Log.w("DashboardScreen", "Failed to reload shake prefs in onResume: ${e.message}")
+        }
     }
 
     override fun onPause() {
@@ -415,6 +461,11 @@ class DashboardScreen : BaseBottomNavActivity(), SensorEventListener {
         if(stepCounterSensor != null) { // Only unregister if sensor was available
             sensorManager.unregisterListener(this, stepCounterSensor)
             Log.d("DashboardScreen", "Sensor listener unregistered in onPause.")
+        }
+        // Unregister accelerometer listener separately to avoid interfering with step sensor logic
+        accelerometer?.let {
+            sensorManager.unregisterListener(this, it)
+            Log.d("DashboardScreen", "Accelerometer listener unregistered in onPause.")
         }
         saveCachedStepDataToPrefs() // Save latest cached step data
         if (this::screenTimeUpdateRunnable.isInitialized) {
@@ -451,30 +502,57 @@ class DashboardScreen : BaseBottomNavActivity(), SensorEventListener {
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
-        if (event?.sensor?.type == Sensor.TYPE_STEP_COUNTER) {
-            currentHardwareStepValue = event.values[0]
-            Log.d("DashboardScreen", "Sensor event: New hardware total_steps = $currentHardwareStepValue")
+        if (event == null) return
 
-            // Handle initial baseline if not set or if sensor restarted
-            if (cachedStepPreviousTotalStepsSaved == 0f && currentHardwareStepValue > 0f) {
-                // If it's a new day, performDailyStepInitialization in onResume should handle it.
-                // If same day but baseline is 0 (e.g. fresh install, first sensor event), set baseline.
-                if (cachedStepLastSaveDate == getCurrentStepDateString()) {
+        when (event.sensor.type) {
+            Sensor.TYPE_STEP_COUNTER -> {
+                currentHardwareStepValue = event.values[0]
+                Log.d("DashboardScreen", "Sensor event: New hardware total_steps = $currentHardwareStepValue")
+
+                // Handle initial baseline if not set or if sensor restarted
+                if (cachedStepPreviousTotalStepsSaved == 0f && currentHardwareStepValue > 0f) {
+                    if (cachedStepLastSaveDate == getCurrentStepDateString()) {
+                        cachedStepPreviousTotalStepsSaved = currentHardwareStepValue
+                        cachedStepCurrentDailySteps = 0
+                        Log.i("DashboardScreen", "Sensor event: Initial baseline set for today to $currentHardwareStepValue")
+                    }
+                }
+
+                cachedStepCurrentDailySteps = (currentHardwareStepValue - cachedStepPreviousTotalStepsSaved).toInt()
+
+                if (cachedStepCurrentDailySteps < 0) { // Indicates a device restart or sensor anomaly
+                    Log.w("DashboardScreen", "Sensor event: Negative current steps ($cachedStepCurrentDailySteps). Resetting baseline.")
                     cachedStepPreviousTotalStepsSaved = currentHardwareStepValue
                     cachedStepCurrentDailySteps = 0
-                    Log.i("DashboardScreen", "Sensor event: Initial baseline set for today to $currentHardwareStepValue")
-                } 
+                }
+                cachedStepLastSensorHardwareValue = currentHardwareStepValue // Always update last known hardware value
+                updateUISteps()
             }
-            
-            cachedStepCurrentDailySteps = (currentHardwareStepValue - cachedStepPreviousTotalStepsSaved).toInt()
 
-            if (cachedStepCurrentDailySteps < 0) { // Indicates a device restart or sensor anomaly
-                Log.w("DashboardScreen", "Sensor event: Negative current steps ($cachedStepCurrentDailySteps). Resetting baseline.")
-                cachedStepPreviousTotalStepsSaved = currentHardwareStepValue
-                cachedStepCurrentDailySteps = 0
+            Sensor.TYPE_ACCELEROMETER -> {
+                val x = event.values[0]
+                val y = event.values[1]
+                val z = event.values[2]
+                val gX = x / SensorManager.GRAVITY_EARTH
+                val gY = y / SensorManager.GRAVITY_EARTH
+                val gZ = z / SensorManager.GRAVITY_EARTH
+                val gForce = kotlin.math.sqrt(gX * gX + gY * gY + gZ * gZ)
+
+                if (gForce > shakeThreshold) {
+                    val now = System.currentTimeMillis()
+                    if (now - lastShakeTimestamp > shakeDebounceMs) {
+                        lastShakeTimestamp = now
+                        Log.d("DashboardScreen", "Shake detected (g=$gForce). Triggering quick mood log.")
+                        try {
+                            // Provide immediate feedback to the user that shake was detected
+                            android.widget.Toast.makeText(this, "Quick mood detected — opening mood log", android.widget.Toast.LENGTH_SHORT).show()
+                        } catch (_: Exception) {}
+                        triggerQuickMoodLog()
+                    } else {
+                        Log.d("DashboardScreen", "Shake detected but debounced (g=$gForce).")
+                    }
+                }
             }
-            cachedStepLastSensorHardwareValue = currentHardwareStepValue // Always update last known hardware value
-            updateUISteps()
         }
     }
 
@@ -500,6 +578,18 @@ class DashboardScreen : BaseBottomNavActivity(), SensorEventListener {
             putInt(KEY_CURRENT_DAILY_STEPS, cachedStepCurrentDailySteps)
             putFloat(KEY_LAST_SENSOR_HARDWARE_VALUE, cachedStepLastSensorHardwareValue)
             apply()
+        }
+    }
+
+    private fun triggerQuickMoodLog() {
+        try {
+            val intent = Intent(this, com.example.wellness_pro.ui.MoodLogActivity::class.java)
+            intent.putExtra(com.example.wellness_pro.ui.MoodLogActivity.EXTRA_QUICK_MOOD, true)
+            // Start as a new task/bring to front similar to other nav behavior
+            intent.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+            startActivity(intent)
+        } catch (e: Exception) {
+            Log.e("DashboardScreen", "Failed to launch MoodLogActivity for quick mood: ${e.message}", e)
         }
     }
 

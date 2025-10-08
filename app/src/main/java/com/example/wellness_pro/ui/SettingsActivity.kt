@@ -94,6 +94,44 @@ class SettingsActivity : BaseActivity() { // CHANGED parent class
 			applyDarkMode(isChecked)
 		}
 
+		// Shake-to-add-mood settings
+		val switchShakeQuickMood = findViewById<Switch?>(R.id.switchShakeQuickMood)
+		val seekBarShakeSensitivity = findViewById<android.widget.SeekBar?>(R.id.seekBarShakeSensitivity)
+		val textViewShakeSensitivityValue = findViewById<TextView?>(R.id.textViewShakeSensitivityValue)
+
+		// Defaults
+		val defaultEnabled = prefs.getBoolean("shake_quick_mood_enabled", true)
+		val defaultSensitivity = prefs.getFloat("shake_sensitivity", 2.7f)
+
+		// Map stored sensitivity (float) to SeekBar position (0..50)
+		fun sensitivityToProgress(s: Float): Int {
+			val clipped = s.coerceIn(0.5f, 5.5f)
+			return ((clipped - 0.5f) / 0.1f).toInt()
+		}
+
+		fun progressToSensitivity(p: Int): Float {
+			return 0.5f + p * 0.1f
+		}
+
+		switchShakeQuickMood?.isChecked = defaultEnabled
+		seekBarShakeSensitivity?.progress = sensitivityToProgress(defaultSensitivity)
+		textViewShakeSensitivityValue?.text = "Current: ${"%.1f".format(defaultSensitivity)}g"
+
+		switchShakeQuickMood?.setOnCheckedChangeListener { _, isChecked ->
+			prefs.edit().putBoolean("shake_quick_mood_enabled", isChecked).apply()
+		}
+
+		seekBarShakeSensitivity?.setOnSeekBarChangeListener(object : android.widget.SeekBar.OnSeekBarChangeListener {
+			override fun onProgressChanged(seekBar: android.widget.SeekBar?, progress: Int, fromUser: Boolean) {
+				val sens = progressToSensitivity(progress)
+				textViewShakeSensitivityValue?.text = "Current: ${"%.1f".format(sens)}g"
+				prefs.edit().putFloat("shake_sensitivity", sens).apply()
+			}
+
+			override fun onStartTrackingTouch(seekBar: android.widget.SeekBar?) {}
+			override fun onStopTrackingTouch(seekBar: android.widget.SeekBar?) {}
+		})
+
 		// Change display name
 		findViewById<Button?>(R.id.buttonChangeName)?.setOnClickListener {
 			showChangeNameDialog()
