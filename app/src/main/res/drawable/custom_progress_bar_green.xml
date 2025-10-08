@@ -3,11 +3,11 @@
     <item android:id="@android:id/background">
         <shape>
             <corners android:radius="5dip" />
-            <gradient
-                android:startColor="#E0E0E0"
-                android:centerColor="#E0E0E0"
+                <gradient
+                android:startColor="@color/progress_gray"
+                android:centerColor="@color/progress_gray"
                 android:centerY="0.75"
-                android:endColor="#E0E0E0"
+                android:endColor="@color/progress_gray"
                 android:angle="270"
                 />
         </shape>
@@ -18,10 +18,10 @@
             <shape>
                 <corners android:radius="5dip" />
                 <gradient
-                    android:startColor="#80C34A"
-                    android:centerColor="#80C34A"
+                    android:startColor="@color/progress_green_translucent"
+                    android:centerColor="@color/progress_green_translucent"
                     android:centerY="0.75"
-                    android:endColor="#80C34A"
+                    android:endColor="@color/progress_green_translucent"
                     android:angle="270"
                     />
             </shape>
@@ -33,10 +33,10 @@
             <shape>
                 <corners android:radius="5dip" />
                 <gradient
-                    android:startColor="#4CAF50"
-                    android:centerColor="#4CAF50"
+                    android:startColor="@color/progress_green"
+                    android:centerColor="@color/progress_green"
                     android:centerY="0.75"
-                    android:endColor="#4CAF50"
+                    android:endColor="@color/progress_green"
                     android:angle="270"
                     />
             </shape>

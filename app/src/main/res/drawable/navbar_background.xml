@@ -3,7 +3,7 @@
     android:shape="rectangle">
 
     <!-- Background Color - Using wellness theme -->
-    <solid android:color="#FF1E3A5A" />
+    <solid android:color="@color/navbar_bg" />
 
     <!-- Corner Radius -->
     <corners android:radius="400dp" />

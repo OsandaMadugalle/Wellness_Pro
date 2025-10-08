@@ -35,6 +35,16 @@
     <color name="dialog_message_text_color">@color/textColorPrimary</color>
     <color name="dialog_button_text_color">@color/colorAccentGreen</color>
     <color name="dialog_button_ripple_color">#334CAF50</color>
+    <!-- Additional semantic colors added to replace inline literals -->
+    <color name="translucent_background">#800A1F2E</color>
+    <color name="widget_stroke">#FF4CAF50</color>
+    <color name="navbar_bg">#FF1E3A5A</color>
+    <color name="progress_gray">#E0E0E0</color>
+    <color name="progress_green_translucent">#80C34A</color>
+    <color name="progress_green">#4CAF50</color>
+    <color name="progress_blue">#2196F3</color>
+    <color name="progress_blue_light">#90CAF9</color>
+    <color name="progress_background_hydration">#FF102A4C</color>
     <color name="timepicker_header_color">@color/colorPrimary</color>
     <color name="timepicker_header_text_color">@color/colorOnPrimary</color>
     <color name="timepicker_clock_text_color">@color/textColorPrimary</color>

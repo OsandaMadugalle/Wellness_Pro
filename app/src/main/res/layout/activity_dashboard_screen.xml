@@ -365,7 +365,7 @@
                         android:max="8"
                         android:progress="0"
                         android:progressTint="@color/colorAccentBlue"
-                        android:progressBackgroundTint="#FF102A4C"
+                        android:progressBackgroundTint="@color/progress_background_hydration"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/textViewHydrationTitle" />
