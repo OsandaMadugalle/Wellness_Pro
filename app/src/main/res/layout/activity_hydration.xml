@@ -17,10 +17,10 @@
         android:elevation="4dp"
         android:gravity="center"
         android:orientation="vertical"
-        android:paddingLeft="16dp"
-        android:paddingTop="16dp"
-        android:paddingRight="16dp"
-        android:paddingBottom="24dp"
+    android:paddingLeft="@dimen/screen_padding"
+    android:paddingTop="@dimen/header_padding_top"
+    android:paddingRight="@dimen/screen_padding"
+    android:paddingBottom="@dimen/header_padding_bottom"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -66,8 +66,8 @@
             android:id="@+id/contentLayoutHydration"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
+            android:paddingStart="@dimen/screen_padding"
+            android:paddingEnd="@dimen/screen_padding"
             android:paddingTop="16dp"
             android:paddingBottom="16dp">
 

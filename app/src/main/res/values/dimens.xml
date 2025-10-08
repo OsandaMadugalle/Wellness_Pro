@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Base dimensions (portrait / default) -->
+    <dimen name="logo_size">140dp</dimen>
+    <dimen name="avatar_size">56dp</dimen>
+    <dimen name="screen_padding">16dp</dimen>
+    <dimen name="header_padding_top">16dp</dimen>
+    <dimen name="header_padding_bottom">24dp</dimen>
+    <dimen name="button_height">60dp</dimen>
+
     <dimen name="action_icon_size">28dp</dimen>
     <dimen name="action_icon_margin_end">52dp</dimen>
     <dimen name="action_icon_margin_start_delete">16dp</dimen>

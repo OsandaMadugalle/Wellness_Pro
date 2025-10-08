@@ -13,10 +13,10 @@
         android:layout_height="wrap_content"
         android:background="@color/backgroundColor"
         android:elevation="4dp"
-        android:paddingLeft="16dp"
-        android:paddingTop="16dp"
-        android:paddingRight="16dp"
-        android:paddingBottom="24dp">
+    android:paddingLeft="@dimen/screen_padding"
+    android:paddingTop="@dimen/header_padding_top"
+    android:paddingRight="@dimen/screen_padding"
+    android:paddingBottom="@dimen/header_padding_bottom">
 
         <TextView
             android:id="@+id/textView4"
@@ -102,7 +102,7 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="16dp">
+                    android:padding="@dimen/screen_padding">
 
                     <TextView
                         android:id="@+id/textViewCurrentMoodTitle"
@@ -345,7 +345,7 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="16dp">
+                    android:padding="@dimen/screen_padding">
 
                     <TextView
                         android:id="@+id/textViewHydrationTitle"
