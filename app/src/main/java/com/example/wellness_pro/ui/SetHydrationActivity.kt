@@ -30,6 +30,8 @@ import com.example.wellness_pro.reminders.HydrationReminderManager
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import android.content.Intent
 import android.os.PowerManager
 import android.provider.Settings
@@ -243,8 +245,19 @@ class SetHydrationActivity : BaseBottomNavActivity() {
         }
 
         val savedTimes = sharedPreferences.getStringSet(KEY_REMINDER_TIMES, emptySet()) ?: emptySet()
-        reminderTimesList.clear()
-        reminderTimesList.addAll(savedTimes.sorted())
+        // Sort times chronologically (AM before PM) using LocalTime parsing to avoid lexicographic order issues
+        try {
+            val formatter = DateTimeFormatter.ofPattern("h:mm a", Locale.getDefault())
+            val sorted = savedTimes.mapNotNull { t ->
+                try { Pair(t, LocalTime.parse(t, formatter)) } catch (_: Exception) { null }
+            }.sortedBy { it.second }
+            reminderTimesList.clear()
+            reminderTimesList.addAll(sorted.map { it.first })
+        } catch (e: Exception) {
+            // Fallback to simple sort if LocalTime isn't available for some reason
+            reminderTimesList.clear()
+            reminderTimesList.addAll(savedTimes.sorted())
+        }
         Log.d(TAG, "Hydration settings loaded in SetHydrationActivity. Goal: $currentSetGlassesGoal, Times: ${reminderTimesList.joinToString()}")
 
         // Ensure adapter and UI show the loaded times immediately

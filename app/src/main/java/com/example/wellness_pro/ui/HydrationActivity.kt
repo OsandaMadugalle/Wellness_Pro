@@ -149,24 +149,49 @@ class HydrationActivity : BaseBottomNavActivity() {
         }
 
         val currentTime = Calendar.getInstance()
-        val sdf = SimpleDateFormat("hh:mm a", Locale.getDefault())
+
+        // helper: parse strings like "05:30 AM" or "5:30 pm" into hour/minute (24h)
+        fun parseHourMinute(timeStr: String): Pair<Int, Int>? {
+            // Matches H or HH : MM with optional AM/PM
+            val regex = Regex("\\s*(\\d{1,2}):(\\d{2})\\s*([APap][Mm])?\\s*")
+            val match = regex.matchEntire(timeStr)
+            if (match == null) return null
+            var hour = match.groupValues[1].toIntOrNull() ?: return null
+            val minute = match.groupValues[2].toIntOrNull() ?: return null
+            val ampm = match.groupValues[3].uppercase()
+            if (ampm.isNotEmpty()) {
+                if (ampm == "AM" && hour == 12) hour = 0
+                else if (ampm == "PM" && hour != 12) hour += 12
+            }
+            // bounds check
+            if (hour !in 0..23 || minute !in 0..59) return null
+            return Pair(hour, minute)
+        }
+
+        // Build a sorted list of (timeString -> millisToday) so ordering is by actual time
+        val timesWithMillis = mutableListOf<Pair<String, Long>>()
+        for (time in reminderTimes) {
+            val hm = parseHourMinute(time) ?: continue
+            val reminderCalendar = Calendar.getInstance()
+            reminderCalendar.set(Calendar.HOUR_OF_DAY, hm.first)
+            reminderCalendar.set(Calendar.MINUTE, hm.second)
+            reminderCalendar.set(Calendar.SECOND, 0)
+            reminderCalendar.set(Calendar.MILLISECOND, 0)
+            timesWithMillis.add(Pair(time, reminderCalendar.timeInMillis))
+        }
+
+        if (timesWithMillis.isEmpty()) {
+            textViewNextReminderLabel.visibility = View.GONE
+            return
+        }
+
+        timesWithMillis.sortBy { it.second }
 
         var nextReminderTime: String? = null
-        for (time in reminderTimes) {
-            val reminderCalendar = Calendar.getInstance()
-            val parsedDate = sdf.parse(time)
-            if(parsedDate != null) {
-                val parsedCalendar = Calendar.getInstance()
-                parsedCalendar.time = parsedDate
-
-                reminderCalendar.set(Calendar.HOUR_OF_DAY, parsedCalendar.get(Calendar.HOUR_OF_DAY))
-                reminderCalendar.set(Calendar.MINUTE, parsedCalendar.get(Calendar.MINUTE))
-                reminderCalendar.set(Calendar.SECOND, 0)
-
-                if (reminderCalendar.after(currentTime)) {
-                    nextReminderTime = time
-                    break
-                }
+        for ((timeStr, millis) in timesWithMillis) {
+            if (millis > currentTime.timeInMillis) {
+                nextReminderTime = timeStr
+                break
             }
         }
 
@@ -174,8 +199,9 @@ class HydrationActivity : BaseBottomNavActivity() {
             textViewNextReminderLabel.text = "Next reminder at: $nextReminderTime"
             textViewNextReminderLabel.visibility = View.VISIBLE
         } else {
-            // If all reminders for today have passed, show the first reminder for tomorrow
-            textViewNextReminderLabel.text = "Next reminder at: ${reminderTimes.first()} (tomorrow)"
+            // If all reminders for today have passed, show the first reminder for tomorrow (earliest by time)
+            val earliestTomorrow = timesWithMillis.first().first
+            textViewNextReminderLabel.text = "Next reminder at: $earliestTomorrow (tomorrow)"
             textViewNextReminderLabel.visibility = View.VISIBLE
         }
     }

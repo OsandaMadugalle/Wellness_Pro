@@ -135,27 +135,35 @@ object HydrationReminderManager {
             return null
         }
 
-        val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault()) 
+        // Parse time strings robustly (avoid using Date parsing which can pick today's date at epoch)
+        val timeRegex = Regex("\\s*(\\d{1,2}):(\\d{2})\\s*([APap][Mm])?\\s*")
         val sortedTimesToday = TreeSet<Long>()
 
-        val currentCalendar = Calendar.getInstance().apply {
-            timeInMillis = currentTimeMillis
-        }
+        val currentCalendar = Calendar.getInstance().apply { timeInMillis = currentTimeMillis }
 
         for (timeStr in reminderTimesStringSet) {
             try {
-                val parsedDate = timeFormat.parse(timeStr)
-                parsedDate?.let {
-                    val reminderCalendar = Calendar.getInstance().apply {
-                        time = it
-                        set(Calendar.YEAR, currentCalendar.get(Calendar.YEAR))
-                        set(Calendar.MONTH, currentCalendar.get(Calendar.MONTH))
-                        set(Calendar.DAY_OF_MONTH, currentCalendar.get(Calendar.DAY_OF_MONTH))
-                        set(Calendar.SECOND, 0)
-                        set(Calendar.MILLISECOND, 0)
-                    }
-                    sortedTimesToday.add(reminderCalendar.timeInMillis)
+                val match = timeRegex.matchEntire(timeStr)
+                if (match == null) {
+                    Log.w(TAG, "Unrecognized reminder time format: $timeStr")
+                    continue
                 }
+                var hour = match.groupValues[1].toInt()
+                val minute = match.groupValues[2].toInt()
+                val ampm = match.groupValues[3].uppercase()
+                if (ampm.isNotEmpty()) {
+                    if (ampm == "AM" && hour == 12) hour = 0
+                    else if (ampm == "PM" && hour != 12) hour += 12
+                }
+
+                val reminderCalendar = Calendar.getInstance().apply {
+                    timeInMillis = currentCalendar.timeInMillis
+                    set(Calendar.HOUR_OF_DAY, hour)
+                    set(Calendar.MINUTE, minute)
+                    set(Calendar.SECOND, 0)
+                    set(Calendar.MILLISECOND, 0)
+                }
+                sortedTimesToday.add(reminderCalendar.timeInMillis)
             } catch (e: Exception) {
                 Log.e(TAG, "Error parsing reminder time string from SharedPreferences: $timeStr", e)
             }
