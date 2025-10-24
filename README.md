@@ -58,6 +58,34 @@ Notes:
 - Remove `.idea/` from git and add it to `.gitignore` (I can run the git commands if you want).
 - Run a CI workflow to ensure builds across multiple SDK versions.
 
+## Screenshots
+Below are a few screenshots from the app. The image files are stored in the `Screenshots/` folder at the repo root. Use these relative paths when viewing the README on GitHub.
+
+Single image (example):
+
+![Dashboard](Screenshots/Dashboard.jpg)
+
+Two images side-by-side:
+
+<p float="left">
+  <img src="Screenshots/Loading.jpg" width="320" />
+  <img src="Screenshots/LogMood.jpg" width="320" />
+</p>
+
+Gallery:
+
+- ![Habits](Screenshots/Habits.jpg)
+- ![Hydration](Screenshots/Hydration.jpg)
+- ![Mood history](Screenshots/MoodHistory.jpg)
+- ![Profile](Screenshots/Profile.jpg)
+- ![Set habit](Screenshots/SetHabit.jpg)
+- ![Set hydration](Screenshots/SetHydration.jpg)
+- ![Settings](Screenshots/Settings.jpg)
+
+Notes:
+- If the images are large, consider resizing them before committing or use Git LFS for large binaries.
+- Make sure the `Screenshots/` folder and images are committed to the repository so they render on GitHub.
+
 ---
 
 If you want any additional docs (architecture.md, development setup for new contributors, or API reference), tell me which area you want first and I'll add a `docs/` file.
