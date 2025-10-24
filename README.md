@@ -1,91 +1,33 @@
-# Wellness_Pro
 # Wellness Pro
 
-Wellness Pro is an Android app for simple wellness tracking: mood journaling, habit tracking, and hydration reminders. The app is written in Kotlin and uses AndroidX and Material components.
+Wellness Pro is a simple Android app for daily wellness tracking: mood journaling, habit tracking, and hydration reminders.
 
-This README is a concise developer reference: how to build, where key code lives, and repository hygiene notes.
-
-## Quick facts
-- Language: Kotlin
-- Build: Gradle (Kotlin DSL)
-- Module: `app/` (Android application)
-- Minimum SDK: 26
-- SDK/compile target: 36
-
-## Build & run (developer)
-1. Install Android Studio and the Android SDK that matches the project.
-2. From the project root (where `gradlew` lives):
-
-```pwsh
-cd E:/AndroidStudioProjects/Wellness_Pro
-.\gradlew.bat assembleDebug -x lint
-```
-
-3. Import the project into Android Studio and run or debug from there.
-
-Notes:
-- If Gradle prompts for SDK/platform updates, install the missing components via the SDK Manager.
-- The project builds successfully on this machine after removing Firebase artifacts.
-
-## Project layout (important locations)
-- `app/` - Android app module
-  - `app/src/main/java/com/example/wellness_pro/` - Kotlin source code
-  - `app/src/main/res/layout/` - XML layouts
-  - `app/src/main/res/values/` - strings, colors, dimens, themes
-  - `app/src/main/AndroidManifest.xml` - manifest
-- Root-level Gradle files: `build.gradle.kts`, `settings.gradle.kts`
-- `gradle/` and `gradle/wrapper` contain version pinning and wrapper config.
-
-## Features overview
-- Mood Journal: log moods, view history and trends.
-- Habits: create and track habits with progress UI.
-- Hydration: track water intake and configure reminders locally.
-- Reminders: uses WorkManager / AlarmManager fallback for scheduling reminders.
-
-## Repository hygiene
-- Firebase: This project does NOT use Firebase. Firebase configuration files and Gradle plugin references have been removed from the project and are not tracked. If you see references to Firebase in working files, they are residual comments and safe to ignore.
-- IDE files: The `.idea/` directory contains user-specific settings and should generally be excluded from git. Consider removing it from the repo and adding `.idea/` to `.gitignore`.
-- Build outputs: `app/build/` and other `build/` directories are generated and should be ignored.
-
-## Common tasks
-- Run tests (unit/instrumented) via Android Studio or Gradle tasks.
-- Lint and formatting: follow the project's code style settings in `.editorconfig` and any linters configured in Gradle.
-
-## Contributing
-- Please open issues or PRs on the main repository. Follow code style and prefer small, reviewable changes.
-
-## Contact / Next steps I can do for you
-- Remove `.idea/` from git and add it to `.gitignore` (I can run the git commands if you want).
-- Run a CI workflow to ensure builds across multiple SDK versions.
+## Features
+- Mood Journal: log moods with optional notes and view history.
+- Habits: create and track habits with progress and streaks.
+- Hydration: log water intake, view daily totals, and receive local reminders.
+- Local Reminders: scheduled with WorkManager with AlarmManager fallback.
 
 ## Screenshots
-Below are a few screenshots from the app. The image files are stored in the `Screenshots/` folder at the repo root. Use these relative paths when viewing the README on GitHub.
-
-Single image (example):
-
-![Dashboard](Screenshots/Dashboard.jpg)
-
-Two images side-by-side:
-
-<p float="left">
-  <img src="Screenshots/Loading.jpg" width="320" />
-  <img src="Screenshots/LogMood.jpg" width="320" />
-</p>
-
-Gallery:
-
-- ![Habits](Screenshots/Habits.jpg)
-- ![Hydration](Screenshots/Hydration.jpg)
-- ![Mood history](Screenshots/MoodHistory.jpg)
-- ![Profile](Screenshots/Profile.jpg)
-- ![Set habit](Screenshots/SetHabit.jpg)
-- ![Set hydration](Screenshots/SetHydration.jpg)
-- ![Settings](Screenshots/Settings.jpg)
-
-Notes:
-- If the images are large, consider resizing them before committing or use Git LFS for large binaries.
-- Make sure the `Screenshots/` folder and images are committed to the repository so they render on GitHub.
-
----
-
-If you want any additional docs (architecture.md, development setup for new contributors, or API reference), tell me which area you want first and I'll add a `docs/` file.
+<table>
+  <tr>
+    <td><img src="Screenshots/Dashboard.jpg" alt="Dashboard" width="320" /></td>
+    <td><img src="Screenshots/Loading.jpg" alt="Loading" width="320" /></td>
+    <td><img src="Screenshots/LogMood.jpg" alt="Log Mood" width="320" /></td>
+  </tr>
+  <tr>
+    <td><img src="Screenshots/Habits.jpg" alt="Habits" width="320" /></td>
+    <td><img src="Screenshots/Hydration.jpg" alt="Hydration" width="320" /></td>
+    <td><img src="Screenshots/MoodHistory.jpg" alt="Mood history" width="320" /></td>
+  </tr>
+  <tr>
+    <td><img src="Screenshots/Profile.jpg" alt="Profile" width="320" /></td>
+    <td><img src="Screenshots/SetHabit.jpg" alt="Set habit" width="320" /></td>
+    <td><img src="Screenshots/SetHydration.jpg" alt="Set hydration" width="320" /></td>
+  </tr>
+  <tr>
+    <td><img src="Screenshots/Settings.jpg" alt="Settings" width="320" /></td>
+    <td></td>
+    <td></td>
+  </tr>
+</table>
